@@ -1,0 +1,2 @@
+C:\Users\Administrateur\Documents\GitHub\AverageDev\Average.Client\obj\Release\Client.csprojAssemblyReference.cache
+C:\Users\Administrateur\Documents\GitHub\AverageDev\Average.Client\obj\Release\Client.csproj.CoreCompileInputs.cache

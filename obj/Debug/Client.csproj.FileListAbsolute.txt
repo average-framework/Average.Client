@@ -1,0 +1,21 @@
+C:\Users\Administrateur\Documents\GitHub\redm\resources\avg\avgc.net.dll
+C:\Users\Administrateur\Documents\GitHub\Average\Average.Client\obj\Debug\Client.csprojAssemblyReference.cache
+C:\Users\Administrateur\Documents\GitHub\Average\Average.Client\obj\Debug\Client.csproj.CopyComplete
+C:\Users\Administrateur\Documents\GitHub\Average\Average.Client\obj\Debug\avgc.net.dll
+C:\Users\Administrateur\Documents\GitHub\Average\Average.Client\obj\Debug\Client.csproj.CoreCompileInputs.cache
+C:\Users\Administrateur\Documents\GitHub\AverageDev\Average.Client\obj\Debug\Client.csprojAssemblyReference.cache
+C:\Users\Administrateur\Documents\GitHub\AverageDev\Average.Client\obj\Debug\Client.csproj.CoreCompileInputs.cache
+C:\Users\Administrateur\Documents\GitHub\AverageDev\Average.Client\obj\Debug\avgc.net.dll
+C:\Users\Administrateur\Documents\GitHub\AverageDev\Average.Client\obj\Debug\Client.csproj.CopyComplete
+C:\Users\Administrateur\Documents\GitHub\redmdev\resources\avg\avgc.net.dll
+C:\Users\Administrateur\Documents\GitHub\average_dev\resources\avg\avgc.net.dll
+C:\Users\Bubbl\Documents\GitHub\redmdev\resources\avg\avgc.net.dll
+C:\Users\Bubbl\Documents\GitHub\RdR_Code\Average.Client\obj\Debug\Client.csproj.AssemblyReference.cache
+C:\Users\Bubbl\Documents\GitHub\RdR_Code\Average.Client\obj\Debug\Client.csproj.CoreCompileInputs.cache
+C:\Users\Bubbl\Documents\GitHub\RdR_Code\Average.Client\obj\Debug\Client.csproj.CopyComplete
+C:\Users\Bubbl\Documents\GitHub\RdR_Code\Average.Client\obj\Debug\avgc.net.dll
+C:\Users\bubbl\Desktop\Average Framework\Average.Client\obj\Debug\Client.csproj.AssemblyReference.cache
+C:\Users\bubbl\Desktop\Average Framework\Average.Client\obj\Debug\Client.csproj.CoreCompileInputs.cache
+C:\Users\bubbl\Desktop\Average Framework\Average.Client\obj\Debug\avgc.net.dll
+C:\Users\bubbl\Desktop\Average Framework Server\avg\avgc.net.dll
+C:\Users\bubbl\Desktop\Average Framework\Average.Client\obj\Debug\Client.csproj.CopyComplete

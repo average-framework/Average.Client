@@ -11,14 +11,14 @@ using System.Threading.Tasks;
 
 namespace Average
 {
-    public class Main : BaseScript
+    internal class Main : BaseScript
     {
-        public static EventHandlerDictionary Events { get; private set; }
+        internal static EventHandlerDictionary Events { get; private set; }
 
-        public static Logger logger;
-        public static CommandManager commandManager;
-        public static Framework framework;
-        public static ThreadManager threadManager;
+        internal static Logger logger;
+        internal static CommandManager commandManager;
+        internal static Framework framework;
+        internal static ThreadManager threadManager;
 
         PluginLoader plugin;
 
@@ -35,7 +35,7 @@ namespace Average
             plugin.Load();
         }
 
-        public static RpcRequest Event(string @event)
+        internal static RpcRequest Event(string @event)
         {
             return new RpcRequest(@event, new RpcHandler(Events), new RpcTrigger(), new RpcSerializer());
         }
@@ -44,7 +44,7 @@ namespace Average
         /// Create new thread at runtime
         /// </summary>
         /// <param name="task"></param>
-        public void RegisterTick(Func<Task> func)
+        internal void RegisterTick(Func<Task> func)
         {
             Tick += func;
         }
@@ -53,7 +53,7 @@ namespace Average
         /// Delete thread at runtime
         /// </summary>
         /// <param name="task"></param>
-        public void UnregisterTick(Func<Task> func)
+        internal void UnregisterTick(Func<Task> func)
         {
             Tick -= func;
         }

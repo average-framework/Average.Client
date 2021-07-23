@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Average.Threading
 {
-    public class ThreadManager : IThreadManager
+    internal class ThreadManager : IThreadManager
     {
         Main main;
 
@@ -23,7 +23,7 @@ namespace Average.Threading
         internal void RegisterThread(MethodInfo method, ThreadAttribute threadAttr, object classObj)
         {
             var methodParams = method.GetParameters();
-            
+
             if (methodParams.Count() == 0)
             {
                 if (threadAttr != null)
@@ -80,19 +80,10 @@ namespace Average.Threading
         {
             var thread = threads.Find(x => x.Method.Name == methodName);
 
-            if(thread != null)
+            if (thread != null)
             {
                 main.UnregisterTick(thread.Func);
                 threads.Remove(thread);
-
-                Main.logger.Trace("Remove thread by method name: " + methodName);
-            }
-            else
-            {
-                for(int i = 0; i < threads.Count; i++)
-                {
-                    Main.logger.Trace("Thread: " + threads[i].Method.Name);
-                }
             }
         }
 

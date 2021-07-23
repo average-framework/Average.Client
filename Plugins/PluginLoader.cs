@@ -5,6 +5,7 @@ using SDK.Client.Extensions;
 using SDK.Client.Plugins;
 using SDK.Shared;
 using SDK.Shared.Plugins;
+using SDK.Shared.Threading;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -115,6 +116,19 @@ namespace Average.Plugins
                             }
 
                             RegisterCommands(type, classObj);
+                            //RegisterThread();
+
+                            foreach(var method in type.GetMethods())
+                            {
+                                var threadAttr = method.GetCustomAttribute<ThreadAttribute>();
+
+                                if(threadAttr != null)
+                                {
+                                    //var task = (Task)method.Invoke(classObj, new object[] { });
+                                    //await task;
+                                    Main.threadManager.RegisterThread(method, threadAttr, classObj);
+                                }
+                            }
                         }
                     }
                 }

@@ -9,7 +9,7 @@
     <ProjectGuid>{B95A3DB2-D4D9-4766-BBD4-DF941B07F82B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Average.Client</RootNamespace>
+    <RootNamespace>Average</RootNamespace>
     <AssemblyName>average.client.net</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <LangVersion>8.0</LangVersion>

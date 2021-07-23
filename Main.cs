@@ -1,4 +1,4 @@
-﻿using Average.Client.Plugins;
+﻿using Average.Plugins;
 using CitizenFX.Core;
 using SDK.Client;
 using SDK.Client.Commands;
@@ -6,9 +6,9 @@ using SDK.Client.Diagnostics;
 using SDK.Client.Rpc;
 using SDK.Shared.Rpc;
 
-namespace Average.Client
+namespace Average
 {
-    public class Main : BaseScript
+    internal class Main : BaseScript
     {
         public static EventHandlerDictionary Events { get; private set; }
 

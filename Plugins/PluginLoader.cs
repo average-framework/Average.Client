@@ -1,6 +1,7 @@
 ﻿using CitizenFX.Core;
 using SDK.Client;
 using SDK.Client.Commands;
+using SDK.Client.Exports;
 using SDK.Client.Extensions;
 using SDK.Client.Plugins;
 using SDK.Shared;
@@ -117,6 +118,7 @@ namespace Average.Plugins
                             RegisterCommands(type, classObj);
                             RegisterThreads(type, classObj);
                             RegisterEvents(asm, type, classObj);
+                            RegisterExports(asm, type, classObj);
                         }
                     }
                 }
@@ -160,11 +162,20 @@ namespace Average.Plugins
 
                 if (eventAttr != null)
                 {
-                    Main.logger.Debug("Params: " + string.Join(", ", method.GetParameters().Select(x => x.ParameterType.FullName)));
-                    //var paramType = Type.GetType()
-                    //var action = method.Invoke(classObj, new object[] { "test1", "action2"});
                     Main.eventManager.RegisterEvent(method, eventAttr, classObj);
-                    //Main.eventManager.RegisterEvent(method, eventAttr, classObj);
+                }
+            }
+        }
+
+        void RegisterExports(Assembly asm, Type type, object classObj)
+        {
+            foreach (var method in type.GetMethods())
+            {
+                var exportAttr = method.GetCustomAttribute<ExportAttribute>();
+
+                if (exportAttr != null)
+                {
+                    Main.exportManager.RegisterExport(method, exportAttr, classObj);
                 }
             }
         }

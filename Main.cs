@@ -22,6 +22,7 @@ namespace Average
         internal static Framework framework;
         internal static ThreadManager threadManager;
         internal static EventManager eventManager;
+        internal static ExportManager exportManager;
 
         PluginLoader plugin;
 
@@ -34,7 +35,8 @@ namespace Average
             commandManager = new CommandManager(logger);
             threadManager = new ThreadManager(this);
             eventManager = new EventManager(EventHandlers, logger);
-            framework = new Framework(EventHandlers, ScriptExports, threadManager, eventManager, logger, commandManager);
+            exportManager = new ExportManager(logger);
+            framework = new Framework(EventHandlers, ScriptExports, threadManager, eventManager, exportManager, logger, commandManager);
             plugin = new PluginLoader(commandManager);
 
             plugin.Load();

@@ -4,6 +4,7 @@ using CitizenFX.Core;
 using SDK.Client;
 using SDK.Client.Commands;
 using SDK.Client.Diagnostics;
+using SDK.Client.Events;
 using SDK.Client.Rpc;
 using SDK.Shared.Rpc;
 using System;
@@ -20,6 +21,7 @@ namespace Average
         internal static CommandManager commandManager;
         internal static Framework framework;
         internal static ThreadManager threadManager;
+        internal static EventManager eventManager;
 
         PluginLoader plugin;
 
@@ -31,7 +33,8 @@ namespace Average
             logger = new Logger();
             commandManager = new CommandManager(logger);
             threadManager = new ThreadManager(this);
-            framework = new Framework(EventHandlers, ScriptExports, threadManager, logger, commandManager);
+            eventManager = new EventManager(EventHandlers, logger);
+            framework = new Framework(EventHandlers, ScriptExports, threadManager, eventManager, logger, commandManager);
             plugin = new PluginLoader(commandManager);
 
             plugin.Load();

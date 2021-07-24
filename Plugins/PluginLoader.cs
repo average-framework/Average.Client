@@ -19,13 +19,12 @@ namespace Average.Plugins
         CommandManager commandManager;
 
         List<IPlugin> plugins = new List<IPlugin>();
+        List<PluginInfo> pluginsInfo;
 
         public PluginLoader(CommandManager commandManager)
         {
             this.commandManager = commandManager;
         }
-
-        List<PluginInfo> pluginsInfo;
 
         async Task<List<PluginInfo>> GetPlugins()
         {
@@ -116,19 +115,8 @@ namespace Average.Plugins
                             }
 
                             RegisterCommands(type, classObj);
-                            //RegisterThread();
-
-                            foreach(var method in type.GetMethods())
-                            {
-                                var threadAttr = method.GetCustomAttribute<ThreadAttribute>();
-
-                                if(threadAttr != null)
-                                {
-                                    //var task = (Task)method.Invoke(classObj, new object[] { });
-                                    //await task;
-                                    Main.threadManager.RegisterThread(method, threadAttr, classObj);
-                                }
-                            }
+                            RegisterThreads(type, classObj);
+                            RegisterEvents(asm, type, classObj);
                         }
                     }
                 }
@@ -148,6 +136,36 @@ namespace Average.Plugins
                 var aliasAttr = method.GetCustomAttribute<CommandAliasAttribute>();
 
                 commandManager.RegisterCommand(cmdAttr, aliasAttr, method, classObj);
+            }
+        }
+
+        void RegisterThreads(Type type, object classObj)
+        {
+            foreach (var method in type.GetMethods())
+            {
+                var threadAttr = method.GetCustomAttribute<ThreadAttribute>();
+
+                if (threadAttr != null)
+                {
+                    Main.threadManager.RegisterThread(method, threadAttr, classObj);
+                }
+            }
+        }
+
+        void RegisterEvents(Assembly asm, Type type, object classObj)
+        {
+            foreach (var method in type.GetMethods())
+            {
+                var eventAttr = method.GetCustomAttribute<EventAttribute>();
+
+                if (eventAttr != null)
+                {
+                    Main.logger.Debug("Params: " + string.Join(", ", method.GetParameters().Select(x => x.ParameterType.FullName)));
+                    //var paramType = Type.GetType()
+                    //var action = method.Invoke(classObj, new object[] { "test1", "action2"});
+                    Main.eventManager.RegisterEvent(method, eventAttr, classObj);
+                    //Main.eventManager.RegisterEvent(method, eventAttr, classObj);
+                }
             }
         }
 

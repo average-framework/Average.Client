@@ -1,4 +1,5 @@
 ﻿using CitizenFX.Core;
+using Newtonsoft.Json;
 using SDK.Client;
 using SDK.Client.Commands;
 using SDK.Client.Exports;
@@ -54,8 +55,6 @@ namespace Average.Plugins
             {
                 foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
                 {
-                    Main.logger.Trace("asm: " + asm);
-
                     var sdk = asm.GetCustomAttribute<ClientPluginAttribute>();
 
                     if (sdk != null)
@@ -85,25 +84,36 @@ namespace Average.Plugins
                             return;
                         }
 
-                        Main.logger.Trace("p: " + pluginsInfo.Count);
-
-                        foreach (var p in pluginsInfo)
-                        {
-                            Main.logger.Trace("p: " + p.Client);
-                        }
-
                         var pluginInfo = pluginsInfo.Find(x => x.Client == asm.GetName().Name + ".dll");
 
-                        foreach (var type in types)
+                        if(pluginInfo != null)
                         {
-                            Plugin script = null;
-
-                            // Load script dynamically at runtime
-                            if (type.GetCustomAttribute<MainScriptAttribute>() != null)
+                            foreach (var type in types)
                             {
-                                try
+                                Plugin script = null;
+
+                                // Load script dynamically at runtime
+                                if (type.GetCustomAttribute<MainScriptAttribute>() != null)
                                 {
-                                    if (pluginInfo != null)
+                                    try
+                                    {
+                                        if (pluginInfo != null)
+                                        {
+                                            script = (Plugin)Activator.CreateInstance(type, Main.framework, pluginInfo);
+                                            script.PluginInfo = pluginInfo;
+                                            RegisterPlugin(script);
+
+                                            Main.logger.Info($"Plugin {asm.GetName().Name} -> script: {script.Name} successfully loaded.");
+                                        }
+                                    }
+                                    catch (InvalidCastException ex)
+                                    {
+                                        Main.logger.Error($"Unable to load {asm.GetName().Name}");
+                                    }
+                                }
+                                else
+                                {
+                                    try
                                     {
                                         script = (Plugin)Activator.CreateInstance(type, Main.framework, pluginInfo);
                                         script.PluginInfo = pluginInfo;
@@ -111,39 +121,28 @@ namespace Average.Plugins
 
                                         Main.logger.Info($"Plugin {asm.GetName().Name} -> script: {script.Name} successfully loaded.");
                                     }
+                                    catch
+                                    {
+                                        Main.logger.Error($"Unable to load script: {script.Name}");
+                                    }
                                 }
-                                catch (InvalidCastException ex)
-                                {
-                                    Main.logger.Error($"Unable to load {asm.GetName().Name}");
-                                }
-                            }
-                            else
-                            {
-                                try
-                                {
-                                    script = (Plugin)Activator.CreateInstance(type, Main.framework, pluginInfo);
-                                    script.PluginInfo = pluginInfo;
-                                    RegisterPlugin(script);
 
-                                    Main.logger.Info($"Plugin {asm.GetName().Name} -> script: {script.Name} successfully loaded.");
-                                }
-                                catch
+                                if (script == null)
                                 {
-                                    Main.logger.Error($"Unable to load script: {script.Name}");
+                                    continue;
                                 }
-                            }
 
-                            if (script == null)
-                            {
-                                continue;
+                                RegisterCommands(type, script);
+                                RegisterThreads(type, script);
+                                RegisterEvents(type, script);
+                                RegisterExports(type, script);
+                                RegisterSyncs(type, script);
+                                RegisterGetSyncs(type, script);
                             }
-
-                            RegisterCommands(type, script);
-                            RegisterThreads(type, script);
-                            RegisterEvents(type, script);
-                            RegisterExports(type, script);
-                            RegisterSyncs(type, script);
-                            RegisterGetSyncs(type, script);
+                        }
+                        else
+                        {
+                            Main.logger.Error($"Unable to find plugin: {asm.GetName().Name}.dll");
                         }
                     }
                 }
@@ -214,7 +213,6 @@ namespace Average.Plugins
 
                 if (syncAttr != null)
                 {
-                    Main.logger.Debug("sync: " + syncAttr.Name + ", " + property.Name + ", " + property.PropertyType.Name + ", " + property.GetIndexParameters().Length);
                     Main.syncManager.RegisterSync(ref property, syncAttr, classObj);
                 }
             }
@@ -229,7 +227,6 @@ namespace Average.Plugins
 
                 if (getSyncAttr != null)
                 {
-                    Main.logger.Debug("sync: " + getSyncAttr.Name + ", " + property.Name + ", " + property.PropertyType.Name + ", " + property.GetIndexParameters().Length);
                     Main.syncManager.RegisterGetSync(ref property, getSyncAttr, classObj);
                 }
             }

@@ -54,6 +54,8 @@ namespace Average.Plugins
             {
                 foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
                 {
+                    Main.logger.Trace("asm: " + asm);
+
                     var sdk = asm.GetCustomAttribute<ClientPluginAttribute>();
 
                     if (sdk != null)
@@ -83,11 +85,18 @@ namespace Average.Plugins
                             return;
                         }
 
+                        Main.logger.Trace("p: " + pluginsInfo.Count);
+
+                        foreach (var p in pluginsInfo)
+                        {
+                            Main.logger.Trace("p: " + p.Client);
+                        }
+
                         var pluginInfo = pluginsInfo.Find(x => x.Client == asm.GetName().Name + ".dll");
 
                         foreach (var type in types)
                         {
-                            object classObj = null;
+                            Plugin script = null;
 
                             // Load script dynamically at runtime
                             if (type.GetCustomAttribute<MainScriptAttribute>() != null)
@@ -96,12 +105,11 @@ namespace Average.Plugins
                                 {
                                     if (pluginInfo != null)
                                     {
-                                        classObj = Activator.CreateInstance(type, Main.framework, pluginInfo);
-                                        var plugin = classObj as Plugin;
-                                        plugin.PluginInfo = pluginInfo;
-                                        RegisterPlugin(plugin);
+                                        script = (Plugin)Activator.CreateInstance(type, Main.framework, pluginInfo);
+                                        script.PluginInfo = pluginInfo;
+                                        RegisterPlugin(script);
 
-                                        Main.logger.Info($"{asm.GetName().Name} Successfully loaded.");
+                                        Main.logger.Info($"Plugin {asm.GetName().Name} -> script: {script.Name} successfully loaded.");
                                     }
                                 }
                                 catch (InvalidCastException ex)
@@ -109,16 +117,33 @@ namespace Average.Plugins
                                     Main.logger.Error($"Unable to load {asm.GetName().Name}");
                                 }
                             }
+                            else
+                            {
+                                try
+                                {
+                                    script = (Plugin)Activator.CreateInstance(type, Main.framework, pluginInfo);
+                                    script.PluginInfo = pluginInfo;
+                                    RegisterPlugin(script);
 
-                            if (classObj == null)
+                                    Main.logger.Info($"Plugin {asm.GetName().Name} -> script: {script.Name} successfully loaded.");
+                                }
+                                catch
+                                {
+                                    Main.logger.Error($"Unable to load script: {script.Name}");
+                                }
+                            }
+
+                            if (script == null)
                             {
                                 continue;
                             }
 
-                            RegisterCommands(type, classObj);
-                            RegisterThreads(type, classObj);
-                            RegisterEvents(asm, type, classObj);
-                            RegisterExports(asm, type, classObj);
+                            RegisterCommands(type, script);
+                            RegisterThreads(type, script);
+                            RegisterEvents(type, script);
+                            RegisterExports(type, script);
+                            RegisterSyncs(type, script);
+                            RegisterGetSyncs(type, script);
                         }
                     }
                 }
@@ -154,7 +179,7 @@ namespace Average.Plugins
             }
         }
 
-        void RegisterEvents(Assembly asm, Type type, object classObj)
+        void RegisterEvents(Type type, object classObj)
         {
             foreach (var method in type.GetMethods())
             {
@@ -167,7 +192,7 @@ namespace Average.Plugins
             }
         }
 
-        void RegisterExports(Assembly asm, Type type, object classObj)
+        void RegisterExports(Type type, object classObj)
         {
             foreach (var method in type.GetMethods())
             {
@@ -176,6 +201,36 @@ namespace Average.Plugins
                 if (exportAttr != null)
                 {
                     Main.exportManager.RegisterExport(method, exportAttr, classObj);
+                }
+            }
+        }
+
+        void RegisterSyncs(Type type, object classObj)
+        {
+            for(int i = 0; i < type.GetProperties().Count(); i++)
+            {
+                var property = type.GetProperties()[i];
+                var syncAttr = property.GetCustomAttribute<SyncAttribute>();
+
+                if (syncAttr != null)
+                {
+                    Main.logger.Debug("sync: " + syncAttr.Name + ", " + property.Name + ", " + property.PropertyType.Name + ", " + property.GetIndexParameters().Length);
+                    Main.syncManager.RegisterSync(ref property, syncAttr, classObj);
+                }
+            }
+        }
+
+        void RegisterGetSyncs(Type type, object classObj)
+        {
+            for (int i = 0; i < type.GetProperties().Count(); i++)
+            {
+                var property = type.GetProperties()[i];
+                var getSyncAttr = property.GetCustomAttribute<GetSyncAttribute>();
+
+                if (getSyncAttr != null)
+                {
+                    Main.logger.Debug("sync: " + getSyncAttr.Name + ", " + property.Name + ", " + property.PropertyType.Name + ", " + property.GetIndexParameters().Length);
+                    Main.syncManager.RegisterGetSync(ref property, getSyncAttr, classObj);
                 }
             }
         }

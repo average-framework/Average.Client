@@ -5,6 +5,7 @@ using SDK.Client;
 using SDK.Client.Commands;
 using SDK.Client.Diagnostics;
 using SDK.Client.Events;
+using SDK.Client.Exports;
 using SDK.Client.Rpc;
 using SDK.Shared.Rpc;
 using System;
@@ -23,6 +24,7 @@ namespace Average
         internal static ThreadManager threadManager;
         internal static EventManager eventManager;
         internal static ExportManager exportManager;
+        internal static SyncManager syncManager;
 
         PluginLoader plugin;
 
@@ -36,10 +38,19 @@ namespace Average
             threadManager = new ThreadManager(this);
             eventManager = new EventManager(EventHandlers, logger);
             exportManager = new ExportManager(logger);
-            framework = new Framework(EventHandlers, ScriptExports, threadManager, eventManager, exportManager, logger, commandManager);
+            syncManager = new SyncManager(logger);
+            framework = new Framework(EventHandlers, ScriptExports, threadManager, eventManager, exportManager, syncManager, logger, commandManager);
             plugin = new PluginLoader(commandManager);
 
             plugin.Load();
+
+            Tick += SyncTest;
+        }
+
+        private async Task SyncTest()
+        {
+            await Delay(1000);
+            syncManager.SyncProperties();
         }
 
         internal static RpcRequest Event(string @event)

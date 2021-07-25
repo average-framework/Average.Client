@@ -1,8 +1,6 @@
 ﻿using CitizenFX.Core;
-using Newtonsoft.Json;
 using SDK.Client;
 using SDK.Client.Commands;
-using SDK.Client.Exports;
 using SDK.Client.Extensions;
 using SDK.Client.Plugins;
 using SDK.Shared;
@@ -86,7 +84,7 @@ namespace Average.Plugins
 
                         var pluginInfo = pluginsInfo.Find(x => x.Client == asm.GetName().Name + ".dll");
 
-                        if(pluginInfo != null)
+                        if (pluginInfo != null)
                         {
                             foreach (var type in types)
                             {
@@ -155,7 +153,7 @@ namespace Average.Plugins
 
         void RegisterCommands(Type type, object classObj)
         {
-            // Load registered commands (method need to be public to be detected)
+            // Registering commands (method need to be public to be detected)
             foreach (var method in type.GetMethods())
             {
                 var cmdAttr = method.GetCustomAttribute<SDK.Client.CommandAttribute>();
@@ -167,6 +165,7 @@ namespace Average.Plugins
 
         void RegisterThreads(Type type, object classObj)
         {
+            // Registering threads (method need to be public to be detected)
             foreach (var method in type.GetMethods())
             {
                 var threadAttr = method.GetCustomAttribute<ThreadAttribute>();
@@ -180,6 +179,7 @@ namespace Average.Plugins
 
         void RegisterEvents(Type type, object classObj)
         {
+            // Registering events (method need to be public to be detected)
             foreach (var method in type.GetMethods())
             {
                 var eventAttr = method.GetCustomAttribute<EventAttribute>();
@@ -193,6 +193,7 @@ namespace Average.Plugins
 
         void RegisterExports(Type type, object classObj)
         {
+            // Registering exports (method need to be public to be detected)
             foreach (var method in type.GetMethods())
             {
                 var exportAttr = method.GetCustomAttribute<ExportAttribute>();
@@ -206,7 +207,8 @@ namespace Average.Plugins
 
         void RegisterSyncs(Type type, object classObj)
         {
-            for(int i = 0; i < type.GetProperties().Count(); i++)
+            // Registering syncs (method need to be public to be detected)
+            for (int i = 0; i < type.GetProperties().Count(); i++)
             {
                 var property = type.GetProperties()[i];
                 var syncAttr = property.GetCustomAttribute<SyncAttribute>();
@@ -216,10 +218,22 @@ namespace Average.Plugins
                     Main.syncManager.RegisterSync(ref property, syncAttr, classObj);
                 }
             }
+
+            for (int i = 0; i < type.GetFields().Count(); i++)
+            {
+                var field = type.GetFields()[i];
+                var syncAttr = field.GetCustomAttribute<SyncAttribute>();
+
+                if (syncAttr != null)
+                {
+                    Main.syncManager.RegisterSync(ref field, syncAttr, classObj);
+                }
+            }
         }
 
         void RegisterGetSyncs(Type type, object classObj)
         {
+            // Registering getSyncs (method need to be public to be detected)
             for (int i = 0; i < type.GetProperties().Count(); i++)
             {
                 var property = type.GetProperties()[i];
@@ -228,6 +242,17 @@ namespace Average.Plugins
                 if (getSyncAttr != null)
                 {
                     Main.syncManager.RegisterGetSync(ref property, getSyncAttr, classObj);
+                }
+            }
+
+            for (int i = 0; i < type.GetFields().Count(); i++)
+            {
+                var field = type.GetFields()[i];
+                var getSyncAttr = field.GetCustomAttribute<GetSyncAttribute>();
+
+                if (getSyncAttr != null)
+                {
+                    Main.syncManager.RegisterGetSync(ref field, getSyncAttr, classObj);
                 }
             }
         }

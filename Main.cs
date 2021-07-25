@@ -49,7 +49,7 @@ namespace Average
 
         private async Task SyncTest()
         {
-            await Delay(1000);
+            //await Delay(250);
             syncManager.SyncProperties();
         }
 

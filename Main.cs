@@ -24,7 +24,9 @@ namespace Average
         internal static ThreadManager threadManager;
         internal static EventManager eventManager;
         internal static ExportManager exportManager;
-        internal static SyncManager syncManager;
+        internal static SDK.Client.SyncManager syncManager;
+
+        internal SyncManager sync;
 
         PluginLoader plugin;
 
@@ -38,19 +40,14 @@ namespace Average
             threadManager = new ThreadManager(this);
             eventManager = new EventManager(EventHandlers, logger);
             exportManager = new ExportManager(logger);
-            syncManager = new SyncManager(logger);
+            syncManager = new SDK.Client.SyncManager(logger);
             framework = new Framework(EventHandlers, ScriptExports, threadManager, eventManager, exportManager, syncManager, logger, commandManager);
             plugin = new PluginLoader(commandManager);
 
             plugin.Load();
 
-            Tick += SyncTest;
-        }
-
-        private async Task SyncTest()
-        {
-            //await Delay(250);
-            syncManager.SyncProperties();
+            sync = new SyncManager(syncManager);
+            RegisterScript(sync);
         }
 
         internal static RpcRequest Event(string @event)

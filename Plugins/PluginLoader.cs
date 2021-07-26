@@ -1,10 +1,12 @@
 ﻿using CitizenFX.Core;
+using CitizenFX.Core.Native;
 using SDK.Client;
 using SDK.Client.Commands;
 using SDK.Client.Extensions;
 using SDK.Client.Plugins;
 using SDK.Shared;
 using SDK.Shared.Plugins;
+using SDK.Shared.Sync;
 using SDK.Shared.Threading;
 using System;
 using System.Collections.Generic;
@@ -136,6 +138,7 @@ namespace Average.Plugins
                                 RegisterExports(type, script);
                                 RegisterSyncs(type, script);
                                 RegisterGetSyncs(type, script);
+                                RegisterNetworkGetSyncs(type, script);
                             }
                         }
                         else
@@ -253,6 +256,33 @@ namespace Average.Plugins
                 if (getSyncAttr != null)
                 {
                     Main.syncManager.RegisterGetSync(ref field, getSyncAttr, classObj);
+                }
+            }
+        }
+
+        void RegisterNetworkGetSyncs(Type type, object classObj)
+        {
+            // Registering networkGetSyncs (property need to be public to be detected)
+            for (int i = 0; i < type.GetProperties().Count(); i++)
+            {
+                var property = type.GetProperties()[i];
+                var getSyncAttr = property.GetCustomAttribute<NetworkGetSyncAttribute>();
+
+                if (getSyncAttr != null)
+                {
+                    Main.syncManager.RegisterNetworkGetSync(ref property, getSyncAttr, classObj);
+                }
+            }
+
+            // Registering networkGetSyncs (field need to be public to be detected)
+            for (int i = 0; i < type.GetFields().Count(); i++)
+            {
+                var field = type.GetFields()[i];
+                var getSyncAttr = field.GetCustomAttribute<NetworkGetSyncAttribute>();
+
+                if (getSyncAttr != null)
+                {
+                    Main.syncManager.RegisterNetworkGetSync(ref field, getSyncAttr, classObj);
                 }
             }
         }

@@ -40,7 +40,7 @@ namespace Average
             threadManager = new ThreadManager(this);
             eventManager = new EventManager(EventHandlers, logger);
             exportManager = new ExportManager(logger);
-            syncManager = new SDK.Client.SyncManager(logger);
+            syncManager = new SDK.Client.SyncManager(EventHandlers, logger);
             framework = new Framework(EventHandlers, ScriptExports, threadManager, eventManager, exportManager, syncManager, logger, commandManager);
             plugin = new PluginLoader(commandManager);
 

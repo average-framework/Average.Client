@@ -287,13 +287,13 @@ namespace Average.Plugins
 
         void RegisterPlugin(IPlugin script)
         {
-            BaseScript.RegisterScript((Plugin)script);
+            //BaseScript.RegisterScript((Plugin)script);
             plugins.Add(script);
         }
 
         void UnloadScript(IPlugin script)
         {
-            BaseScript.UnregisterScript((Plugin)script);
+            //BaseScript.UnregisterScript((Plugin)script);
             plugins.Remove(script);
         }
     }

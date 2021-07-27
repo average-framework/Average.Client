@@ -15,8 +15,7 @@ namespace Average
 {
     internal class Main : BaseScript
     {
-        internal static EventHandlerDictionary Events { get; private set; }
-        internal static ExportDictionary ScriptExports { get; private set; }
+        static EventHandlerDictionary eventHandlers;
 
         internal static Logger logger;
         internal static CommandManager commandManager;
@@ -32,8 +31,7 @@ namespace Average
 
         public Main()
         {
-            Events = EventHandlers;
-            ScriptExports = Exports;
+            eventHandlers = EventHandlers;
 
             logger = new Logger();
             commandManager = new CommandManager(logger);
@@ -41,7 +39,7 @@ namespace Average
             eventManager = new EventManager(EventHandlers, logger);
             exportManager = new ExportManager(logger);
             syncManager = new SDK.Client.SyncManager(EventHandlers, logger);
-            framework = new Framework(EventHandlers, ScriptExports, threadManager, eventManager, exportManager, syncManager, logger, commandManager);
+            framework = new Framework(threadManager, eventManager, exportManager, syncManager, logger, commandManager);
             plugin = new PluginLoader(commandManager);
 
             plugin.Load();
@@ -52,7 +50,7 @@ namespace Average
 
         internal static RpcRequest Event(string @event)
         {
-            return new RpcRequest(@event, new RpcHandler(Events), new RpcTrigger(), new RpcSerializer());
+            return new RpcRequest(@event, new RpcHandler(eventHandlers), new RpcTrigger(), new RpcSerializer());
         }
 
         /// <summary>

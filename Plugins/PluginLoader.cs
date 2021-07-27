@@ -1,12 +1,10 @@
 ﻿using CitizenFX.Core;
-using CitizenFX.Core.Native;
 using SDK.Client;
 using SDK.Client.Commands;
-using SDK.Client.Extensions;
 using SDK.Client.Plugins;
 using SDK.Shared;
+using SDK.Shared.Extensions;
 using SDK.Shared.Plugins;
-using SDK.Shared.Sync;
 using SDK.Shared.Threading;
 using System;
 using System.Collections.Generic;

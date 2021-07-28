@@ -1,6 +1,6 @@
-﻿using CitizenFX.Core;
+﻿using Average.Commands;
+using CitizenFX.Core;
 using SDK.Client;
-using SDK.Client.Commands;
 using SDK.Client.Plugins;
 using SDK.Client.Rpc;
 using SDK.Shared;

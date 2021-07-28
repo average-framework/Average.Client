@@ -76,6 +76,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\CommandManager.cs" />
     <Compile Include="Exports\ExportManager.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Plugins\PluginLoader.cs" />

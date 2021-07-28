@@ -1,4 +1,5 @@
 ﻿using Average.Commands;
+using Average.Events;
 using Average.Exports;
 using Average.Plugins;
 using Average.Threading;

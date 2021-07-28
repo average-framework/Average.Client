@@ -2,6 +2,7 @@
 using SDK.Client;
 using SDK.Client.Commands;
 using SDK.Client.Plugins;
+using SDK.Client.Rpc;
 using SDK.Shared;
 using SDK.Shared.Extensions;
 using SDK.Shared.Plugins;
@@ -16,19 +17,21 @@ namespace Average.Plugins
 {
     internal class PluginLoader
     {
+        RpcRequest rpc;
         CommandManager commandManager;
 
         List<IPlugin> plugins = new List<IPlugin>();
         List<PluginInfo> pluginsInfo;
 
-        public PluginLoader(CommandManager commandManager)
+        public PluginLoader(RpcRequest rpc, CommandManager commandManager)
         {
+            this.rpc = rpc;
             this.commandManager = commandManager;
         }
 
         async Task<List<PluginInfo>> GetPlugins()
         {
-            Main.Event("avg.internal.get_plugins").On(message =>
+            rpc.Event("avg.internal.get_plugins").On(message =>
             {
                 pluginsInfo = message.Args[0].Convert<List<PluginInfo>>();
             }).Emit();

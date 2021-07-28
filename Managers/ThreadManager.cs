@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 
-namespace Average.Threading
+namespace Average.Managers
 {
     internal class ThreadManager : IThreadManager
     {

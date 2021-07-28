@@ -1,4 +1,4 @@
-﻿using Average.Commands;
+﻿using Average.Managers;
 using CitizenFX.Core;
 using SDK.Client;
 using SDK.Client.Plugins;
@@ -13,7 +13,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 
-namespace Average.Plugins
+namespace Average
 {
     internal class PluginLoader
     {

@@ -7,7 +7,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace Average.Exports
+namespace Average.Managers
 {
     public class ExportManager : IExportManager
     {

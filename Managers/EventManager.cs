@@ -8,7 +8,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace Average.Events
+namespace Average.Managers
 {
     public class EventManager : IEventManager
     {

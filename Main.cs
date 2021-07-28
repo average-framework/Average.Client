@@ -1,8 +1,4 @@
-﻿using Average.Commands;
-using Average.Events;
-using Average.Exports;
-using Average.Plugins;
-using Average.Threading;
+﻿using Average.Managers;
 using CitizenFX.Core;
 using SDK.Client;
 using SDK.Client.Diagnostics;

@@ -1,7 +1,7 @@
 ﻿using CitizenFX.Core.Native;
 using SDK.Client;
-using SDK.Client.Commands;
 using SDK.Client.Diagnostics;
+using SDK.Client.Managers;
 using SDK.Shared;
 using System;
 using System.Collections.Generic;

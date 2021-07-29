@@ -1,5 +1,6 @@
 ﻿using CitizenFX.Core;
 using SDK.Client.Diagnostics;
+using SDK.Client.Events;
 using SDK.Client.Interfaces;
 using SDK.Shared;
 using System;
@@ -7,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Runtime.Versioning;
 
 namespace Average.Managers
 {
@@ -14,6 +16,19 @@ namespace Average.Managers
     {
         Dictionary<string, Delegate> events;
         Logger logger;
+
+        public event EventHandler<ResourceStartEventArgs> ResourceStart;
+        public event EventHandler<ResourceStopEventArgs> ResourceStop;
+        public event EventHandler<ResourceStartingEventArgs> ResourceStarting;
+        public event EventHandler<ClientResourceStartEventArgs> ClientResourceStart;
+        public event EventHandler<ClientResourceStopEventArgs> ClientResourceStop;
+        public event EventHandler<GameEventTriggeredEventArgs> GameEventTriggered;
+        public event EventHandler<ClientMapStartEventArgs> ClientMapStart;
+        public event EventHandler<ClientMapStopEventArgs> ClientMapStop;
+        public event EventHandler<ClientMapGameTypeStartEventArgs> ClientGameTypeStart;
+        public event EventHandler<ClientMapGameTypeStopEventArgs> ClientGameTypeStop;
+        public event EventHandler<PlayerActivatedEventArgs> PlayerActivated;
+        public event EventHandler<SessionInitializedEventArgs> SessionInitialized;
 
         public EventManager(EventHandlerDictionary eventHandlers, Logger logger)
         {
@@ -84,6 +99,106 @@ namespace Average.Managers
         internal void InternalTriggerEvent(string eventName, List<object> args)
         {
             Emit(eventName, args.ToArray());
+        }
+
+        #endregion
+
+        #region Events
+
+        public void OnGameEventTriggered(string name, int[] data)
+        {
+            if (GameEventTriggered != null)
+            {
+                GameEventTriggered(null, new GameEventTriggeredEventArgs(name, data));
+            }
+        }
+
+        public void OnResourceStop(string resource)
+        {
+            if (ResourceStop != null)
+            {
+                ResourceStop(null, new ResourceStopEventArgs(resource));
+            }
+        }
+
+        public void OnResourceStart(string resource)
+        {
+            if (ResourceStart != null)
+            {
+                ResourceStart(null, new ResourceStartEventArgs(resource));
+            }
+        }
+
+        public void OnClientResourceStart(string resource)
+        {
+            if (ClientResourceStart != null)
+            {
+                ClientResourceStart(null, new ClientResourceStartEventArgs(resource));
+            }
+        }
+
+        public void OnClientResourceStop(string resource)
+        {
+            if (ClientResourceStop != null)
+            {
+                ClientResourceStop(null, new ClientResourceStopEventArgs(resource));
+            }
+        }
+
+        public void OnResourceStarting(string resource)
+        {
+            if (ResourceStarting != null)
+            {
+                ResourceStarting(null, new ResourceStartingEventArgs(resource));
+            }
+        }
+
+        public void OnClientMapStart(string resource)
+        {
+            if (ClientMapStart != null)
+            {
+                ClientMapStart(null, new ClientMapStartEventArgs(resource));
+            }
+        }
+
+        public void OnClientMapStop(string resource)
+        {
+            if (ClientMapStop != null)
+            {
+                ClientMapStop(null, new ClientMapStopEventArgs(resource));
+            }
+        }
+
+        public void OnClientGameTypeStart(string resource)
+        {
+            if (ClientGameTypeStart != null)
+            {
+                ClientGameTypeStart(null, new ClientMapGameTypeStartEventArgs(resource));
+            }
+        }
+
+        public void OnClientGameTypeStop(string resource)
+        {
+            if (ClientGameTypeStop != null)
+            {
+                ClientGameTypeStop(null, new ClientMapGameTypeStopEventArgs(resource));
+            }
+        }
+
+        public void OnPlayerActivated()
+        {
+            if (PlayerActivated != null)
+            {
+                PlayerActivated(null, new PlayerActivatedEventArgs());
+            }
+        }
+
+        public void OnSessionInitialized()
+        {
+            if (SessionInitialized != null)
+            {
+                SessionInitialized(null, new SessionInitializedEventArgs());
+            }
         }
 
         #endregion

@@ -71,11 +71,11 @@ namespace Average.Managers
                 var action = Action.CreateDelegate(Expression.GetDelegateType((from parameter in method.GetParameters() select parameter.ParameterType).Concat(new[] { method.ReturnType }).ToArray()), classObj, method);
                 events.Add(eventAttr.Event, action);
 
-                logger.Debug($"Register event: {eventAttr.Event} on method: {method.Name}, args count: {methodParams.Count()}");
+                logger.Debug($"Registering [Event] attribute: {eventAttr.Event} on method: {method.Name}, args count: {methodParams.Count()}");
             }
             else
             {
-                logger.Error($"Unable to register event: {eventAttr.Event} on method: {method.Name}, an event have already been registered with this event name.");
+                logger.Error($"Unable to register [Event] attribute: {eventAttr.Event} on method: {method.Name}, an event have already been registered with this event name.");
             }
         }
 

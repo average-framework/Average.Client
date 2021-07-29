@@ -42,7 +42,7 @@ namespace Average.Managers
             eventHandlers["avg.internal.sync_field"] += new Action<string, object>(InternalNetworkSyncFieldEvent);
         }
 
-        internal object GetPropertyValue(PropertyInfo property, object classObj)
+        object GetPropertyValue(PropertyInfo property, object classObj)
         {
             if (property.GetIndexParameters().Length == 0)
             {
@@ -57,7 +57,7 @@ namespace Average.Managers
             return null;
         }
 
-        internal object GetFieldValue(FieldInfo field, object classObj)
+        object GetFieldValue(FieldInfo field, object classObj)
         {
             return field.GetValue(classObj);
         }
@@ -167,7 +167,7 @@ namespace Average.Managers
         public void RegisterGetSync(ref FieldInfo field, GetSyncAttribute getSyncAttr, object classObj)
         {
             fieldsGetSyncs.Add(new GetSyncFieldState(getSyncAttr, field, classObj));
-            logger.Debug($"Registering [GetSync]: {getSyncAttr.Name} on field: {field.Name}.");
+            logger.Debug($"Registering [GetSync] attribute: {getSyncAttr.Name} on field: {field.Name}.");
         }
 
         #region Network
@@ -177,18 +177,18 @@ namespace Average.Managers
             if (property.CanWrite && property.CanRead)
             {
                 networkedPropertiesGetSyncs.Add(new GetSyncPropertyState(getSyncAttr, property, classObj));
-                logger.Debug($"Registering [NetworkGetSync]: {getSyncAttr.Name} on property: {property.Name}.");
+                logger.Debug($"Registering [NetworkGetSync] attribute: {getSyncAttr.Name} on property: {property.Name}.");
             }
             else
             {
-                logger.Error($"Unable to register [NetworkGetSync]: {getSyncAttr.Name} on property: {property.Name}, [NetworkGetSync] attribute can only be placed on getter & setter property.");
+                logger.Error($"Unable to register [NetworkGetSync] attribute: {getSyncAttr.Name} on property: {property.Name}, [NetworkGetSync] attribute can only be placed on getter & setter property.");
             }
         }
 
         public void RegisterNetworkGetSync(ref FieldInfo field, NetworkGetSyncAttribute getSyncAttr, object classObj)
         {
             networkedFieldsGetSyncs.Add(new GetSyncFieldState(getSyncAttr, field, classObj));
-            logger.Debug($"Registering [NetworkGetSync]: {getSyncAttr.Name} on field: {field.Name}.");
+            logger.Debug($"Registering [NetworkGetSync] attribute: {getSyncAttr.Name} on field: {field.Name}.");
         }
 
         #endregion

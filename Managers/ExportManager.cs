@@ -55,11 +55,11 @@ namespace Average.Managers
                 var action = Action.CreateDelegate(Expression.GetDelegateType((from parameter in method.GetParameters() select parameter.ParameterType).Concat(new[] { method.ReturnType }).ToArray()), classObj, method);
                 exports.Add(exportAttr.Name, action);
 
-                logger.Debug($"Register export: {exportAttr.Name} on method: {method.Name}, args count: {methodParams.Count()}.");
+                logger.Debug($"Registering [Export] attribute: {exportAttr.Name} on method: {method.Name}, args count: {methodParams.Count()}.");
             }
             else
             {
-                logger.Error($"Unable to register export: {exportAttr.Name} on method: {method.Name}, an export have already been registered with this name.");
+                logger.Error($"Unable to register [Export] attribute: {exportAttr.Name} on method: {method.Name}, an export have already been registered with this name.");
             }
         }
 

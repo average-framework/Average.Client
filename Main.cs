@@ -18,6 +18,7 @@ namespace Average
         internal static EventManager eventManager;
         internal static ExportManager exportManager;
         internal static SyncManager syncManager;
+        internal static InternalManager internalManager;
 
         internal CfxManager cfx;
         internal SyncManager sync;
@@ -34,9 +35,11 @@ namespace Average
             eventManager = new EventManager(EventHandlers, logger);
             exportManager = new ExportManager(logger);
             syncManager = new SyncManager(EventHandlers, logger);
-            framework = new Framework(threadManager, eventManager, exportManager, syncManager, logger, commandManager, rpc);
+            internalManager = new InternalManager();
+            framework = new Framework(threadManager, eventManager, exportManager, syncManager, logger, commandManager, internalManager, rpc);
             cfx = new CfxManager(EventHandlers, eventManager);
             plugin = new PluginLoader(rpc, commandManager);
+            internalManager.SetPluginList(ref plugin.plugins);
 
             plugin.Load();
         }

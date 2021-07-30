@@ -20,7 +20,7 @@ namespace Average
         RpcRequest rpc;
         CommandManager commandManager;
 
-        List<IPlugin> plugins = new List<IPlugin>();
+        public List<IPlugin> plugins = new List<IPlugin>();
         List<PluginInfo> pluginsInfo;
 
         public PluginLoader(RpcRequest rpc, CommandManager commandManager)
@@ -290,13 +290,11 @@ namespace Average
 
         void RegisterPlugin(IPlugin script)
         {
-            //BaseScript.RegisterScript((Plugin)script);
             plugins.Add(script);
         }
 
         void UnloadScript(IPlugin script)
         {
-            //BaseScript.UnregisterScript((Plugin)script);
             plugins.Remove(script);
         }
     }

@@ -20,16 +20,15 @@ namespace Average
         internal static SyncManager syncManager;
         internal static InternalManager internalManager;
 
-        internal CfxManager cfx;
-        internal SyncManager sync;
-        internal RpcRequest rpc;
-
+        CfxManager cfx;
+        RpcRequest rpc;
         PluginLoader plugin;
 
         public Main()
         {
             rpc = new RpcRequest(new RpcHandler(EventHandlers), new RpcTrigger(), new RpcSerializer());
             logger = new Logger();
+
             commandManager = new CommandManager(logger);
             threadManager = new ThreadManager(this);
             eventManager = new EventManager(EventHandlers, logger);

@@ -1,5 +1,4 @@
 ﻿using CitizenFX.Core;
-using SDK.Client.Diagnostics;
 using System;
 
 namespace Average.Managers

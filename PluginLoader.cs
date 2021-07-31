@@ -9,7 +9,9 @@ using SDK.Shared.Plugins;
 using SDK.Shared.Threading;
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
 
@@ -140,6 +142,7 @@ namespace Average
                                 RegisterSyncs(type, script);
                                 RegisterGetSyncs(type, script);
                                 RegisterNetworkGetSyncs(type, script);
+                                RegisterNUICallbacks(type, script);
                             }
                         }
                         else
@@ -169,8 +172,10 @@ namespace Average
 
         void RegisterThreads(Type type, object classObj)
         {
-            // Registering threads (method need to be public to be detected)
-            foreach (var method in type.GetMethods())
+            // Registering threads
+            var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy;
+
+            foreach (var method in type.GetMethods(flags))
             {
                 var threadAttr = method.GetCustomAttribute<ThreadAttribute>();
 
@@ -183,8 +188,10 @@ namespace Average
 
         void RegisterEvents(Type type, object classObj)
         {
-            // Registering events (method need to be public to be detected)
-            foreach (var method in type.GetMethods())
+            // Registering events
+            var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy;
+
+            foreach (var method in type.GetMethods(flags))
             {
                 var eventAttr = method.GetCustomAttribute<EventAttribute>();
 
@@ -197,8 +204,10 @@ namespace Average
 
         void RegisterExports(Type type, object classObj)
         {
-            // Registering exports (method need to be public to be detected)
-            foreach (var method in type.GetMethods())
+            // Registering exports
+            var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy;
+
+            foreach (var method in type.GetMethods(flags))
             {
                 var exportAttr = method.GetCustomAttribute<ExportAttribute>();
 
@@ -211,10 +220,12 @@ namespace Average
 
         void RegisterSyncs(Type type, object classObj)
         {
-            // Registering syncs (method need to be public to be detected)
-            for (int i = 0; i < type.GetProperties().Count(); i++)
+            // Registering syncs
+            var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy;
+
+            for (int i = 0; i < type.GetProperties(flags).Count(); i++)
             {
-                var property = type.GetProperties()[i];
+                var property = type.GetProperties(flags)[i];
                 var syncAttr = property.GetCustomAttribute<SyncAttribute>();
 
                 if (syncAttr != null)
@@ -223,9 +234,9 @@ namespace Average
                 }
             }
 
-            for (int i = 0; i < type.GetFields().Count(); i++)
+            for (int i = 0; i < type.GetFields(flags).Count(); i++)
             {
-                var field = type.GetFields()[i];
+                var field = type.GetFields(flags)[i];
                 var syncAttr = field.GetCustomAttribute<SyncAttribute>();
 
                 if (syncAttr != null)
@@ -237,10 +248,12 @@ namespace Average
 
         void RegisterGetSyncs(Type type, object classObj)
         {
-            // Registering getSyncs (method need to be public to be detected)
-            for (int i = 0; i < type.GetProperties().Count(); i++)
+            // Registering getSyncs
+            var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy;
+
+            for (int i = 0; i < type.GetProperties(flags).Count(); i++)
             {
-                var property = type.GetProperties()[i];
+                var property = type.GetProperties(flags)[i];
                 var getSyncAttr = property.GetCustomAttribute<GetSyncAttribute>();
 
                 if (getSyncAttr != null)
@@ -249,9 +262,9 @@ namespace Average
                 }
             }
 
-            for (int i = 0; i < type.GetFields().Count(); i++)
+            for (int i = 0; i < type.GetFields(flags).Count(); i++)
             {
-                var field = type.GetFields()[i];
+                var field = type.GetFields(flags)[i];
                 var getSyncAttr = field.GetCustomAttribute<GetSyncAttribute>();
 
                 if (getSyncAttr != null)
@@ -284,6 +297,43 @@ namespace Average
                 if (getSyncAttr != null)
                 {
                     Main.syncManager.RegisterNetworkGetSync(ref field, getSyncAttr, classObj);
+                }
+            }
+        }
+
+        void RegisterNUICallbacks(Type type, object classObj)
+        {
+            foreach(var method in type.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
+            {
+                var attr = method.GetCustomAttribute<UICallbackAttribute>();
+                var methodParams = method.GetParameters();
+
+                if (attr != null)
+                {
+                    if (methodParams.Count() == 2)
+                    {
+                        if (methodParams[0].ParameterType == typeof(IDictionary<string, object>) && methodParams[1].ParameterType == typeof(CallbackDelegate))
+                        {
+                            try
+                            {
+                                var action = (Func<IDictionary<string, object>, CallbackDelegate, CallbackDelegate>)Action.CreateDelegate(Expression.GetDelegateType((from parameter in method.GetParameters() select parameter.ParameterType).Concat(new[] { method.ReturnType }).ToArray()), classObj, method);
+                                Main.eventManager.RegisterInternalNUICallbackEvent(attr.Name, action);
+                                Main.logger.Debug($"Registering [UICallback] attribute: {attr.Name} on method: {method.Name}");
+                            }
+                            catch
+                            {
+                                Main.logger.Error($"Unable to cast [UICallback] attribute on method: {method.Name} to return type {method.ReturnType}. The return type need to be \"CallbackDelegate\".");
+                            }
+                        }
+                        else
+                        {
+                            Main.logger.Error($"Unable to register [UICallback] attribute on method: {method.Name} because parameters type does not match with required parameters type. Method parameters need to be of type \"IDictionary<string, object>, CallbackDelegate\"");
+                        }
+                    }
+                    else
+                    {
+                        Main.logger.Error($"Unable to register [UICallback] attribute on method: {method.Name} because this method does not contains required parameters count.");
+                    }
                 }
             }
         }

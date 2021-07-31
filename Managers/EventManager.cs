@@ -1,4 +1,5 @@
 ﻿using CitizenFX.Core;
+using CitizenFX.Core.Native;
 using SDK.Client.Diagnostics;
 using SDK.Client.Events;
 using SDK.Client.Interfaces;
@@ -14,6 +15,7 @@ namespace Average.Managers
     public class EventManager : IEventManager
     {
         Dictionary<string, Delegate> events;
+        EventHandlerDictionary eventHandlers;
         Logger logger;
 
         public event EventHandler<ResourceStartEventArgs> ResourceStart;
@@ -31,6 +33,7 @@ namespace Average.Managers
 
         public EventManager(EventHandlerDictionary eventHandlers, Logger logger)
         {
+            this.eventHandlers = eventHandlers;
             this.logger = logger;
             events = new Dictionary<string, Delegate>();
 
@@ -61,6 +64,12 @@ namespace Average.Managers
             {
                 logger.Error($"Unable to register event: {eventName}, an event have already been registered with this event name.");
             }
+        }
+
+        public void RegisterInternalNUICallbackEvent(string eventName, Func<IDictionary<string, object>, CallbackDelegate, CallbackDelegate> callback)
+        {
+            API.RegisterNuiCallbackType(eventName);
+            eventHandlers[$"__cfx_nui:{eventName}"] += new Action<IDictionary<string, object>, CallbackDelegate>((body, resultCallback) => callback.Invoke(body, resultCallback));
         }
 
         public void UnregisterInternalEvent(string eventName, Delegate action)

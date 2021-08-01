@@ -56,6 +56,8 @@ namespace Average
 
             try
             {
+                Main.internalManager.IsWorking = true;
+
                 foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
                 {
                     var sdk = asm.GetCustomAttribute<ClientPluginAttribute>();
@@ -151,6 +153,8 @@ namespace Average
                         }
                     }
                 }
+
+                Main.internalManager.IsWorking = false;
             }
             catch (Exception ex)
             {

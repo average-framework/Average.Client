@@ -72,7 +72,7 @@ namespace Average.Managers
             eventHandlers[$"__cfx_nui:{eventName}"] += new Action<IDictionary<string, object>, CallbackDelegate>((body, resultCallback) => callback.Invoke(body, resultCallback));
         }
 
-        public void UnregisterInternalEvent(string eventName, Delegate action)
+        public void UnregisterInternalEvent(string eventName)
         {
             if (events.ContainsKey(eventName))
             {

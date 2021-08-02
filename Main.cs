@@ -2,7 +2,6 @@
 using CitizenFX.Core;
 using SDK.Client;
 using SDK.Client.Diagnostics;
-using SDK.Client.Interfaces;
 using SDK.Client.Rpc;
 using SDK.Shared.Rpc;
 using System;
@@ -20,7 +19,6 @@ namespace Average
         internal static ExportManager exportManager;
         internal static SyncManager syncManager;
         internal static InternalManager internalManager;
-        internal static BlipManager blipManager;
 
         CfxManager cfx;
         RpcRequest rpc;
@@ -37,8 +35,7 @@ namespace Average
             exportManager = new ExportManager(logger);
             syncManager = new SyncManager(EventHandlers, logger);
             internalManager = new InternalManager(logger);
-            blipManager = new BlipManager(EventHandlers);
-            framework = new Framework(threadManager, eventManager, exportManager, syncManager, logger, commandManager, internalManager, blipManager, rpc);
+            framework = new Framework(threadManager, eventManager, exportManager, syncManager, logger, commandManager, internalManager, rpc);
             cfx = new CfxManager(EventHandlers, eventManager);
             plugin = new PluginLoader(rpc, commandManager);
             internalManager.SetPluginList(ref plugin.plugins);

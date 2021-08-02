@@ -100,6 +100,10 @@
       <Project>{3f43345a-6a6e-4be0-8889-26346add06a3}</Project>
       <Name>SDK.Shared</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Shared.Client\Shared.Client.csproj">
+      <Project>{1EB67C31-E134-4BFA-B57A-ECC83854B53C}</Project>
+      <Name>Shared.Client</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

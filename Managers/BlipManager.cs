@@ -1,6 +1,6 @@
 ﻿using CitizenFX.Core;
-using SDK.Client.Interfaces;
 using SDK.Shared;
+using Shared.Client.Interfaces;
 using System;
 using System.Collections.Generic;
 using static CitizenFX.Core.Native.API;
@@ -8,7 +8,7 @@ using static SDK.Client.GameAPI;
 
 namespace Average.Managers
 {
-    public class BlipManager : IBlipManager
+    public class BlipManager : IBlipClient_Main
     {
         public List<int> Blips { get; } = new List<int>();
 

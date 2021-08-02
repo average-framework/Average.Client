@@ -9,15 +9,15 @@ namespace Average.Managers
 {
     internal class ThreadManager : IThreadManager
     {
-        Main main;
-
         List<Thread> threads = new List<Thread>();
 
-        public List<Thread> Threads => threads;
+        Action<Func<Task>> attachCallback;
+        Action<Func<Task>> detachCallback;
 
-        public ThreadManager(Main main)
+        public ThreadManager(Action<Func<Task>> attachCallback, Action<Func<Task>> detachCallback)
         {
-            this.main = main;
+            this.attachCallback = attachCallback;
+            this.detachCallback = detachCallback;
         }
 
         internal void RegisterThread(MethodInfo method, ThreadAttribute threadAttr, object classObj)
@@ -58,7 +58,8 @@ namespace Average.Managers
                                 {
                                     threads[threads.FindIndex(x => x.Func == func)].IsRunning = false;
                                     threads[threads.FindIndex(x => x.Func == func)].IsTerminated = true;
-                                    main.UnregisterTick(func);
+                                    //main.UnregisterTick(func);
+                                    detachCallback(func);
                                 }
                             }
                         }
@@ -67,7 +68,8 @@ namespace Average.Managers
                     thread.Func = func;
                     threads.Add(thread);
 
-                    main.RegisterTick(func);
+                    //main.RegisterTick(func);
+                    attachCallback(func);
                 }
             }
             else
@@ -76,34 +78,22 @@ namespace Average.Managers
             }
         }
 
+        public void StartThread(Func<Task> action) => attachCallback(action);
+
+        public void StopThread(Func<Task> action) => detachCallback(action);
+
         public void UnregisterThread(string methodName)
         {
             var thread = threads.Find(x => x.Method.Name == methodName);
 
             if (thread != null)
             {
-                main.UnregisterTick(thread.Func);
+                //main.UnregisterTick(thread.Func);
+                detachCallback(thread.Func);
                 threads.Remove(thread);
             }
         }
 
-        public IEnumerable<Thread> GetThreads()
-        {
-            return threads.AsEnumerable();
-        }
-
-        #region Internal
-
-        void IThreadManager.UnregisterThread(string methodName)
-        {
-            UnregisterThread(methodName);
-        }
-
-        IEnumerable<Thread> IThreadManager.GetThreads()
-        {
-            return GetThreads();
-        }
-
-        #endregion
+        public IEnumerable<Thread> GetThreads() => threads.AsEnumerable();
     }
 }

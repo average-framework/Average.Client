@@ -30,7 +30,7 @@ namespace Average.Managers
             return handle;
         }
 
-        public int Get(int handle) => Npcs.Find(x => x == handle);
+        public int Get(int handle) => Exist(handle) ? Npcs.Find(x => x == handle) : -1;
 
         public bool Exist(int handle) => Npcs.Exists(x => x == handle);
 
@@ -39,7 +39,7 @@ namespace Average.Managers
             if (Exist(handle))
             {
                 if (DoesEntityExist(handle)) DeleteEntity(ref handle);
-                Npcs.Remove(Get(handle));
+                if (Npcs.Exists(x => x == handle)) Npcs.Remove(Get(handle));
             }
         }
 
@@ -53,8 +53,11 @@ namespace Average.Managers
             {
                 for (int i = 0; i < Npcs.Count; i++)
                 {
-                    Delete(i);
+                    var handle = Npcs[i];
+                    Delete(handle);
                 }
+
+                GC.SuppressFinalize(this);
             }
         }
 

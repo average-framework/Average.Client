@@ -14,7 +14,7 @@ namespace Average.Managers
 {
     public class EventManager : IEventManager
     {
-        Dictionary<string, Delegate> events;
+        Dictionary<string, List<Delegate>> events;
         EventHandlerDictionary eventHandlers;
         Logger logger;
 
@@ -35,7 +35,7 @@ namespace Average.Managers
         {
             this.eventHandlers = eventHandlers;
             this.logger = logger;
-            events = new Dictionary<string, Delegate>();
+            events = new Dictionary<string, List<Delegate>>();
 
             eventHandlers["avg.internal.trigger_event"] += new Action<string, List<object>>(InternalTriggerEvent);
         }
@@ -44,7 +44,8 @@ namespace Average.Managers
         {
             if (events.ContainsKey(eventName))
             {
-                events[eventName].DynamicInvoke(args);
+                //events[eventName].DynamicInvoke(args);
+                events[eventName].ForEach(w => w.DynamicInvoke(args));
             }
         }
 
@@ -57,13 +58,15 @@ namespace Average.Managers
         {
             if (!events.ContainsKey(eventName))
             {
-                events.Add(eventName, action);
-                logger.Debug($"Register event: {eventName}");
+                events.Add(eventName, new List<Delegate>() { action });
             }
             else
             {
-                logger.Error($"Unable to register event: {eventName}, an event have already been registered with this event name.");
+                events[eventName].Add(action);
+                //logger.Error($"Unable to register event: {eventName}, an event have already been registered with this event name.");
             }
+
+            logger.Debug($"Register event: {eventName}");
         }
 
         public void RegisterInternalNUICallbackEvent(string eventName, Func<IDictionary<string, object>, CallbackDelegate, CallbackDelegate> callback)
@@ -85,21 +88,40 @@ namespace Average.Managers
             }
         }
 
+        public void UnregisterInternalEventAction(string eventName, Delegate action)
+        {
+            if (events.ContainsKey(eventName) && events[eventName].Contains(action))
+            {
+                events[eventName].Remove(action);
+                logger.Debug($"Unregister event action: {eventName}");
+            }
+            else
+            {
+                logger.Error($"Unable to unregister event action: {eventName}.");
+            }
+        }
+
         public void RegisterEvent(MethodInfo method, EventAttribute eventAttr, object classObj)
         {
             var methodParams = method.GetParameters();
 
-            if (!events.ContainsKey(eventAttr.Event))
-            {
-                var action = Action.CreateDelegate(Expression.GetDelegateType((from parameter in method.GetParameters() select parameter.ParameterType).Concat(new[] { method.ReturnType }).ToArray()), classObj, method);
-                events.Add(eventAttr.Event, action);
+            var action = Action.CreateDelegate(Expression.GetDelegateType((from parameter in method.GetParameters() select parameter.ParameterType).Concat(new[] { method.ReturnType }).ToArray()), classObj, method);
+            RegisterInternalEvent(eventAttr.Event, action);
 
-                logger.Debug($"Registering [Event] attribute: {eventAttr.Event} on method: {method.Name}, args count: {methodParams.Count()}");
-            }
-            else
-            {
-                logger.Error($"Unable to register [Event] attribute: {eventAttr.Event} on method: {method.Name}, an event have already been registered with this event name.");
-            }
+            logger.Debug($"Registering [Event] attribute: {eventAttr.Event} on method: {method.Name}, args count: {methodParams.Count()}");
+
+            //if (!events.ContainsKey(eventAttr.Event))
+            //{
+            //    var action = Action.CreateDelegate(Expression.GetDelegateType((from parameter in method.GetParameters() select parameter.ParameterType).Concat(new[] { method.ReturnType }).ToArray()), classObj, method);
+            //    RegisterInternalEvent(eventAttr.Event, action);
+            //    //events.Add(eventAttr.Event, action);
+
+            //    logger.Debug($"Registering [Event] attribute: {eventAttr.Event} on method: {method.Name}, args count: {methodParams.Count()}");
+            //}
+            //else
+            //{
+            //    logger.Error($"Unable to register [Event] attribute: {eventAttr.Event} on method: {method.Name}, an event have already been registered with this event name.");
+            //}
         }
 
         #region Internal

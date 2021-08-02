@@ -9,7 +9,6 @@ using SDK.Shared.Plugins;
 using SDK.Shared.Threading;
 using System;
 using System.Collections.Generic;
-using System.Dynamic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -167,7 +166,7 @@ namespace Average
             // Registering commands (method need to be public to be detected)
             foreach (var method in type.GetMethods())
             {
-                var cmdAttr = method.GetCustomAttribute<SDK.Client.ClientCommandAttribute>();
+                var cmdAttr = method.GetCustomAttribute<ClientCommandAttribute>();
                 var aliasAttr = method.GetCustomAttribute<ClientCommandAliasAttribute>();
 
                 commandManager.RegisterCommand(cmdAttr, aliasAttr, method, classObj);
@@ -307,7 +306,7 @@ namespace Average
 
         void RegisterNUICallbacks(Type type, object classObj)
         {
-            foreach(var method in type.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
+            foreach (var method in type.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
             {
                 var attr = method.GetCustomAttribute<UICallbackAttribute>();
                 var methodParams = method.GetParameters();

@@ -30,7 +30,7 @@ namespace Average
             logger = new Logger();
 
             commandManager = new CommandManager(logger);
-            threadManager = new ThreadManager(this);
+            threadManager = new ThreadManager(c => Tick += c, c => Tick -= c);
             eventManager = new EventManager(EventHandlers, logger);
             exportManager = new ExportManager(logger);
             syncManager = new SyncManager(EventHandlers, logger);

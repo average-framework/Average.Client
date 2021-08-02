@@ -54,7 +54,7 @@ namespace Average.Managers
                     }
 
                     Commands.Add(new Tuple<ClientCommandAttribute, ClientCommandAliasAttribute>(commandAttr, aliasAttr));
-                    Logger.Debug($"Regisering [Command] attribute: {commandAttr.Command}");
+                    Logger.Debug($"Regisering [Command] attribute: {commandAttr.Command} on method: {method.Name}");
                 }
                 else
                 {
@@ -83,7 +83,7 @@ namespace Average.Managers
                     Logger.Debug($"Regisering {aliasAttr.Alias.Length} alias for command: {commandAttr.Command} [{string.Join(", ", aliasAttr.Alias)}]");
                 }
 
-                Logger.Debug($"Regisering [Command] attribute: {commandAttr.Command}");
+                Logger.Debug($"Regisering [Command] attribute: {commandAttr.Command} on method: {method.Name}");
             }
             else
             {

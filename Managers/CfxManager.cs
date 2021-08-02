@@ -5,12 +5,10 @@ namespace Average.Managers
 {
     internal class CfxManager
     {
-        EventHandlerDictionary eventHandlers;
         EventManager eventManager;
 
         public CfxManager(EventHandlerDictionary eventHandlers, EventManager eventManager)
         {
-            this.eventHandlers = eventHandlers;
             this.eventManager = eventManager;
 
             eventHandlers["onResourceStop"] += new Action<string>(OnResourceStop);
@@ -29,62 +27,62 @@ namespace Average.Managers
 
         #region Events
 
-        protected async void OnResourceStop(string resource)
+        protected void OnResourceStop(string resource)
         {
             eventManager.OnResourceStop(resource);
         }
 
-        protected async void OnResourceStart(string resource)
+        protected void OnResourceStart(string resource)
         {
             eventManager.OnResourceStart(resource);
         }
 
-        protected async void OnResourceStarting(string resource)
+        protected void OnResourceStarting(string resource)
         {
             eventManager.OnResourceStarting(resource);
         }
 
-        protected async void OnClientResourceStart(string resource)
+        protected void OnClientResourceStart(string resource)
         {
             eventManager.OnClientResourceStart(resource);
         }
 
-        protected async void OnClientResourceStop(string resource)
+        protected void OnClientResourceStop(string resource)
         {
             eventManager.OnClientResourceStop(resource);
         }
 
-        protected async void OnGameEventTriggered(string name, int[] data)
+        protected void OnGameEventTriggered(string name, int[] data)
         {
             eventManager.OnGameEventTriggered(name, data);
         }
 
-        protected async void OnClientMapStart(string resource)
+        protected void OnClientMapStart(string resource)
         {
             eventManager.OnClientMapStart(resource);
         }
 
-        protected async void OnClientMapStop(string resource)
+        protected void OnClientMapStop(string resource)
         {
             eventManager.OnClientMapStop(resource);
         }
 
-        protected async void OnClientGameTypeStart(string resource)
+        protected void OnClientGameTypeStart(string resource)
         {
             eventManager.OnClientGameTypeStart(resource);
         }
 
-        protected async void OnClientGameTypeStop(string resource)
+        protected void OnClientGameTypeStop(string resource)
         {
             eventManager.OnClientGameTypeStop(resource);
         }
 
-        protected async void OnPlayerActivated()
+        protected void OnPlayerActivated()
         {
             eventManager.OnPlayerActivated();
         }
 
-        protected async void OnSessionInitialized()
+        protected void OnSessionInitialized()
         {
             eventManager.OnPlayerActivated();
         }

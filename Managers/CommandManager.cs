@@ -23,10 +23,7 @@ namespace Average.Managers
 
         public void RegisterCommand(ClientCommandAttribute commandAttr, ClientCommandAliasAttribute aliasAttr, MethodInfo method, object classObj)
         {
-            if (commandAttr == null)
-            {
-                return;
-            }
+            if (commandAttr == null) return;
 
             var methodParams = method.GetParameters();
 
@@ -91,24 +88,12 @@ namespace Average.Managers
             }
         }
 
-        public IEnumerable<Tuple<ClientCommandAttribute, ClientCommandAliasAttribute>> GetCommands()
-        {
-            return Commands.AsEnumerable();
-        }
+        public IEnumerable<Tuple<ClientCommandAttribute, ClientCommandAliasAttribute>> GetCommands() => Commands.AsEnumerable();
 
-        public ClientCommandAttribute GetCommand(string command)
-        {
-            return Commands.Find(x => x.Item1.Command == command).Item1;
-        }
+        public ClientCommandAttribute GetCommand(string command) => Commands.Find(x => x.Item1.Command == command).Item1;
 
-        public ClientCommandAliasAttribute GetCommandAlias(string command)
-        {
-            return Commands.Find(x => x.Item1.Command == command).Item2;
-        }
+        public ClientCommandAliasAttribute GetCommandAlias(string command) => Commands.Find(x => x.Item1.Command == command).Item2;
 
-        public int Count()
-        {
-            return Commands.Count();
-        }
+        public int Count() => Commands.Count();
     }
 }

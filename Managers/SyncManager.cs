@@ -241,35 +241,17 @@ namespace Average.Managers
             }
         }
 
-        public IEnumerable<SyncPropertyState> GetAllSyncProperties()
-        {
-            return propertiesSyncs.Values.AsEnumerable();
-        }
+        public IEnumerable<SyncPropertyState> GetAllSyncProperties() => propertiesSyncs.Values.AsEnumerable();
 
-        public IEnumerable<SyncFieldState> GetAllSyncFields()
-        {
-            return fieldsSyncs.Values.AsEnumerable();
-        }
+        public IEnumerable<SyncFieldState> GetAllSyncFields() => fieldsSyncs.Values.AsEnumerable();
 
-        public IEnumerable<GetSyncPropertyState> GetAllNetworkedGetSyncProperties()
-        {
-            return networkedPropertiesGetSyncs.AsEnumerable();
-        }
+        public IEnumerable<GetSyncPropertyState> GetAllNetworkedGetSyncProperties() => networkedPropertiesGetSyncs.AsEnumerable();
 
-        public IEnumerable<GetSyncFieldState> GetAllNetworkedGetSyncFields()
-        {
-            return networkedFieldsGetSyncs.AsEnumerable();
-        }
+        public IEnumerable<GetSyncFieldState> GetAllNetworkedGetSyncFields() => networkedFieldsGetSyncs.AsEnumerable();
 
-        public IEnumerable<GetSyncPropertyState> GetAllGetSyncProperties()
-        {
-            return propertiesGetSyncs.AsEnumerable();
-        }
+        public IEnumerable<GetSyncPropertyState> GetAllGetSyncProperties() => propertiesGetSyncs.AsEnumerable();
 
-        public IEnumerable<GetSyncFieldState> GetAllGetSyncFields()
-        {
-            return fieldsGetSyncs.AsEnumerable();
-        }
+        public IEnumerable<GetSyncFieldState> GetAllGetSyncFields() => fieldsGetSyncs.AsEnumerable();
 
         #endregion
     }

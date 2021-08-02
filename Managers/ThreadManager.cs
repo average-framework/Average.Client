@@ -41,7 +41,6 @@ namespace Average.Managers
                             }
                         }
 
-                        // Wait task is finished
                         await (Task)method.Invoke(classObj, new object[] { });
 
                         var currentThreadIndex = threads.FindIndex(x => x.Func == func);
@@ -58,7 +57,7 @@ namespace Average.Managers
                                 {
                                     threads[threads.FindIndex(x => x.Func == func)].IsRunning = false;
                                     threads[threads.FindIndex(x => x.Func == func)].IsTerminated = true;
-                                    //main.UnregisterTick(func);
+                             
                                     detachCallback(func);
                                 }
                             }
@@ -68,7 +67,6 @@ namespace Average.Managers
                     thread.Func = func;
                     threads.Add(thread);
 
-                    //main.RegisterTick(func);
                     attachCallback(func);
 
                     Main.logger.Debug($"Registering [Thread] attribute to method: {method.Name}.");
@@ -90,7 +88,6 @@ namespace Average.Managers
 
             if (thread != null)
             {
-                //main.UnregisterTick(thread.Func);
                 detachCallback(thread.Func);
                 threads.Remove(thread);
 

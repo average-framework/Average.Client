@@ -4,7 +4,6 @@ using SDK.Client;
 using SDK.Client.Diagnostics;
 using SDK.Client.Events;
 using SDK.Client.Interfaces;
-using SDK.Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,7 +44,6 @@ namespace Average.Managers
         {
             if (events.ContainsKey(eventName))
             {
-                //events[eventName].DynamicInvoke(args);
                 events[eventName].ForEach(w => w.DynamicInvoke(args));
             }
         }
@@ -64,7 +62,6 @@ namespace Average.Managers
             else
             {
                 events[eventName].Add(action);
-                //logger.Error($"Unable to register event: {eventName}, an event have already been registered with this event name.");
             }
 
             logger.Debug($"Register event: {eventName}");
@@ -110,27 +107,11 @@ namespace Average.Managers
             RegisterInternalEvent(eventAttr.Event, action);
 
             logger.Debug($"Registering [Event] attribute: {eventAttr.Event} on method: {method.Name}, args count: {methodParams.Count()}");
-
-            //if (!events.ContainsKey(eventAttr.Event))
-            //{
-            //    var action = Action.CreateDelegate(Expression.GetDelegateType((from parameter in method.GetParameters() select parameter.ParameterType).Concat(new[] { method.ReturnType }).ToArray()), classObj, method);
-            //    RegisterInternalEvent(eventAttr.Event, action);
-            //    //events.Add(eventAttr.Event, action);
-
-            //    logger.Debug($"Registering [Event] attribute: {eventAttr.Event} on method: {method.Name}, args count: {methodParams.Count()}");
-            //}
-            //else
-            //{
-            //    logger.Error($"Unable to register [Event] attribute: {eventAttr.Event} on method: {method.Name}, an event have already been registered with this event name.");
-            //}
         }
 
         #region Internal
 
-        internal void InternalTriggerEvent(string eventName, List<object> args)
-        {
-            Emit(eventName, args.ToArray());
-        }
+        internal void InternalTriggerEvent(string eventName, List<object> args) => Emit(eventName, args.ToArray());
 
         #endregion
 

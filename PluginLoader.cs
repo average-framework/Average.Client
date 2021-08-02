@@ -59,65 +59,45 @@ namespace Average
 
                 foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
                 {
-                    var sdk = asm.GetCustomAttribute<ClientPluginAttribute>();
+                    var types = asm.GetTypes().Where(x => !x.IsAbstract && x.IsClass && x.IsSubclassOf(typeof(Plugin))).ToList();
+                    var mainScriptCount = 0;
 
-                    if (sdk != null)
+                    foreach (var type in types)
                     {
-                        var types = asm.GetTypes().Where(x => !x.IsAbstract && x.IsClass && x.IsSubclassOf(typeof(Plugin))).ToList();
-                        var mainScriptCount = 0;
+                        var attr = type.GetCustomAttribute<MainScriptAttribute>();
 
+                        if (attr != null)
+                        {
+                            mainScriptCount++;
+                        }
+                    }
+
+                    if (mainScriptCount > 1)
+                    {
+                        Main.logger.Error("Unable to load multiples [MainScript] attribute in same plugin. Fix this error to continue.");
+                        return;
+                    }
+
+                    if (mainScriptCount == 0)
+                    {
+                        Main.logger.Error("Unable to load this plugin, he does not contains [MainScript] attribute. Fix this error to continue.");
+                        return;
+                    }
+
+                    var pluginInfo = pluginsInfo.Find(x => x.Client == asm.GetName().Name + ".dll");
+
+                    if (pluginInfo != null)
+                    {
                         foreach (var type in types)
                         {
-                            var attr = type.GetCustomAttribute<MainScriptAttribute>();
+                            Plugin script = null;
 
-                            if (attr != null)
+                            // Load script dynamically at runtime
+                            if (type.GetCustomAttribute<MainScriptAttribute>() != null)
                             {
-                                mainScriptCount++;
-                            }
-                        }
-
-                        if (mainScriptCount > 1)
-                        {
-                            Main.logger.Error("Unable to load multiples [MainScript] attribute in same plugin. Fix this error to continue.");
-                            return;
-                        }
-
-                        if (mainScriptCount == 0)
-                        {
-                            Main.logger.Error("Unable to load this plugin, he does not contains [MainScript] attribute. Fix this error to continue.");
-                            return;
-                        }
-
-                        var pluginInfo = pluginsInfo.Find(x => x.Client == asm.GetName().Name + ".dll");
-
-                        if (pluginInfo != null)
-                        {
-                            foreach (var type in types)
-                            {
-                                Plugin script = null;
-
-                                // Load script dynamically at runtime
-                                if (type.GetCustomAttribute<MainScriptAttribute>() != null)
+                                try
                                 {
-                                    try
-                                    {
-                                        if (pluginInfo != null)
-                                        {
-                                            script = (Plugin)Activator.CreateInstance(type, Main.framework, pluginInfo);
-                                            script.PluginInfo = pluginInfo;
-                                            RegisterPlugin(script);
-
-                                            Main.logger.Info($"Plugin {asm.GetName().Name} -> script: {script.Name} successfully loaded.");
-                                        }
-                                    }
-                                    catch (InvalidCastException ex)
-                                    {
-                                        Main.logger.Error($"Unable to load {asm.GetName().Name}");
-                                    }
-                                }
-                                else
-                                {
-                                    try
+                                    if (pluginInfo != null)
                                     {
                                         script = (Plugin)Activator.CreateInstance(type, Main.framework, pluginInfo);
                                         script.PluginInfo = pluginInfo;
@@ -125,31 +105,46 @@ namespace Average
 
                                         Main.logger.Info($"Plugin {asm.GetName().Name} -> script: {script.Name} successfully loaded.");
                                     }
-                                    catch
-                                    {
-                                        Main.logger.Error($"Unable to load script: {script.Name}");
-                                    }
                                 }
-
-                                if (script == null)
+                                catch (InvalidCastException ex)
                                 {
-                                    continue;
+                                    Main.logger.Error($"Unable to load {asm.GetName().Name}");
                                 }
-
-                                RegisterCommands(type, script);
-                                RegisterThreads(type, script);
-                                RegisterEvents(type, script);
-                                RegisterExports(type, script);
-                                RegisterSyncs(type, script);
-                                RegisterGetSyncs(type, script);
-                                RegisterNetworkGetSyncs(type, script);
-                                RegisterNUICallbacks(type, script);
                             }
+                            else
+                            {
+                                try
+                                {
+                                    script = (Plugin)Activator.CreateInstance(type, Main.framework, pluginInfo);
+                                    script.PluginInfo = pluginInfo;
+                                    RegisterPlugin(script);
+
+                                    Main.logger.Info($"Plugin {asm.GetName().Name} -> script: {script.Name} successfully loaded.");
+                                }
+                                catch
+                                {
+                                    Main.logger.Error($"Unable to load script: {script.Name}");
+                                }
+                            }
+
+                            if (script == null)
+                            {
+                                continue;
+                            }
+
+                            RegisterCommands(type, script);
+                            RegisterThreads(type, script);
+                            RegisterEvents(type, script);
+                            RegisterExports(type, script);
+                            RegisterSyncs(type, script);
+                            RegisterGetSyncs(type, script);
+                            RegisterNetworkGetSyncs(type, script);
+                            RegisterNUICallbacks(type, script);
                         }
-                        else
-                        {
-                            Main.logger.Error($"Unable to find plugin: {asm.GetName().Name}.dll");
-                        }
+                    }
+                    else
+                    {
+                        Main.logger.Error($"Unable to find plugin: {asm.GetName().Name}.dll");
                     }
                 }
 

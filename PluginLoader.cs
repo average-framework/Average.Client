@@ -197,7 +197,7 @@ namespace Average
 
             foreach (var method in type.GetMethods(flags))
             {
-                var eventAttr = method.GetCustomAttribute<EventAttribute>();
+                var eventAttr = method.GetCustomAttribute<ClientEventAttribute>();
 
                 if (eventAttr != null)
                 {

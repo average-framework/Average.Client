@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace Average.Managers
 {
@@ -22,12 +23,10 @@ namespace Average.Managers
         List<GetSyncPropertyState> propertiesGetSyncs;
         List<GetSyncFieldState> fieldsGetSyncs;
 
-        EventHandlerDictionary eventHandlers;
         Logger logger;
 
-        public SyncManager(EventHandlerDictionary eventHandlers, Logger logger)
+        public SyncManager(EventHandlerDictionary eventHandlers, Logger logger, Framework framework)
         {
-            this.eventHandlers = eventHandlers;
             this.logger = logger;
 
             propertiesSyncs = new Dictionary<string, SyncPropertyState>();
@@ -41,6 +40,16 @@ namespace Average.Managers
 
             eventHandlers["avg.internal.sync_property"] += new Action<string, object>(InternalNetworkSyncPropertyEvent);
             eventHandlers["avg.internal.sync_field"] += new Action<string, object>(InternalNetworkSyncFieldEvent);
+
+            framework.Thread.StartThread(Update);
+        }
+
+        protected async Task Update()
+        {
+            await BaseScript.Delay(100);
+
+            SyncProperties();
+            SyncProperties();
         }
 
         object GetPropertyValue(PropertyInfo property, object classObj)
@@ -58,10 +67,7 @@ namespace Average.Managers
             return null;
         }
 
-        object GetFieldValue(FieldInfo field, object classObj)
-        {
-            return field.GetValue(classObj);
-        }
+        object GetFieldValue(FieldInfo field, object classObj) => field.GetValue(classObj);
 
         public void SyncProperties()
         {

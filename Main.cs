@@ -33,9 +33,9 @@ namespace Average
             threadManager = new ThreadManager(c => Tick += c, c => Tick -= c);
             eventManager = new EventManager(EventHandlers, logger);
             exportManager = new ExportManager(logger);
-            syncManager = new SyncManager(EventHandlers, logger);
             internalManager = new InternalManager(logger);
             framework = new Framework(threadManager, eventManager, exportManager, syncManager, logger, commandManager, internalManager, rpc);
+            syncManager = new SyncManager(EventHandlers, logger, framework);
             cfx = new CfxManager(EventHandlers, eventManager);
             plugin = new PluginLoader(rpc, commandManager);
             internalManager.SetPluginList(ref plugin.plugins);

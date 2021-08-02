@@ -2,7 +2,6 @@
 using SDK.Client;
 using SDK.Client.Diagnostics;
 using SDK.Client.Managers;
-using SDK.Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;

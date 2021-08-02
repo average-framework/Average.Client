@@ -167,8 +167,8 @@ namespace Average
             // Registering commands (method need to be public to be detected)
             foreach (var method in type.GetMethods())
             {
-                var cmdAttr = method.GetCustomAttribute<SDK.Client.CommandAttribute>();
-                var aliasAttr = method.GetCustomAttribute<CommandAliasAttribute>();
+                var cmdAttr = method.GetCustomAttribute<SDK.Client.ClientCommandAttribute>();
+                var aliasAttr = method.GetCustomAttribute<ClientCommandAliasAttribute>();
 
                 commandManager.RegisterCommand(cmdAttr, aliasAttr, method, classObj);
             }

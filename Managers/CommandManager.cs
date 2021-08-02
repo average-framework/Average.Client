@@ -47,11 +47,11 @@ namespace Average.Managers
                             }), false);
                         }
 
-                        Logger.Debug($"Regisering {aliasAttr.Alias.Length} alias for command: {commandAttr.Command} [{string.Join(", ", aliasAttr.Alias)}]");
+                        Logger.Debug($"Registering {aliasAttr.Alias.Length} alias for command: {commandAttr.Command} [{string.Join(", ", aliasAttr.Alias)}]");
                     }
 
                     Commands.Add(new Tuple<ClientCommandAttribute, ClientCommandAliasAttribute>(commandAttr, aliasAttr));
-                    Logger.Debug($"Regisering [Command] attribute: {commandAttr.Command} on method: {method.Name}");
+                    Logger.Debug($"Registering [Command] attribute: {commandAttr.Command} on method: {method.Name}");
                 }
                 else
                 {
@@ -75,12 +75,10 @@ namespace Average.Managers
                             method.Invoke(classObj, new object[] { });
                         }), false);
                     }
-
-                    Commands.Add(new Tuple<ClientCommandAttribute, ClientCommandAliasAttribute>(commandAttr, aliasAttr));
-                    Logger.Debug($"Regisering {aliasAttr.Alias.Length} alias for command: {commandAttr.Command} [{string.Join(", ", aliasAttr.Alias)}]");
                 }
 
-                Logger.Debug($"Regisering [Command] attribute: {commandAttr.Command} on method: {method.Name}");
+                Commands.Add(new Tuple<ClientCommandAttribute, ClientCommandAliasAttribute>(commandAttr, aliasAttr));
+                Logger.Debug($"Registering [Command] attribute: {commandAttr.Command} on method: {method.Name}");
             }
             else
             {

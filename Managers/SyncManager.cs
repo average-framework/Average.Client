@@ -1,4 +1,5 @@
 ﻿using CitizenFX.Core;
+using SDK.Client;
 using SDK.Client.Diagnostics;
 using SDK.Client.Interfaces;
 using SDK.Shared;

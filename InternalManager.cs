@@ -1,19 +1,16 @@
-﻿using CitizenFX.Core;
-using SDK.Client.Diagnostics;
+﻿using SDK.Client.Diagnostics;
 using SDK.Client.Interfaces;
 using SDK.Shared.Plugins;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Average.Managers
+namespace Average.Client.Managers
 {
     public class InternalManager : IInternal
     {
-        List<IPlugin> plugins;
+        List<IPlugin> plugins = new List<IPlugin>();
         Logger logger;
-
-        public bool IsWorking { get; set; }
 
         public InternalManager(Logger logger)
         {
@@ -22,34 +19,12 @@ namespace Average.Managers
 
         public IEnumerable<string> GetRegisteredPluginsNamespace() => plugins.Select(x => x.GetType().FullName);
 
-        public void SetPluginList(ref List<IPlugin> plugins) => this.plugins = plugins;
+        public void SetPlugins(ref List<IPlugin> plugins) => this.plugins = plugins;
 
-        public async Task<T> GetPluginInstance<T>(string pluginName)
+        public async Task<dynamic> GetPluginInstance(string pluginName)
         {
-            try
-            {
-                while (IsWorking == true) await BaseScript.Delay(0);
+            await Main.loader.IsPluginsFullyLoaded();
 
-                var instance = plugins.Find(x => x.GetType().FullName == pluginName);
-
-                if (instance == null)
-                {
-                    logger.Error($"This class namespace / class does not exists. This namespace can be changed by another one, please contact owner of this script for more informations. [{pluginName}]");
-                    return default(T);
-                }
-
-                return (T)instance;
-            }
-            catch
-            {
-                logger.Error($"This class namespace / class does not exists. This namespace can be changed by another one, please contact owner of this script for more informations. [{pluginName}]");
-            }
-
-            return default(T);
-        }
-
-        public dynamic GetPluginInstance(string pluginName)
-        {
             var instance = plugins.Find(x => x.GetType().FullName == pluginName);
 
             if (instance == null)

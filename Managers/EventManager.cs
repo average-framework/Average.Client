@@ -10,7 +10,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace Average.Managers
+namespace Average.Client.Managers
 {
     public class EventManager : IEventManager
     {

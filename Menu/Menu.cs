@@ -1,16 +1,16 @@
 ﻿using CitizenFX.Core;
 using SDK.Client;
+using SDK.Client.Menu;
 using SDK.Client.Plugins;
 using SDK.Shared;
 using SDK.Shared.Plugins;
-using Shared.Server.Interfaces;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using static SDK.Client.GameAPI;
 
-namespace Menu.Client
+namespace Average.Client.Menu
 {
-    [MainScript]
-    public class Menu : Plugin, IMenuClient_Menu
+    public class Menu
     {
         List<MenuContainer> menus = new List<MenuContainer>();
         List<string> history = new List<string>();
@@ -30,19 +30,9 @@ namespace Menu.Client
         protected virtual void OnMenuChangeReached(MenuContainer oldMenu, MenuContainer currentMenu) => OnMenuChangeHandler?.Invoke(oldMenu, currentMenu);
         protected virtual void OnMenuCloseReached(MenuContainer currentMenu) => OnMenuCloseHandler?.Invoke(currentMenu);
 
-        public Menu(Framework framework, PluginInfo pluginInfo) : base(framework, pluginInfo)
+        public Menu(Framework framework)
         {
 
-        }
-
-        public override async Task OnReady()
-        {
-            await Overlay.Load();
-        }
-
-        public override async Task UIReady()
-        {
-            await Overlay.Show();
         }
 
         #region Nui Callback

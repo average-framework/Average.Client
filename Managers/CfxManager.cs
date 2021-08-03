@@ -1,7 +1,7 @@
 ﻿using CitizenFX.Core;
 using System;
 
-namespace Average.Managers
+namespace Average.Client.Managers
 {
     internal class CfxManager
     {

@@ -1,4 +1,4 @@
-﻿using Average.Managers;
+﻿using Average.Client.Managers;
 using CitizenFX.Core;
 using SDK.Client;
 using SDK.Client.Diagnostics;
@@ -7,7 +7,7 @@ using SDK.Shared.Rpc;
 using System;
 using System.Threading.Tasks;
 
-namespace Average
+namespace Average.Client
 {
     internal class Main : BaseScript
     {
@@ -18,33 +18,56 @@ namespace Average
         internal static EventManager eventManager;
         internal static ExportManager exportManager;
         internal static SyncManager syncManager;
-        internal static InternalManager internalManager;
         internal static BlipManager blipManager;
         internal static NpcManager npcManager;
+        internal static UserManager userManager;
+        internal static PermissionManager permissionManager;
+        internal static MapManager mapManager;
+        internal static CharacterManager characterManager;
+        internal static InternalManager internalManager;
 
         CfxManager cfx;
         RpcRequest rpc;
-        PluginLoader plugin;
+        internal static PluginLoader loader;
 
         public Main()
         {
-            rpc = new RpcRequest(new RpcHandler(EventHandlers), new RpcTrigger(), new RpcSerializer());
-            logger = new Logger();
+            Task.Factory.StartNew(async () => 
+            {
+                await Delay(0);
 
-            commandManager = new CommandManager(logger);
-            threadManager = new ThreadManager(c => Tick += c, c => Tick -= c);
-            eventManager = new EventManager(EventHandlers, logger);
-            exportManager = new ExportManager(logger);
-            internalManager = new InternalManager(logger);
-            blipManager = new BlipManager(EventHandlers);
-            npcManager = new NpcManager(EventHandlers);
-            framework = new Framework(threadManager, eventManager, exportManager, syncManager, logger, commandManager, internalManager, blipManager, npcManager, rpc);
-            syncManager = new SyncManager(EventHandlers, logger, framework);
-            cfx = new CfxManager(EventHandlers, eventManager);
-            plugin = new PluginLoader(rpc, commandManager);
-            internalManager.SetPluginList(ref plugin.plugins);
+                rpc = new RpcRequest(new RpcHandler(EventHandlers), new RpcTrigger(), new RpcSerializer());
+                logger = new Logger();
 
-            plugin.Load();
+                framework = new Framework();
+                commandManager = new CommandManager(logger);
+                threadManager = new ThreadManager(c => Tick += c, c => Tick -= c);
+                eventManager = new EventManager(EventHandlers, logger);
+                exportManager = new ExportManager(logger);
+                blipManager = new BlipManager(EventHandlers);
+                npcManager = new NpcManager(EventHandlers);
+                userManager = new UserManager(framework);
+                permissionManager = new PermissionManager(framework);
+                mapManager = new MapManager(framework);
+                characterManager = new CharacterManager(framework);
+                syncManager = new SyncManager(EventHandlers, logger, framework);
+                cfx = new CfxManager(EventHandlers, eventManager);
+                internalManager = new InternalManager(logger);
+
+                framework.SetDependencies(threadManager, eventManager, exportManager, syncManager, logger, commandManager, internalManager, blipManager, npcManager, userManager, permissionManager, mapManager, characterManager, rpc);
+                
+                loader = new PluginLoader(framework);
+                await loader.Load();
+                await loader.IsPluginsFullyLoaded();
+
+                var plugins = loader.Plugins;
+                internalManager.SetPlugins(ref plugins);
+
+                //var plugins = loader.Plugins;
+                //internalManager.SetPluginList(ref plugins);
+
+                framework.IsReadyToWork = true;
+            });
         }
 
         internal void RegisterTick(Func<Task> func)

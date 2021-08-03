@@ -10,7 +10,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 
-namespace Average.Managers
+namespace Average.Client.Managers
 {
     public class SyncManager : ISyncManager
     {
@@ -24,6 +24,8 @@ namespace Average.Managers
         List<GetSyncFieldState> fieldsGetSyncs;
 
         Logger logger;
+
+        public int SyncRate { get; set; } = 60;
 
         public SyncManager(EventHandlerDictionary eventHandlers, Logger logger, Framework framework)
         {
@@ -41,12 +43,16 @@ namespace Average.Managers
             eventHandlers["avg.internal.sync_property"] += new Action<string, object>(InternalNetworkSyncPropertyEvent);
             eventHandlers["avg.internal.sync_field"] += new Action<string, object>(InternalNetworkSyncFieldEvent);
 
-            framework.Thread.StartThread(Update);
+            Task.Factory.StartNew(async () =>
+            {
+                await framework.IsReadyAsync();
+                framework.Thread.StartThread(Update);
+            });
         }
 
         protected async Task Update()
         {
-            await BaseScript.Delay(100);
+            await BaseScript.Delay(SyncRate);
 
             SyncProperties();
             SyncProperties();

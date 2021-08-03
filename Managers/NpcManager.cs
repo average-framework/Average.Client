@@ -1,4 +1,5 @@
 ﻿using CitizenFX.Core;
+using SDK.Client.Interfaces;
 using SDK.Shared;
 using System;
 using System.Collections.Generic;
@@ -6,10 +7,9 @@ using System.Threading.Tasks;
 using static CitizenFX.Core.Native.API;
 using static SDK.Client.GameAPI;
 
-namespace Average.Managers
+namespace Average.Client.Managers
 {
-    [MainScript]
-    public class NpcManager
+    public class NpcManager : INpcManager
     {
         public List<int> Npcs { get; } = new List<int>();
 

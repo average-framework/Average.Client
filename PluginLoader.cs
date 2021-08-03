@@ -1,4 +1,4 @@
-﻿using Average.Managers;
+﻿using Average.Client.Managers;
 using CitizenFX.Core;
 using SDK.Client;
 using SDK.Client.Plugins;
@@ -14,39 +14,42 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
 
-namespace Average
+namespace Average.Client
 {
     internal class PluginLoader
     {
-        RpcRequest rpc;
-        CommandManager commandManager;
+        Framework framework;
 
-        public List<IPlugin> plugins = new List<IPlugin>();
+        public List<IPlugin> Plugins { get; } = new List<IPlugin>();
         List<PluginInfo> pluginsInfo;
 
-        public PluginLoader(RpcRequest rpc, CommandManager commandManager)
+        bool isReady;
+
+        public PluginLoader(Framework framework)
         {
-            this.rpc = rpc;
-            this.commandManager = commandManager;
+            this.framework = framework;
+        }
+
+        public async Task IsPluginsFullyLoaded()
+        {
+            while (!isReady) await BaseScript.Delay(250);
         }
 
         async Task<List<PluginInfo>> GetPlugins()
         {
-            rpc.Event("avg.internal.get_plugins").On(message =>
+            framework.Rpc.Event("avg.internal.get_plugins").On(message =>
             {
                 pluginsInfo = message.Args[0].Convert<List<PluginInfo>>();
             }).Emit();
 
-            while (pluginsInfo == null)
-            {
-                await BaseScript.Delay(250);
-            }
-
+            while (pluginsInfo == null) await BaseScript.Delay(250);
             return pluginsInfo;
         }
 
         public async Task Load()
         {
+            isReady = false;
+
             Main.logger.Debug("Getting plugins..");
 
             var pluginsInfo = await GetPlugins();
@@ -55,8 +58,6 @@ namespace Average
 
             try
             {
-                Main.internalManager.IsWorking = true;
-
                 foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
                 {
                     var types = asm.GetTypes().Where(x => !x.IsAbstract && x.IsClass).ToList();
@@ -124,11 +125,10 @@ namespace Average
                                         Main.logger.Error($"Unable to load script: {script.Name}");
                                     }
                                 }
-
-                                if (script == null) continue;
                             }
 
-                            RegisterCommands(type, script);
+                            if (script == null) continue;
+
                             RegisterThreads(type, script);
                             RegisterEvents(type, script);
                             RegisterExports(type, script);
@@ -136,6 +136,7 @@ namespace Average
                             RegisterGetSyncs(type, script);
                             RegisterNetworkGetSyncs(type, script);
                             RegisterNUICallbacks(type, script);
+                            RegisterCommands(type, script);
                         }
                     }
                     else
@@ -144,11 +145,12 @@ namespace Average
                     }
                 }
 
-                Main.internalManager.IsWorking = false;
+                isReady = true;
             }
             catch (Exception ex)
             {
                 Main.logger.Error(ex.StackTrace);
+                isReady = false;
             }
         }
 
@@ -160,6 +162,7 @@ namespace Average
                 var cmdAttr = method.GetCustomAttribute<ClientCommandAttribute>();
                 var aliasAttr = method.GetCustomAttribute<ClientCommandAliasAttribute>();
 
+                var commandManager = (CommandManager)framework.Command;
                 commandManager.RegisterCommand(cmdAttr, aliasAttr, method, classObj);
             }
         }
@@ -334,12 +337,12 @@ namespace Average
 
         void RegisterPlugin(IPlugin script)
         {
-            plugins.Add(script);
+            Plugins.Add(script);
         }
 
         void UnloadScript(IPlugin script)
         {
-            plugins.Remove(script);
+            Plugins.Remove(script);
         }
     }
 }

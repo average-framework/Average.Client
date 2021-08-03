@@ -9,7 +9,7 @@
     <ProjectGuid>{B95A3DB2-D4D9-4766-BBD4-DF941B07F82B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Average</RootNamespace>
+    <RootNamespace>Average.Client</RootNamespace>
     <AssemblyName>average.client.net</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <LangVersion>8.0</LangVersion>
@@ -78,13 +78,23 @@
   <ItemGroup>
     <Compile Include="Managers\BlipManager.cs" />
     <Compile Include="Managers\CfxManager.cs" />
+    <Compile Include="Managers\CharacterManager.cs" />
     <Compile Include="Managers\CommandManager.cs" />
     <Compile Include="Managers\EventManager.cs" />
     <Compile Include="Managers\ExportManager.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="InternalManager.cs" />
+    <Compile Include="Managers\MapManager.cs" />
+    <Compile Include="Managers\NpcManager.cs" />
+    <Compile Include="Managers\PermissionManager.cs" />
+    <Compile Include="Managers\UserManager.cs" />
     <Compile Include="Menu\Menu.cs" />
     <Compile Include="Menu\MenuContainer.cs" />
+    <Compile Include="Models\CustomImapModel.cs" />
+    <Compile Include="Models\CustomInteriorModel.cs" />
+    <Compile Include="Models\ImapModel.cs" />
+    <Compile Include="Models\InteriorModel.cs" />
+    <Compile Include="Models\InteriorSetModel.cs" />
     <Compile Include="PluginLoader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Managers\SyncManager.cs" />
@@ -101,10 +111,6 @@
     <ProjectReference Include="..\SDK.Shared\SDK.Shared.csproj">
       <Project>{3f43345a-6a6e-4be0-8889-26346add06a3}</Project>
       <Name>SDK.Shared</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Shared.Client\Shared.Client.csproj">
-      <Project>{1EB67C31-E134-4BFA-B57A-ECC83854B53C}</Project>
-      <Name>Shared.Client</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

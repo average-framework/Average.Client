@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 
-namespace Average.Managers
+namespace Average.Client.Managers
 {
     internal class ThreadManager : IThreadManager
     {
@@ -99,6 +99,6 @@ namespace Average.Managers
             }
         }
 
-        public IEnumerable<Thread> GetThreads() => threads.AsEnumerable();
+        //public IEnumerable<Thread> GetThreads() => threads.AsEnumerable();
     }
 }

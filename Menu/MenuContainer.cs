@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using SDK.Client.Menu;
+using System.Collections.Generic;
 using static SDK.Client.GameAPI;
 
-namespace Menu.Client
+namespace Average.Client.Menu
 {
-    public class MenuContainer
+    public class MenuContainer : IMenuContainer
     {
         public List<IMenuItem> Items { get; } = new List<IMenuItem>();
         public string Name { get; }
@@ -15,11 +16,11 @@ namespace Menu.Client
             Title = title;
         }
 
-        public bool ItemExists(IMenuItem menuItem) => Items.Contains(menuItem);
+        public bool ItemExist(IMenuItem menuItem) => Items.Contains(menuItem);
 
         public void AddItem(IMenuItem menuItem)
         {
-            if (!ItemExists(menuItem))
+            if (!ItemExist(menuItem))
             {
                 menuItem.ParentContainer = this;
                 Items.Add(menuItem);
@@ -28,8 +29,7 @@ namespace Menu.Client
 
         public void RemoveItem(IMenuItem menuItem)
         {
-            if (ItemExists(menuItem))
-                Items.Remove(menuItem);
+            if (ItemExist(menuItem)) Items.Remove(menuItem);
         }
 
         public IMenuItem GetItem(string name) => Items.Find(x => x.Name == name);

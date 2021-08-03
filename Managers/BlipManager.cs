@@ -1,6 +1,5 @@
 ﻿using CitizenFX.Core;
 using SDK.Shared;
-using Shared.Client.Interfaces;
 using System;
 using System.Collections.Generic;
 using static CitizenFX.Core.Native.API;
@@ -8,7 +7,7 @@ using static SDK.Client.GameAPI;
 
 namespace Average.Managers
 {
-    public class BlipManager : IBlipClient_Main
+    public class BlipManager
     {
         public List<int> Blips { get; } = new List<int>();
 
@@ -44,12 +43,7 @@ namespace Average.Managers
         {
             if (resource == Constant.RESOURCE_NAME)
             {
-                for (int i = 0; i < Blips.Count; i++)
-                {
-                    var handle = Blips[i];
-                    Delete(handle);
-                }
-
+                for (int i = 0; i < Blips.Count; i++) Delete(Blips[i]);
                 GC.SuppressFinalize(this);
             }
         }

@@ -19,6 +19,8 @@ namespace Average
         internal static ExportManager exportManager;
         internal static SyncManager syncManager;
         internal static InternalManager internalManager;
+        internal static BlipManager blipManager;
+        internal static NpcManager npcManager;
 
         CfxManager cfx;
         RpcRequest rpc;
@@ -34,7 +36,9 @@ namespace Average
             eventManager = new EventManager(EventHandlers, logger);
             exportManager = new ExportManager(logger);
             internalManager = new InternalManager(logger);
-            framework = new Framework(threadManager, eventManager, exportManager, syncManager, logger, commandManager, internalManager, rpc);
+            blipManager = new BlipManager(EventHandlers);
+            npcManager = new NpcManager(EventHandlers);
+            framework = new Framework(threadManager, eventManager, exportManager, syncManager, logger, commandManager, internalManager, blipManager, npcManager, rpc);
             syncManager = new SyncManager(EventHandlers, logger, framework);
             cfx = new CfxManager(EventHandlers, eventManager);
             plugin = new PluginLoader(rpc, commandManager);

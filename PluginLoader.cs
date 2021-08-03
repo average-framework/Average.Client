@@ -78,12 +78,11 @@ namespace Average
                             return;
                         }
 
-                        if (mainScriptCount == 0)
-                        {
-                            Main.logger.Error($"Unable to load this plugin: {asm.FullName}, he does not contains [MainScript] attribute. Fix this error to continue.");
-                            return;
-                            //continue;
-                        }
+                        //if (mainScriptCount == 0)
+                        //{
+                        //    Main.logger.Error($"Unable to load this plugin: {asm.FullName}, he does not contains [MainScript] attribute. Fix this error to continue.");
+                        //    return;
+                        //}
 
                         foreach (var type in types)
                         {

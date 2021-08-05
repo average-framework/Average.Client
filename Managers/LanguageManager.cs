@@ -1,9 +1,10 @@
 ﻿using SDK.Client;
+using SDK.Client.Interfaces;
 using System.Collections.Generic;
 
 namespace Average.Client.Managers
 {
-    public class LanguageManager
+    public class LanguageManager : ILanguageManager
     {
         Dictionary<string, string> language = new Dictionary<string, string>();
         public string Current { get; private set; }

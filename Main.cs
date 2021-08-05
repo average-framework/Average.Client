@@ -26,6 +26,7 @@ namespace Average.Client
         internal static PermissionManager permissionManager;
         internal static MapManager mapManager;
         internal static CharacterManager characterManager;
+        internal static LanguageManager languageManager;
 
         CfxManager cfx;
         RpcRequest rpc;
@@ -44,6 +45,7 @@ namespace Average.Client
             eventManager = new EventManager(EventHandlers, logger);
             exportManager = new ExportManager(logger);
             syncManager = new SyncManager(EventHandlers, logger, framework);
+            languageManager = new LanguageManager();
             menu = new MenuManager(eventManager);
             blipManager = new BlipManager(EventHandlers);
             npcManager = new NpcManager(EventHandlers);
@@ -53,7 +55,7 @@ namespace Average.Client
             characterManager = new CharacterManager(framework);
             cfx = new CfxManager(EventHandlers, eventManager);
 
-            framework.SetDependencies(menu, threadManager, eventManager, exportManager, syncManager, logger, commandManager, blipManager, npcManager, userManager, permissionManager, mapManager, characterManager, rpc);
+            framework.SetDependencies(languageManager, menu, threadManager, eventManager, exportManager, syncManager, logger, commandManager, blipManager, npcManager, userManager, permissionManager, mapManager, characterManager, rpc);
 
             loader = new PluginLoader(framework);
             loader.Load();

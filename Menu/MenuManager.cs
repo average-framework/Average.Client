@@ -1,19 +1,21 @@
-﻿using CitizenFX.Core;
-using SDK.Client;
+﻿using Average.Client.Managers;
+using CitizenFX.Core;
+using SDK.Client.Events;
+using SDK.Client.Interfaces;
 using SDK.Client.Menu;
-using SDK.Client.Plugins;
-using SDK.Shared;
-using SDK.Shared.Plugins;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using static SDK.Client.GameAPI;
 
 namespace Average.Client.Menu
 {
-    public class Menu
+    public class MenuManager : IMenuManager
     {
+        bool isReady;
+
         List<MenuContainer> menus = new List<MenuContainer>();
-        List<string> history = new List<string>();
+        List<MenuContainer> history = new List<MenuContainer>();
 
         public MenuContainer MainMenu { get; set; }
         public MenuContainer OldMenu { get; private set; }
@@ -21,23 +23,36 @@ namespace Average.Client.Menu
         public bool CanCloseMenu { get; set; } = true;
         public bool IsOpen { get; private set; }
 
-        public delegate void OnMenuChange(MenuContainer oldMenu, MenuContainer currentMenu);
-        public delegate void OnMenuClose(MenuContainer currentMenu);
+        public event EventHandler<MenuChangeEventArgs> MenuChanged;
+        public event EventHandler<MenuCloseEventArgs> MenuClosed;
 
-        public event OnMenuChange OnMenuChangeHandler;
-        public event OnMenuClose OnMenuCloseHandler;
-
-        protected virtual void OnMenuChangeReached(MenuContainer oldMenu, MenuContainer currentMenu) => OnMenuChangeHandler?.Invoke(oldMenu, currentMenu);
-        protected virtual void OnMenuCloseReached(MenuContainer currentMenu) => OnMenuCloseHandler?.Invoke(currentMenu);
-
-        public Menu(Framework framework)
+        public MenuManager(EventManager eventManager)
         {
+            eventManager.RegisterInternalNUICallbackEvent("menu/avg.ready", Ready);
+            eventManager.RegisterInternalNUICallbackEvent("menu/on_click", OnClick);
+            eventManager.RegisterInternalNUICallbackEvent("menu/on_previous", OnPrevious);
 
+            // Load menu in html page
+            SendNUI(new
+            {
+                eventName = "avg.internal.load",
+                plugin = "menu",
+                fileName = "index.html"
+            });
         }
 
         #region Nui Callback
 
-        [UICallback("menu/on_click")]
+        CallbackDelegate Ready(IDictionary<string, object> data, CallbackDelegate result)
+        {
+            Debug.WriteLine("Menu is fucking ready !!!");
+
+            isReady = true;
+
+            return result;
+        }
+
+        //[UICallback("menu/on_click")]
         CallbackDelegate OnClick(IDictionary<string, object> data, CallbackDelegate result)
         {
             var name = data["name"].ToString();
@@ -48,8 +63,8 @@ namespace Average.Client.Menu
                 case MenuItem menuItem:
                     if (menuItem.TargetContainer != null)
                     {
-                        history.Add(CurrentMenu.Name);
-                        OpenMenu(menuItem.TargetContainer.Name);
+                        history.Add(CurrentMenu);
+                        OpenMenu(menuItem.TargetContainer);
                     }
 
                     if (menuItem.Action != null) menuItem.Action.Invoke(menuItem);
@@ -162,7 +177,7 @@ namespace Average.Client.Menu
             return result;
         }
 
-        [UICallback("menu/on_previous")]
+        //[UICallback("menu/on_previous")]
         CallbackDelegate OnPrevious(IDictionary<string, object> data, CallbackDelegate result)
         {
             if (IsOpen)
@@ -192,9 +207,25 @@ namespace Average.Client.Menu
 
         #endregion
 
+        public void OnMenuChanged(MenuContainer oldMenu, MenuContainer currentMenu)
+        {
+            if (MenuChanged != null)
+            {
+                MenuChanged(null, new MenuChangeEventArgs(oldMenu, currentMenu));
+            }
+        }
+
+        public void OnMenuClosed(MenuContainer currentMenu)
+        {
+            if (MenuClosed != null)
+            {
+                MenuClosed(null, new MenuCloseEventArgs(currentMenu));
+            }
+        }
+
         #region Nui Methods
 
-        public async Task UpdateRender(MenuContainer menuContainer)
+        public void UpdateRender(MenuContainer menuContainer)
         {
             var items = new List<object>();
 
@@ -315,7 +346,7 @@ namespace Average.Client.Menu
                     case MenuBarItem menuItem:
                         items.Add(new
                         {
-                            type = "menu_stats_item",
+                            type = "menu_bar_item",
                             name = menuItem.Name,
                             text = menuItem.Text,
                             step = menuItem.Step,
@@ -326,42 +357,21 @@ namespace Average.Client.Menu
                 }
             }
 
-            await SendNUI(new
+            SendNUI(new
             {
-                request = "menu.updateRender",
+                request = "menu.update_render",
                 items
             });
         }
 
-        public async Task OpenMenu(string name)
-        {
-            if (Exist(name))
-            {
-                IsOpen = true;
-
-                if (OldMenu != CurrentMenu)
-                {
-                    OldMenu = CurrentMenu;
-                }
-
-                CurrentMenu = GetContainer(name);
-                MainMenu = CurrentMenu;
-
-                await UpdateRender(CurrentMenu);
-
-                await SendNUI(new
-                {
-                    request = "menu.open",
-                    name = CurrentMenu.Name,
-                    title = CurrentMenu.Title
-                });
-
-                OnMenuChangeReached(OldMenu, CurrentMenu);
-            }
-        }
-
         public async Task OpenMenu(MenuContainer menu)
         {
+            Debug.WriteLine("Try to open menu: " + menu.Title + ", " + Exist(menu));
+
+            while (!isReady) await BaseScript.Delay(250);
+
+            Debug.WriteLine("Open menu: " + menu.Title + ", " + Exist(menu));
+
             if (Exist(menu))
             {
                 IsOpen = true;
@@ -374,31 +384,39 @@ namespace Average.Client.Menu
                 CurrentMenu = menu;
                 MainMenu = CurrentMenu;
 
-                await UpdateRender(CurrentMenu);
+                Debug.WriteLine("Open menu update render: " + menu.Title);
 
-                await SendNUI(new
+                UpdateRender(CurrentMenu);
+
+                Debug.WriteLine("Update render");
+
+                SendNUI(new
                 {
-                    request = "menu.open",
+                    eventName = "avg.internal",
+                    on = "menu.open",
+                    plugin = "menu",
                     name = CurrentMenu.Name,
                     title = CurrentMenu.Title
                 });
 
-                OnMenuChangeReached(OldMenu, CurrentMenu);
+                Debug.WriteLine("Open menu 1");
+
+                OnMenuChanged(OldMenu, CurrentMenu);
             }
         }
 
-        public async Task CloseMenu()
+        public void CloseMenu()
         {
             if (IsOpen)
             {
                 IsOpen = false;
 
-                await SendNUI(new
+                SendNUI(new
                 {
                     request = "menu.close"
                 });
 
-                OnMenuCloseReached(CurrentMenu);
+                OnMenuClosed(CurrentMenu);
             }
         }
 
@@ -408,11 +426,7 @@ namespace Average.Client.Menu
 
         public void ClearHistory() => history.Clear();
 
-        public bool Exist(MenuContainer menuContainer) => menus.Contains(menuContainer);
-
-        public bool Exist(string menuName) => menus.Exists(x => x.Name == menuName);
-
-        public MenuContainer GetContainer(string menuName) => menus.Find(x => x.Name == menuName);
+        public bool Exist(MenuContainer menuContainer) => menus.Exists(x => x == menuContainer);
 
         public void CreateSubMenu(MenuContainer menuContainer)
         {
@@ -422,11 +436,6 @@ namespace Average.Client.Menu
         public void RemoveSubMenu(MenuContainer menuContainer)
         {
             if (Exist(menuContainer)) menus.Remove(menuContainer);
-        }
-
-        public void RemoveSubMenu(string menuName)
-        {
-            if (Exist(menuName)) menus.Remove(menus.Find(x => x.Name == menuName));
         }
 
         #endregion

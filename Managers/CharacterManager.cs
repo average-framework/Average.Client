@@ -20,10 +20,10 @@ namespace Average.Client.Managers
         int textureId = -1;
         const int RefreshPedScaleInternal = 5000;
 
-        public List<CharacterCloth> Clothes { get; }
-        public List<PedCulture> PedCultures { get; }
-        public List<int> BodyTypes { get; }
-        public List<int> WaistTypes { get; }
+        public List<CharacterCloth> Clothes { get; private set; }
+        public List<PedCulture> PedCultures { get; private set; }
+        public List<int> BodyTypes { get; private set; }
+        public List<int> WaistTypes { get; private set; }
 
         public CharacterData Current { get; private set; }
 
@@ -31,15 +31,16 @@ namespace Average.Client.Managers
         {
             this.framework = framework;
 
-            Clothes = Configuration.Parse<List<CharacterCloth>>("utils/clothes.json");
-            BodyTypes = Configuration.Parse<List<int>>("utils/body_types.json");
-            WaistTypes = Configuration.Parse<List<int>>("utils/waist_types.json");
-            PedCultures = CharacterUtils.PedCultures;
-
             Task.Factory.StartNew(async () =>
             {
                 await framework.IsReadyAsync();
                 await framework.Permission.IsReady();
+
+                Clothes = Configuration.Parse<List<CharacterCloth>>("utils/clothes.json");
+                BodyTypes = Configuration.Parse<List<int>>("utils/body_types.json");
+                WaistTypes = Configuration.Parse<List<int>>("utils/waist_types.json");
+                PedCultures = CharacterUtils.PedCultures;
+
                 framework.Thread.StartThread(PedScaleUpdate);
             });
         }
@@ -60,22 +61,23 @@ namespace Average.Client.Managers
 
         public async Task IsReady()
         {
-            while (Current == null) await BaseScript.Delay(0);
+            while (Current == null) await BaseScript.Delay(250);
         }
 
-        public async Task<bool?> Exist()
+        public async Task<bool> Exist()
         {
-            bool? result = null;
+            var receive = false;
+            var result = false;
 
-            framework.Logger.Warn("exists: ");
-
+            framework.Logger.Debug("Try to get character exist");
             framework.Rpc.Event("Character.Exist").On<bool>((exist) =>
             {
-                framework.Logger.Warn("exists: " + exist);
+                framework.Logger.Debug("Character exist: " + exist);
                 result = exist;
+                receive = true;
             }).Emit();
 
-            while (result == null) await BaseScript.Delay(0);
+            while (receive == true) await BaseScript.Delay(0);
             return result;
         }
 
@@ -83,8 +85,10 @@ namespace Average.Client.Managers
         {
             Current = null;
 
+            framework.Logger.Debug("Try to get character");
             framework.Rpc.Event("Character.Load").On<CharacterData>(data =>
             {
+                framework.Logger.Debug("Get character: " + (data == null ? "No character" : data.RockstarId));
                 Current = data;
             }).Emit();
 
@@ -99,6 +103,7 @@ namespace Average.Client.Managers
 
             Current = null;
 
+            framework.Logger.Debug("Try to load character");
             framework.Rpc.Event("Character.Load").On<CharacterData>(data =>
             {
                 Current = data;

@@ -88,8 +88,7 @@
     <Compile Include="Managers\NpcManager.cs" />
     <Compile Include="Managers\PermissionManager.cs" />
     <Compile Include="Managers\UserManager.cs" />
-    <Compile Include="Menu\Menu.cs" />
-    <Compile Include="Menu\MenuContainer.cs" />
+    <Compile Include="Menu\MenuManager.cs" />
     <Compile Include="Models\CustomImapModel.cs" />
     <Compile Include="Models\CustomInteriorModel.cs" />
     <Compile Include="Models\ImapModel.cs" />

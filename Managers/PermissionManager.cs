@@ -20,7 +20,13 @@ namespace Average.Client.Managers
             Task.Factory.StartNew(async () =>
             {
                 await framework.IsReadyAsync();
-                framework.Rpc.Event("Permission.GetAll").On<List<PermissionData>>(permissions => Permissions = permissions).Emit();
+
+                framework.Logger.Debug("Try to get permissions");
+                framework.Rpc.Event("Permission.GetAll").On<List<PermissionData>>(permissions => 
+                {
+                    framework.Logger.Debug("Get permissions");
+                    Permissions = permissions;
+                }).Emit();
             });
         }
 

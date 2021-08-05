@@ -1,4 +1,5 @@
 ﻿using Average.Client.Managers;
+using Average.Client.Menu;
 using CitizenFX.Core;
 using SDK.Client;
 using SDK.Client.Diagnostics;
@@ -18,6 +19,7 @@ namespace Average.Client
         internal static EventManager eventManager;
         internal static ExportManager exportManager;
         internal static SyncManager syncManager;
+        internal static MenuManager menu;
         internal static BlipManager blipManager;
         internal static NpcManager npcManager;
         internal static UserManager userManager;
@@ -32,30 +34,33 @@ namespace Average.Client
 
         public Main()
         {
-            Task.Factory.StartNew(async () => 
+            Task.Factory.StartNew(async () =>
             {
                 await Delay(0);
 
                 rpc = new RpcRequest(new RpcHandler(EventHandlers), new RpcTrigger(), new RpcSerializer());
                 logger = new Logger();
 
+                Configuration.Init(logger);
+
                 framework = new Framework();
                 commandManager = new CommandManager(logger);
                 threadManager = new ThreadManager(c => Tick += c, c => Tick -= c);
                 eventManager = new EventManager(EventHandlers, logger);
                 exportManager = new ExportManager(logger);
+                syncManager = new SyncManager(EventHandlers, logger, framework);
+                menu = new MenuManager(eventManager);
                 blipManager = new BlipManager(EventHandlers);
                 npcManager = new NpcManager(EventHandlers);
                 userManager = new UserManager(framework);
                 permissionManager = new PermissionManager(framework);
                 mapManager = new MapManager(framework);
                 characterManager = new CharacterManager(framework);
-                syncManager = new SyncManager(EventHandlers, logger, framework);
                 cfx = new CfxManager(EventHandlers, eventManager);
                 internalManager = new InternalManager(logger);
 
-                framework.SetDependencies(threadManager, eventManager, exportManager, syncManager, logger, commandManager, internalManager, blipManager, npcManager, userManager, permissionManager, mapManager, characterManager, rpc);
-                
+                framework.SetDependencies(menu, threadManager, eventManager, exportManager, syncManager, logger, commandManager, internalManager, blipManager, npcManager, userManager, permissionManager, mapManager, characterManager, rpc);
+
                 loader = new PluginLoader(framework);
                 await loader.Load();
                 await loader.IsPluginsFullyLoaded();

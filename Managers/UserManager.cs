@@ -16,10 +16,10 @@ namespace Average.Client.Managers
             {
                 await framework.IsReadyAsync();
 
-                framework.Logger.Trace("Get user 0");
+                framework.Logger.Debug("Try to get user");
                 framework.Rpc.Event("User.GetUser").On<UserData>((user) =>
                 {
-                    framework.Logger.Trace("Get user 1: " + user.Name);
+                    framework.Logger.Debug("Get user: " + user.Name);
                     CurrentUser = user;
                 }).Emit();
             });

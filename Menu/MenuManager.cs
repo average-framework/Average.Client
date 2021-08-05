@@ -1,5 +1,6 @@
 ﻿using Average.Client.Managers;
 using CitizenFX.Core;
+using SDK.Client;
 using SDK.Client.Events;
 using SDK.Client.Interfaces;
 using SDK.Client.Menu;
@@ -32,12 +33,18 @@ namespace Average.Client.Menu
             eventManager.RegisterInternalNUICallbackEvent("menu/on_click", OnClick);
             eventManager.RegisterInternalNUICallbackEvent("menu/on_previous", OnPrevious);
 
-            // Load menu in html page
-            SendNUI(new
+            Task.Factory.StartNew(async () => 
             {
-                eventName = "avg.internal.load",
-                plugin = "menu",
-                fileName = "index.html"
+                // Need to be placed in task factory for create menu correctly.
+                await BaseScript.Delay(0);
+
+                // Load menu in html page
+                SendNUI(new
+                {
+                    eventName = "avg.internal.load",
+                    plugin = "menu",
+                    fileName = "index.html"
+                });
             });
         }
 
@@ -45,162 +52,163 @@ namespace Average.Client.Menu
 
         CallbackDelegate Ready(IDictionary<string, object> data, CallbackDelegate result)
         {
-            Debug.WriteLine("Menu is fucking ready !!!");
-
             isReady = true;
-
             return result;
         }
 
-        //[UICallback("menu/on_click")]
         CallbackDelegate OnClick(IDictionary<string, object> data, CallbackDelegate result)
         {
-            var name = data["name"].ToString();
-            var item = CurrentMenu.GetItem(name);
-
-            switch (item)
+            Task.Factory.StartNew(async () => 
             {
-                case MenuItem menuItem:
-                    if (menuItem.TargetContainer != null)
-                    {
-                        history.Add(CurrentMenu);
-                        OpenMenu(menuItem.TargetContainer);
-                    }
+                var name = data["name"].ToString();
+                var item = CurrentMenu.GetItem(name);
 
-                    if (menuItem.Action != null) menuItem.Action.Invoke(menuItem);
-                    break;
-                case MenuBarItem menuItem:
-                    break;
-                case MenuCheckboxItem menuItem:
-                    menuItem.Checked = !menuItem.Checked;
-
-                    if (menuItem.Action != null)
-                    {
-                        menuItem.Action.Invoke(menuItem);
-                        result(menuItem.Checked);
-                    }
-                    break;
-                case MenuItemSlider<int> menuItem:
-                    menuItem.Value = int.Parse(data["value"].ToString());
-
-                    if (menuItem.Action != null) menuItem.Action.Invoke(menuItem.Value);
-                    break;
-                case MenuItemSlider<float> menuItem:
-                    menuItem.Value = float.Parse(data["value"].ToString());
-
-                    if (menuItem.Action != null) menuItem.Action.Invoke(menuItem.Value);
-                    break;
-                case MenuItemList menuItem:
-                    if (menuItem.Action != null)
-                    {
-                        if (data["operator"].ToString() == "-")
+                switch (item)
+                {
+                    case MenuItem menuItem:
+                        if (menuItem.TargetContainer != null)
                         {
-                            if (menuItem.Index != 0)
-                                menuItem.Index--;
-                        }
-                        else if (data["operator"].ToString() == "+")
-                        {
-                            if (menuItem.Index != menuItem.Values.Count - 1)
-                                menuItem.Index++;
+                            history.Add(CurrentMenu);
+                            await OpenMenu(menuItem.TargetContainer);
                         }
 
-                        menuItem.Action.Invoke(menuItem.Index, menuItem.Values[menuItem.Index]);
-                        result(menuItem.Values[menuItem.Index].Value);
-                    }
-                    break;
-                case MenuTextboxItem menuItem:
-                    menuItem.Value = data["value"];
+                        if (menuItem.Action != null) menuItem.Action.Invoke(menuItem);
+                        break;
+                    case MenuBarItem menuItem:
+                        break;
+                    case MenuCheckboxItem menuItem:
+                        menuItem.Checked = !menuItem.Checked;
 
-                    if (menuItem.Action != null) menuItem.Action.Invoke(menuItem.Value);
-                    break;
-                case MenuTextAreaItem menuItem:
-                    menuItem.Value = data["value"];
-
-                    if (menuItem.Action != null) menuItem.Action.Invoke(menuItem.Value);
-                    break;
-                case MenuSliderSelectorItem<int> menuItem:
-                    if (data.ContainsKey("value")) menuItem.Value = int.Parse(data["value"].ToString());
-
-                    if (data.ContainsKey("operator"))
-                    {
-                        var op = data["operator"].ToString();
-
-                        if (op == "-")
+                        if (menuItem.Action != null)
                         {
-                            if (menuItem.Value <= menuItem.MinValue)
-                                menuItem.Value = menuItem.MinValue;
-                            else
-                                menuItem.Value -= menuItem.Step;
+                            menuItem.Action.Invoke(menuItem);
+                            result(menuItem.Checked);
                         }
-                        else if (op == "+")
+                        break;
+                    case MenuItemSlider<int> menuItem:
+                        menuItem.Value = int.Parse(data["value"].ToString());
+
+                        if (menuItem.Action != null) menuItem.Action.Invoke(menuItem.Value);
+                        break;
+                    case MenuItemSlider<float> menuItem:
+                        menuItem.Value = float.Parse(data["value"].ToString());
+
+                        if (menuItem.Action != null) menuItem.Action.Invoke(menuItem.Value);
+                        break;
+                    case MenuItemList menuItem:
+                        if (menuItem.Action != null)
                         {
-                            if (menuItem.Value >= menuItem.MaxValue)
-                                menuItem.Value = menuItem.MaxValue;
-                            else
-                                menuItem.Value += menuItem.Step;
+                            if (data["operator"].ToString() == "-")
+                            {
+                                if (menuItem.Index != 0)
+                                    menuItem.Index--;
+                            }
+                            else if (data["operator"].ToString() == "+")
+                            {
+                                if (menuItem.Index != menuItem.Values.Count - 1)
+                                    menuItem.Index++;
+                            }
+
+                            menuItem.Action.Invoke(menuItem.Index, menuItem.Values[menuItem.Index]);
+                            result(menuItem.Values[menuItem.Index].Value);
                         }
+                        break;
+                    case MenuTextboxItem menuItem:
+                        menuItem.Value = data["value"];
 
-                        result(menuItem.Value);
-                    }
+                        if (menuItem.Action != null) menuItem.Action.Invoke(menuItem.Value);
+                        break;
+                    case MenuTextAreaItem menuItem:
+                        menuItem.Value = data["value"];
 
-                    if (menuItem.Action != null) menuItem.Action.Invoke(menuItem);
-                    break;
-                case MenuSliderSelectorItem<float> menuItem:
-                    if (data.ContainsKey("value")) menuItem.Value = float.Parse(data["value"].ToString());
+                        if (menuItem.Action != null) menuItem.Action.Invoke(menuItem.Value);
+                        break;
+                    case MenuSliderSelectorItem<int> menuItem:
+                        if (data.ContainsKey("value")) menuItem.Value = int.Parse(data["value"].ToString());
 
-                    if (data.ContainsKey("operator"))
-                    {
-                        var op = data["operator"].ToString();
-
-                        if (op == "-")
+                        if (data.ContainsKey("operator"))
                         {
-                            if (menuItem.Value <= menuItem.MinValue)
-                                menuItem.Value = menuItem.MinValue;
-                            else
-                                menuItem.Value -= menuItem.Step;
+                            var op = data["operator"].ToString();
+
+                            if (op == "-")
+                            {
+                                if (menuItem.Value <= menuItem.MinValue)
+                                    menuItem.Value = menuItem.MinValue;
+                                else
+                                    menuItem.Value -= menuItem.Step;
+                            }
+                            else if (op == "+")
+                            {
+                                if (menuItem.Value >= menuItem.MaxValue)
+                                    menuItem.Value = menuItem.MaxValue;
+                                else
+                                    menuItem.Value += menuItem.Step;
+                            }
+
+                            result(menuItem.Value);
                         }
-                        else if (op == "+")
+
+                        if (menuItem.Action != null) menuItem.Action.Invoke(menuItem);
+                        break;
+                    case MenuSliderSelectorItem<float> menuItem:
+                        if (data.ContainsKey("value")) menuItem.Value = float.Parse(data["value"].ToString());
+
+                        if (data.ContainsKey("operator"))
                         {
-                            if (menuItem.Value >= menuItem.MaxValue)
-                                menuItem.Value = menuItem.MaxValue;
-                            else
-                                menuItem.Value += menuItem.Step;
+                            var op = data["operator"].ToString();
+
+                            if (op == "-")
+                            {
+                                if (menuItem.Value <= menuItem.MinValue)
+                                    menuItem.Value = menuItem.MinValue;
+                                else
+                                    menuItem.Value -= menuItem.Step;
+                            }
+                            else if (op == "+")
+                            {
+                                if (menuItem.Value >= menuItem.MaxValue)
+                                    menuItem.Value = menuItem.MaxValue;
+                                else
+                                    menuItem.Value += menuItem.Step;
+                            }
+
+                            result(menuItem.Value);
                         }
 
-                        result(menuItem.Value);
-                    }
-
-                    if (menuItem.Action != null) menuItem.Action.Invoke(menuItem);
-                    break;
-            }
+                        if (menuItem.Action != null) menuItem.Action.Invoke(menuItem);
+                        break;
+                }
+            });
 
             return result;
         }
 
-        //[UICallback("menu/on_previous")]
         CallbackDelegate OnPrevious(IDictionary<string, object> data, CallbackDelegate result)
         {
-            if (IsOpen)
+            Task.Factory.StartNew(async () => 
             {
-                if (history.Count > 0)
+                if (IsOpen)
                 {
-                    var containerIndex = history.Count - 1;
-                    var parent = history[containerIndex];
-
-                    OpenMenu(parent);
-
-                    history.RemoveAt(containerIndex);
-                }
-                else
-                {
-                    if (CanCloseMenu)
+                    if (history.Count > 0)
                     {
-                        CloseMenu();
-                        ClearHistory();
-                        Unfocus();
+                        var containerIndex = history.Count - 1;
+                        var parent = history[containerIndex];
+
+                        await OpenMenu(parent);
+
+                        history.RemoveAt(containerIndex);
+                    }
+                    else
+                    {
+                        if (CanCloseMenu)
+                        {
+                            CloseMenu();
+                            ClearHistory();
+                            Unfocus();
+                        }
                     }
                 }
-            }
+            });
 
             return result;
         }
@@ -359,18 +367,16 @@ namespace Average.Client.Menu
 
             SendNUI(new
             {
-                request = "menu.update_render",
+                eventName = "avg.internal",
+                on = "menu.update_render",
+                plugin = "menu",
                 items
             });
         }
 
         public async Task OpenMenu(MenuContainer menu)
         {
-            Debug.WriteLine("Try to open menu: " + menu.Title + ", " + Exist(menu));
-
             while (!isReady) await BaseScript.Delay(250);
-
-            Debug.WriteLine("Open menu: " + menu.Title + ", " + Exist(menu));
 
             if (Exist(menu))
             {
@@ -384,11 +390,7 @@ namespace Average.Client.Menu
                 CurrentMenu = menu;
                 MainMenu = CurrentMenu;
 
-                Debug.WriteLine("Open menu update render: " + menu.Title);
-
                 UpdateRender(CurrentMenu);
-
-                Debug.WriteLine("Update render");
 
                 SendNUI(new
                 {
@@ -398,8 +400,6 @@ namespace Average.Client.Menu
                     name = CurrentMenu.Name,
                     title = CurrentMenu.Title
                 });
-
-                Debug.WriteLine("Open menu 1");
 
                 OnMenuChanged(OldMenu, CurrentMenu);
             }

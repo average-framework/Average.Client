@@ -45,7 +45,7 @@ namespace Average.Client.Managers
 
             Task.Factory.StartNew(async () =>
             {
-                await framework.IsReadyAsync();
+                //await framework.IsReadyAsync();
                 framework.Thread.StartThread(Update);
             });
         }

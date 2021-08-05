@@ -2,7 +2,6 @@
 using CitizenFX.Core;
 using SDK.Client;
 using SDK.Client.Plugins;
-using SDK.Client.Rpc;
 using SDK.Shared;
 using SDK.Shared.Extensions;
 using SDK.Shared.Plugins;
@@ -46,7 +45,7 @@ namespace Average.Client
             return pluginsInfo;
         }
 
-        public async Task Load()
+        public async void Load()
         {
             isReady = false;
 

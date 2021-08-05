@@ -19,8 +19,6 @@ namespace Average.Client.Managers
 
             Task.Factory.StartNew(async () =>
             {
-                await framework.IsReadyAsync();
-
                 framework.Logger.Debug("Try to get permissions");
                 framework.Rpc.Event("Permission.GetAll").On<List<PermissionData>>(permissions => 
                 {

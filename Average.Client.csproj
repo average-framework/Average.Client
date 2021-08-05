@@ -83,7 +83,6 @@
     <Compile Include="Managers\EventManager.cs" />
     <Compile Include="Managers\ExportManager.cs" />
     <Compile Include="Main.cs" />
-    <Compile Include="InternalManager.cs" />
     <Compile Include="Managers\MapManager.cs" />
     <Compile Include="Managers\NpcManager.cs" />
     <Compile Include="Managers\PermissionManager.cs" />

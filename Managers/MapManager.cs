@@ -14,8 +14,6 @@ namespace Average.Client.Managers
     {
         Framework framework;
 
-        bool isReady;
-
         float lodDistance = 600f;
 
         public List<ImapModel> ScannedImaps { get; } = new List<ImapModel>();
@@ -29,24 +27,11 @@ namespace Average.Client.Managers
         {
             this.framework = framework;
 
-            Task.Factory.StartNew(async () =>
-            {
-                Imaps = Configuration.Parse<List<ImapModel>>("utils/imaps.json");
-                Interiors = Configuration.Parse<List<InteriorModel>>("utils/interiors.json");
-                CustomImaps = Configuration.Parse<List<CustomImapModel>>("configs/custom_imaps.json");
-                CustomInteriors = Configuration.Parse<List<CustomInteriorModel>>("configs/custom_interiors.json");
-                InteriorsSet = Configuration.Parse<List<InteriorSetModel>>("utils/interiors_set.json");
-
-                await framework.IsReadyAsync();
-                await framework.Permission.IsReady();
-
-                isReady = true;
-            });
-        }
-        
-        public async Task IsReady()
-        {
-            while (!isReady) await BaseScript.Delay(250);
+            Imaps = Configuration.Parse<List<ImapModel>>("utils/imaps.json");
+            Interiors = Configuration.Parse<List<InteriorModel>>("utils/interiors.json");
+            CustomImaps = Configuration.Parse<List<CustomImapModel>>("configs/custom_imaps.json");
+            CustomInteriors = Configuration.Parse<List<CustomInteriorModel>>("configs/custom_interiors.json");
+            InteriorsSet = Configuration.Parse<List<InteriorSetModel>>("utils/interiors_set.json");
         }
 
         protected async Task LowSpecModeUpdate()

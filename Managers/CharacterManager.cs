@@ -31,16 +31,13 @@ namespace Average.Client.Managers
         {
             this.framework = framework;
 
+            Clothes = Configuration.Parse<List<CharacterCloth>>("utils/clothes.json");
+            BodyTypes = Configuration.Parse<List<int>>("utils/body_types.json");
+            WaistTypes = Configuration.Parse<List<int>>("utils/waist_types.json");
+            PedCultures = CharacterUtils.PedCultures;
+
             Task.Factory.StartNew(async () =>
             {
-                await framework.IsReadyAsync();
-                await framework.Permission.IsReady();
-
-                Clothes = Configuration.Parse<List<CharacterCloth>>("utils/clothes.json");
-                BodyTypes = Configuration.Parse<List<int>>("utils/body_types.json");
-                WaistTypes = Configuration.Parse<List<int>>("utils/waist_types.json");
-                PedCultures = CharacterUtils.PedCultures;
-
                 framework.Thread.StartThread(PedScaleUpdate);
             });
         }

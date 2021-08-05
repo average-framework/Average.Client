@@ -14,8 +14,6 @@ namespace Average.Client.Managers
         {
             Task.Factory.StartNew(async () => 
             {
-                await framework.IsReadyAsync();
-
                 framework.Logger.Debug("Try to get user");
                 framework.Rpc.Event("User.GetUser").On<UserData>((user) =>
                 {

@@ -56,13 +56,9 @@ namespace Average.Client.Managers
         public void RegisterInternalEvent(string eventName, Delegate action)
         {
             if (!events.ContainsKey(eventName))
-            {
                 events.Add(eventName, new List<Delegate>() { action });
-            }
             else
-            {
                 events[eventName].Add(action);
-            }
 
             logger.Debug($"Register event: {eventName}");
         }

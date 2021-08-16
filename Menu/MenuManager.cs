@@ -391,7 +391,6 @@ namespace Average.Client.Menu
                         });
                         break;
                     case MenuItemList menuItem:
-                        Debug.WriteLine("item list: " + menuItem.Values.ToList().ElementAt(menuItem.Index).Key + ", " + menuItem.Index);
                         items.Add(new
                         {
                             type = "menu_list",
@@ -562,12 +561,14 @@ namespace Average.Client.Menu
 
         public void AddMenuToHistory(MenuContainer menuContainer)
         {
-            if (!Exist(menuContainer)) containerHistories.Add(menuContainer);
+            if (!Exist(menuContainer))
+                containerHistories.Add(menuContainer);
         }
 
         public void RemoveMenuInHistory(MenuContainer menuContainer)
         {
-            if (Exist(menuContainer)) containerHistories.Remove(menuContainer);
+            if (Exist(menuContainer))
+                containerHistories.Remove(menuContainer);
         }
 
         public void SetTabMenu(MenuTabContainer menuTabContainer)

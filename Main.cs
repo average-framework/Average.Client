@@ -34,30 +34,32 @@ namespace Average.Client
 
         public Main()
         {
-            rpc = new RpcRequest(new RpcHandler(EventHandlers), new RpcTrigger(), new RpcSerializer());
             logger = new Logger();
+            rpc = new RpcRequest(new RpcHandler(EventHandlers), new RpcTrigger(), new RpcSerializer());
 
             Configuration.Init(logger);
 
-            framework = new Framework();
+            // Internal Script
             commandManager = new CommandManager(logger);
             threadManager = new ThreadManager(c => Tick += c, c => Tick -= c);
             eventManager = new EventManager(EventHandlers, logger);
             exportManager = new ExportManager(logger);
-            syncManager = new SyncManager(EventHandlers, logger, framework);
+            syncManager = new SyncManager(logger, EventHandlers, threadManager);
             languageManager = new LanguageManager();
             menu = new MenuManager(eventManager);
             blipManager = new BlipManager(EventHandlers);
             npcManager = new NpcManager(EventHandlers);
-            userManager = new UserManager(framework);
-            permissionManager = new PermissionManager(framework);
-            mapManager = new MapManager(framework);
-            characterManager = new CharacterManager(framework);
+            userManager = new UserManager(logger, rpc);
+            permissionManager = new PermissionManager(logger, rpc, userManager);
+            mapManager = new MapManager(logger, permissionManager, threadManager);
+            characterManager = new CharacterManager(logger, threadManager, eventManager, rpc);
             cfx = new CfxManager(EventHandlers, eventManager);
 
-            framework.SetDependencies(languageManager, menu, threadManager, eventManager, exportManager, syncManager, logger, commandManager, blipManager, npcManager, userManager, permissionManager, mapManager, characterManager, rpc);
+            // Framework Script
+            framework = new Framework(languageManager, menu, threadManager, eventManager, exportManager, syncManager, logger, commandManager, blipManager, npcManager, userManager, permissionManager, mapManager, characterManager, rpc);
 
-            loader = new PluginLoader(framework);
+            // Plugin Loader
+            loader = new PluginLoader(rpc, commandManager);
             loader.Load();
         }
 

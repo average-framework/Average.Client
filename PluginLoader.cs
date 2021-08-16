@@ -2,6 +2,7 @@
 using CitizenFX.Core;
 using SDK.Client;
 using SDK.Client.Plugins;
+using SDK.Client.Rpc;
 using SDK.Shared;
 using SDK.Shared.Extensions;
 using SDK.Shared.Plugins;
@@ -17,16 +18,18 @@ namespace Average.Client
 {
     internal class PluginLoader
     {
-        Framework framework;
-
-        public List<IPlugin> Plugins { get; } = new List<IPlugin>();
-        List<PluginInfo> pluginsInfo;
+        RpcRequest rpc;
+        CommandManager command;
 
         bool isReady;
+        List<PluginInfo> pluginsInfo;
 
-        public PluginLoader(Framework framework)
+        public List<IPlugin> Plugins { get; } = new List<IPlugin>();
+
+        public PluginLoader(RpcRequest rpc, CommandManager command)
         {
-            this.framework = framework;
+            this.rpc = rpc;
+            this.command = command;
         }
 
         public async Task IsPluginsFullyLoaded()
@@ -36,7 +39,7 @@ namespace Average.Client
 
         async Task<List<PluginInfo>> GetPlugins()
         {
-            framework.Rpc.Event("avg.internal.get_plugins").On(message =>
+            rpc.Event("avg.internal.get_plugins").On(message =>
             {
                 pluginsInfo = message.Args[0].Convert<List<PluginInfo>>();
             }).Emit();
@@ -163,7 +166,7 @@ namespace Average.Client
                 var cmdAttr = method.GetCustomAttribute<ClientCommandAttribute>();
                 var aliasAttr = method.GetCustomAttribute<ClientCommandAliasAttribute>();
 
-                var commandManager = (CommandManager)framework.Command;
+                var commandManager = (CommandManager)command;
                 commandManager.RegisterCommand(cmdAttr, aliasAttr, method, classObj);
             }
         }

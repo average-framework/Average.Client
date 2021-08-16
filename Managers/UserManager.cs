@@ -1,6 +1,8 @@
 ﻿using CitizenFX.Core;
 using SDK.Client;
+using SDK.Client.Diagnostics;
 using SDK.Client.Interfaces;
+using SDK.Client.Rpc;
 using SDK.Shared.DataModels;
 using System.Threading.Tasks;
 
@@ -10,17 +12,15 @@ namespace Average.Client.Managers
     {
         public UserData CurrentUser { get; private set; }
 
-        public UserManager(Framework framework)
+        public UserManager(Logger logger, RpcRequest rpc)
         {
-            Task.Factory.StartNew(async () => 
+            logger.Warn("Getting user..");
+
+            rpc.Event("User.GetUser").On<UserData>((user) =>
             {
-                framework.Logger.Debug("Try to get user");
-                framework.Rpc.Event("User.GetUser").On<UserData>((user) =>
-                {
-                    framework.Logger.Debug("Get user: " + user.Name);
-                    CurrentUser = user;
-                }).Emit();
-            });
+                logger.Warn("Getted user: " + user.Name);
+                CurrentUser = user;
+            }).Emit();
         }
 
         public async Task IsReady()

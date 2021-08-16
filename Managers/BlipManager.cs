@@ -29,8 +29,11 @@ namespace Average.Client.Managers
         {
             if (Exist(handle))
             {
-                if (DoesBlipExist(handle)) RemoveBlip(ref handle);
-                if (Blips.Exists(x => x == handle)) Blips.Remove(handle);
+                if (DoesBlipExist(handle))
+                    RemoveBlip(ref handle);
+
+                if (Blips.Exists(x => x == handle))
+                    Blips.Remove(handle);
             }
         }
 
@@ -44,7 +47,9 @@ namespace Average.Client.Managers
         {
             if (resource == Constant.RESOURCE_NAME)
             {
-                for (int i = 0; i < Blips.Count; i++) Delete(Blips[i]);
+                for (int i = 0; i < Blips.Count; i++)
+                    Delete(Blips[i]);
+
                 GC.SuppressFinalize(this);
             }
         }

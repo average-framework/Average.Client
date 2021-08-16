@@ -27,7 +27,7 @@ namespace Average.Client.Managers
 
         public int SyncRate { get; set; } = 60;
 
-        public SyncManager(EventHandlerDictionary eventHandlers, Logger logger, Framework framework)
+        public SyncManager(Logger logger, EventHandlerDictionary eventHandlers, ThreadManager thread)
         {
             this.logger = logger;
 
@@ -43,11 +43,7 @@ namespace Average.Client.Managers
             eventHandlers["avg.internal.sync_property"] += new Action<string, object>(InternalNetworkSyncPropertyEvent);
             eventHandlers["avg.internal.sync_field"] += new Action<string, object>(InternalNetworkSyncFieldEvent);
 
-            Task.Factory.StartNew(async () =>
-            {
-                //await framework.IsReadyAsync();
-                framework.Thread.StartThread(Update);
-            });
+            thread.StartThread(Update);
         }
 
         protected async Task Update()
@@ -61,14 +57,7 @@ namespace Average.Client.Managers
         object GetPropertyValue(PropertyInfo property, object classObj)
         {
             if (property.GetIndexParameters().Length == 0)
-            {
-                // Can get value
                 return property.GetValue(classObj, null);
-            }
-            else
-            {
-                // Cannot get value
-            }
 
             return null;
         }

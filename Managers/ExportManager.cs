@@ -23,25 +23,17 @@ namespace Average.Client.Managers
         public void CallMethod(string exportName, params object[] args)
         {
             if (exports.ContainsKey(exportName))
-            {
                 exports[exportName].DynamicInvoke(args);
-            }
             else
-            {
                 logger.Debug($"Unable to call export: {exportName}, this export does not exists.");
-            }
         }
 
         public T CallMethod<T>(string exportName, params object[] args)
         {
             if (exports.ContainsKey(exportName))
-            {
                 return (T)exports[exportName].DynamicInvoke(args);
-            }
             else
-            {
                 logger.Debug($"Unable to call export: {exportName}, this export does not exists.");
-            }
 
             return (T)Activator.CreateInstance(typeof(T));
         }

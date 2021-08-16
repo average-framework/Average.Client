@@ -20,7 +20,9 @@ namespace Average.Client.Managers
 
         public async Task<int> Create(uint model, int variation, Vector3 position, float heading, bool isNetwork = false, bool netMissionEntity = false)
         {
-            if (!HasModelLoaded(model)) await LoadModel(model);
+            if (!HasModelLoaded(model))
+                await LoadModel(model);
+
             var handle = CreatePed(model, position.X, position.Y, position.Z, heading, isNetwork, netMissionEntity, false, false);
 
             SetEntityVisible(handle, true);
@@ -38,8 +40,11 @@ namespace Average.Client.Managers
         {
             if (Exist(handle))
             {
-                if (DoesEntityExist(handle)) DeleteEntity(ref handle);
-                if (Npcs.Exists(x => x == handle)) Npcs.Remove(Get(handle));
+                if (DoesEntityExist(handle))
+                    DeleteEntity(ref handle);
+
+                if (Npcs.Exists(x => x == handle))
+                    Npcs.Remove(Get(handle));
             }
         }
 
@@ -49,7 +54,9 @@ namespace Average.Client.Managers
         {
             if (resource == Constant.RESOURCE_NAME)
             {
-                for (int i = 0; i < Npcs.Count; i++) Delete(Npcs[i]);
+                for (int i = 0; i < Npcs.Count; i++)
+                    Delete(Npcs[i]);
+
                 GC.SuppressFinalize(this);
             }
         }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Average.Client.Managers
 {
-    internal class ThreadManager : IThreadManager
+    public class ThreadManager : IThreadManager
     {
         List<Thread> threads = new List<Thread>();
 

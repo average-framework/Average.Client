@@ -1,6 +1,8 @@
 ﻿using CitizenFX.Core;
 using SDK.Client;
+using SDK.Client.Diagnostics;
 using SDK.Client.Interfaces;
+using SDK.Client.Rpc;
 using SDK.Shared.DataModels;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -9,28 +11,26 @@ namespace Average.Client.Managers
 {
     public class PermissionManager : IPermissionManager
     {
-        Framework framework;
+        UserManager user;
 
         public List<PermissionData> Permissions { get; private set; }
 
-        public PermissionManager(Framework framework)
+        public PermissionManager(Logger logger, RpcRequest rpc, UserManager user)
         {
-            this.framework = framework;
+            this.user = user;
 
-            Task.Factory.StartNew(async () =>
+            logger.Debug("Getting permissions..");
+
+            rpc.Event("Permission.GetAll").On<List<PermissionData>>(permissions =>
             {
-                framework.Logger.Debug("Try to get permissions");
-                framework.Rpc.Event("Permission.GetAll").On<List<PermissionData>>(permissions => 
-                {
-                    framework.Logger.Debug("Get permissions");
-                    Permissions = permissions;
-                }).Emit();
-            });
+                logger.Debug("Getted permissions");
+                Permissions = permissions;
+            }).Emit();
         }
 
         public async Task IsReady()
         {
-            while (Permissions == null) await BaseScript.Delay(250);
+            while (Permissions == null)await BaseScript.Delay(250);
         }
 
         public bool Exist(string name) => Permissions.Exists(x => x.Name == name);
@@ -39,11 +39,11 @@ namespace Average.Client.Managers
 
         public async Task<bool> HasPermission(string name)
         {
-            await framework.User.IsReady();
+            await user.IsReady();
 
             if (Exist(name))
             {
-                var permissionLevel = Permissions.Find(x => x.Name == framework.User.CurrentUser.Permission.Name).Level;
+                var permissionLevel = Permissions.Find(x => x.Name == user.CurrentUser.Permission.Name).Level;
                 var needLevel = Permissions.Find(x => x.Name == name).Level;
                 return permissionLevel >= needLevel;
             }
@@ -53,8 +53,8 @@ namespace Average.Client.Managers
 
         public async Task<bool> HasPermission(string name, int level)
         {
-            await framework.User.IsReady();
-            return Exist(name) && framework.User.CurrentUser.Permission.Level >= level;
+            await user.IsReady();
+            return Exist(name) && user.CurrentUser.Permission.Level >= level;
         }
     }
 }

@@ -1,7 +1,9 @@
 ﻿using CitizenFX.Core;
 using Newtonsoft.Json;
 using SDK.Client;
+using SDK.Client.Diagnostics;
 using SDK.Client.Interfaces;
+using SDK.Client.Rpc;
 using SDK.Client.Utils;
 using SDK.Shared.DataModels;
 using SDK.Shared.Models;
@@ -15,7 +17,9 @@ namespace Average.Client.Managers
 {
     public class CharacterManager : ICharacterManager
     {
-        Framework framework;
+        Logger logger;
+        EventManager eventManager;
+        RpcRequest rpc;
 
         int textureId = -1;
         const int RefreshPedScaleInternal = 5000;
@@ -28,19 +32,18 @@ namespace Average.Client.Managers
 
         public CharacterData Current { get; private set; }
 
-        public CharacterManager(Framework framework)
+        public CharacterManager(Logger logger, ThreadManager thread, EventManager eventManager, RpcRequest rpc)
         {
-            this.framework = framework;
+            this.logger = logger;
+            this.eventManager = eventManager;
+            this.rpc = rpc;
 
             Clothes = Configuration.Parse<List<CharacterCloth>>("utils/clothes.json");
             BodyTypes = Configuration.Parse<List<int>>("utils/body_types.json");
             WaistTypes = Configuration.Parse<List<int>>("utils/waist_types.json");
             PedCultures = CharacterUtils.PedCultures;
 
-            Task.Factory.StartNew(async () =>
-            {
-                framework.Thread.StartThread(PedScaleUpdate);
-            });
+            thread.StartThread(PedScaleUpdate);
         }
 
         #region Threads
@@ -67,10 +70,8 @@ namespace Average.Client.Managers
             var receive = false;
             var result = false;
 
-            framework.Logger.Debug("Try to get character exist");
-            framework.Rpc.Event("Character.Exist").On<bool>((exist) =>
+            rpc.Event("Character.Exist").On<bool>((exist) =>
             {
-                framework.Logger.Debug("Character exist: " + exist);
                 result = exist;
                 receive = true;
             }).Emit();
@@ -83,10 +84,10 @@ namespace Average.Client.Managers
         {
             Current = null;
 
-            framework.Logger.Debug("Try to get character");
-            framework.Rpc.Event("Character.Load").On<CharacterData>(data =>
+            logger.Debug("Getting character..");
+            rpc.Event("Character.Load").On<CharacterData>(data =>
             {
-                framework.Logger.Debug("Get character: " + (data == null ? "No character" : data.RockstarId));
+                logger.Debug("Getted character: " + (data == null ? "No character" : data.RockstarId));
                 Current = data;
             }).Emit();
 
@@ -101,8 +102,8 @@ namespace Average.Client.Managers
 
             Current = null;
 
-            framework.Logger.Debug("Try to load character");
-            framework.Rpc.Event("Character.Load").On<CharacterData>(data =>
+            logger.Debug("Getting character..");
+            rpc.Event("Character.Load").On<CharacterData>(data =>
             {
                 Current = data;
                 Current.Core.Health = health;
@@ -163,10 +164,10 @@ namespace Average.Client.Managers
         {
             var ped = PlayerPedId();
             Current.Core.Health = GetEntityHealth(ped);
-            framework.Event.EmitServer("Character.Save", JsonConvert.SerializeObject(Current));
+            eventManager.EmitServer("Character.Save", JsonConvert.SerializeObject(Current));
         }
 
-        public void Create(CharacterData data) => framework.Event.EmitServer("Character.Save", JsonConvert.SerializeObject(data));
+        public void Create(CharacterData data) => eventManager.EmitServer("Character.Save", JsonConvert.SerializeObject(data));
 
         public void SetPedBody()
         {
@@ -194,9 +195,7 @@ namespace Average.Client.Managers
         async Task SetPedFaceFeatures()
         {
             foreach (var part in Current.FaceParts)
-            {
                 SetPedFaceFeature(part.Key, part.Value);
-            }
         }
 
         async Task SetPedClothes()

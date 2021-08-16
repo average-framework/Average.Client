@@ -136,15 +136,19 @@ namespace Average.Client.Menu
                     if (menuItem.Action != null)
                     {
                         if (data["operator"].ToString() == "-")
+                        {
                             if (menuItem.Value <= menuItem.MinValue)
                                 menuItem.Value = menuItem.MinValue;
                             else
                                 menuItem.Value -= menuItem.Step;
+                        }
                         else if (data["operator"].ToString() == "+")
+                        {
                             if (menuItem.Value >= menuItem.MaxValue)
                                 menuItem.Value = menuItem.MaxValue;
                             else
                                 menuItem.Value += menuItem.Step;
+                        }
 
                         menuItem.Action.Invoke(menuItem);
                         result(menuItem.Value + "/" + menuItem.MaxValue);
@@ -154,15 +158,19 @@ namespace Average.Client.Menu
                     if (menuItem.Action != null)
                     {
                         if (data["operator"].ToString() == "-")
+                        {
                             if (menuItem.Value <= menuItem.MinValue)
                                 menuItem.Value = menuItem.MinValue;
                             else
                                 menuItem.Value -= menuItem.Step;
+                        }
                         else if (data["operator"].ToString() == "+")
+                        {
                             if (menuItem.Value >= menuItem.MaxValue)
                                 menuItem.Value = menuItem.MaxValue;
                             else
                                 menuItem.Value += menuItem.Step;
+                        }
 
                         menuItem.Action.Invoke(menuItem);
                         result(menuItem.Value.ToString("0.00") + "/" + menuItem.MaxValue.ToString("0.00"));
@@ -172,11 +180,19 @@ namespace Average.Client.Menu
                     if (menuItem.Action != null)
                     {
                         if (data["operator"].ToString() == "-")
+                        {
                             if (menuItem.Index != 0)
                                 menuItem.Index--;
-                            else if (data["operator"].ToString() == "+")
+                            else
+                                menuItem.Index = menuItem.Values.Count - 1;
+                        }
+                        else if (data["operator"].ToString() == "+")
+                        {
                             if (menuItem.Index != menuItem.Values.Count - 1)
                                 menuItem.Index++;
+                            else
+                                menuItem.Index = 0;
+                        }
 
                         menuItem.Action.Invoke(menuItem.Index, menuItem.Values);
                         result(menuItem.Values.ToList().ElementAt(menuItem.Index).Key);

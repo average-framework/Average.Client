@@ -5,3 +5,8 @@ C:\Users\bubbl\Desktop\Average Framework Server\avg\average.server.net.dll
 C:\Users\bubbl\Desktop\Averagge Framework TestServer\resources\avg\average.client.net.dll
 C:\Users\bubbl\Desktop\Average Framework\Average.Client\obj\Debug\average.client.net.dll
 C:\Users\bubbl\Desktop\AverageFrameworkServer\resources\avg\average.client.net.dll
+C:\Users\bub.bl\Desktop\Average Framework\Average.Client\obj\Debug\Average.Client.csproj.AssemblyReference.cache
+C:\Users\bub.bl\Desktop\Average Framework\Average.Client\obj\Debug\Average.Client.csproj.CoreCompileInputs.cache
+C:\Users\bub.bl\Desktop\Average Framework\Average.Client\obj\Debug\average.client.net.dll
+C:\Users\bub.bl\Desktop\AverageFrameworkServer\resources\avg\average.client.net.dll
+C:\Users\bub.bl\Desktop\Average Framework\Average.Client\obj\Debug\Average.Client.csproj.CopyComplete

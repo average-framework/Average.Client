@@ -25,6 +25,7 @@ namespace Average.Client.Managers
         public List<int> BodyTypes { get; private set; }
         public List<int> WaistTypes { get; private set; }
 
+
         public CharacterData Current { get; private set; }
 
         public CharacterManager(Framework framework)

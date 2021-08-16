@@ -69,7 +69,9 @@ namespace Average.Client
                         foreach (var type in types)
                         {
                             var attr = type.GetCustomAttribute<MainScriptAttribute>();
-                            if (attr != null) mainScriptCount++;
+
+                            if (attr != null)
+                                mainScriptCount++;
                         }
 
                         if (mainScriptCount > 1)
@@ -78,11 +80,11 @@ namespace Average.Client
                             return;
                         }
 
-                        //if (mainScriptCount == 0)
-                        //{
-                        //    Main.logger.Error($"Unable to load this plugin: {asm.FullName}, he does not contains [MainScript] attribute. Fix this error to continue.");
-                        //    return;
-                        //}
+                        if (mainScriptCount == 0)
+                        {
+                            Main.logger.Error($"Unable to load this plugin: {asm.FullName}, he does not contains [MainScript] attribute. Fix this error to continue.");
+                            return;
+                        }
 
                         foreach (var type in types)
                         {
@@ -148,7 +150,7 @@ namespace Average.Client
             }
             catch (Exception ex)
             {
-                Main.logger.Error(ex.StackTrace);
+                Main.logger.Error("Unknow: " + ex.StackTrace);
                 isReady = false;
             }
         }

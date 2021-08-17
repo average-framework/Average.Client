@@ -1,5 +1,6 @@
 ﻿using Average.Client.Managers;
 using CitizenFX.Core;
+using Newtonsoft.Json;
 using SDK.Client;
 using SDK.Client.Plugins;
 using SDK.Client.Rpc;
@@ -21,7 +22,6 @@ namespace Average.Client
         RpcRequest rpc;
         CommandManager command;
 
-        bool isReady;
         List<PluginInfo> pluginsInfo;
 
         public List<IPlugin> Plugins { get; } = new List<IPlugin>();
@@ -30,11 +30,6 @@ namespace Average.Client
         {
             this.rpc = rpc;
             this.command = command;
-        }
-
-        public async Task IsPluginsFullyLoaded()
-        {
-            while (!isReady) await BaseScript.Delay(250);
         }
 
         async Task<List<PluginInfo>> GetPlugins()
@@ -50,8 +45,6 @@ namespace Average.Client
 
         public async void Load()
         {
-            isReady = false;
-
             Main.logger.Debug("Getting plugins..");
 
             var pluginsInfo = await GetPlugins();
@@ -148,13 +141,10 @@ namespace Average.Client
                         //Main.logger.Error($"Unable to find plugin: {asm.GetName().Name}.dll");
                     }
                 }
-
-                isReady = true;
             }
             catch (Exception ex)
             {
-                Main.logger.Error("Unknow: " + ex.StackTrace);
-                isReady = false;
+                Main.logger.Error("Unknow StackTrace: " + JsonConvert.SerializeObject(ex, Formatting.Indented));
             }
         }
 

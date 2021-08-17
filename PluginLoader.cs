@@ -160,14 +160,15 @@ namespace Average.Client
 
         void RegisterCommands(Type type, object classObj)
         {
+            var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy;
+
             // Registering commands (method need to be public to be detected)
-            foreach (var method in type.GetMethods())
+            foreach (var method in type.GetMethods(flags))
             {
                 var cmdAttr = method.GetCustomAttribute<ClientCommandAttribute>();
                 var aliasAttr = method.GetCustomAttribute<ClientCommandAliasAttribute>();
 
-                var commandManager = (CommandManager)command;
-                commandManager.RegisterCommand(cmdAttr, aliasAttr, method, classObj);
+                command.RegisterCommand(cmdAttr, aliasAttr, method, classObj);
             }
         }
 
@@ -277,10 +278,12 @@ namespace Average.Client
 
         void RegisterNetworkGetSyncs(Type type, object classObj)
         {
+            var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy;
+
             // Registering networkGetSyncs (property need to be public to be detected)
-            for (int i = 0; i < type.GetProperties().Count(); i++)
+            for (int i = 0; i < type.GetProperties(flags).Count(); i++)
             {
-                var property = type.GetProperties()[i];
+                var property = type.GetProperties(flags)[i];
                 var getSyncAttr = property.GetCustomAttribute<NetworkGetSyncAttribute>();
 
                 if (getSyncAttr != null)
@@ -290,9 +293,9 @@ namespace Average.Client
             }
 
             // Registering networkGetSyncs (field need to be public to be detected)
-            for (int i = 0; i < type.GetFields().Count(); i++)
+            for (int i = 0; i < type.GetFields(flags).Count(); i++)
             {
-                var field = type.GetFields()[i];
+                var field = type.GetFields(flags)[i];
                 var getSyncAttr = field.GetCustomAttribute<NetworkGetSyncAttribute>();
 
                 if (getSyncAttr != null)

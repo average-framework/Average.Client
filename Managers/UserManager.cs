@@ -18,7 +18,7 @@ namespace Average.Client.Managers
 
             rpc.Event("User.GetUser").On<UserData>((user) =>
             {
-                logger.Warn("Getted user: " + user.Name);
+                logger.Warn("Getted user");
                 CurrentUser = user;
             }).Emit();
         }

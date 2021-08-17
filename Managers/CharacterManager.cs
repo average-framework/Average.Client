@@ -50,7 +50,8 @@ namespace Average.Client.Managers
 
         protected async Task PedScaleUpdate()
         {
-            if (Current == null) return;
+            if (Current == null)
+                return;
 
             GameAPI.SetPedScale(PlayerPedId(), Current.Scale);
             await BaseScript.Delay(RefreshPedScaleInternal);
@@ -62,7 +63,7 @@ namespace Average.Client.Managers
 
         public async Task IsReady()
         {
-            while (Current == null) await BaseScript.Delay(250);
+            while (Current == null) await BaseScript.Delay(0);
         }
 
         public async Task<bool> Exist()
@@ -85,6 +86,7 @@ namespace Average.Client.Managers
             Current = null;
 
             logger.Debug("Getting character..");
+
             rpc.Event("Character.Load").On<CharacterData>(data =>
             {
                 logger.Debug("Getted character: " + (data == null ? "No character" : data.RockstarId));
@@ -103,6 +105,7 @@ namespace Average.Client.Managers
             Current = null;
 
             logger.Debug("Getting character..");
+
             rpc.Event("Character.Load").On<CharacterData>(data =>
             {
                 Current = data;
@@ -262,7 +265,7 @@ namespace Average.Client.Managers
                     SetPedOverlayOpacity(textureId, overlayId, layer.Opacity);
                 }
 
-                while (!IsPedTextureValid(textureId)) await BaseScript.Delay(250);
+                while (!IsPedTextureValid(textureId)) await BaseScript.Delay(0);
 
                 OverrideTextureOnPed(ped, (uint)GetHashKey("heads"), textureId);
                 UpdatePedTexture(textureId);

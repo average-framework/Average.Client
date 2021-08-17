@@ -50,7 +50,7 @@ namespace Average.Client
             blipManager = new BlipManager(EventHandlers);
             npcManager = new NpcManager(EventHandlers);
             userManager = new UserManager(logger, rpc);
-            permissionManager = new PermissionManager(logger, rpc, userManager);
+            permissionManager = new PermissionManager(logger, rpc, userManager, EventHandlers);
             mapManager = new MapManager(logger, permissionManager, threadManager);
             characterManager = new CharacterManager(logger, threadManager, eventManager, rpc);
             cfx = new CfxManager(EventHandlers, eventManager);

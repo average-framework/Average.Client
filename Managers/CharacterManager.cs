@@ -129,8 +129,6 @@ namespace Average.Client.Managers
 
         public async Task LoadSkin()
         {
-            var ped = PlayerPedId();
-
             SetPedBody();
             SetPedBodyComponents();
 
@@ -138,8 +136,13 @@ namespace Average.Client.Managers
             await SetPedClothes();
             await SetPedFaceFeatures();
 
-            SetPedComponentDisabled(ped, 0x3F1F01E5, 0, false);
-            SetPedComponentDisabled(ped, 0xDA0E2C55, 0, false);
+            await BaseScript.Delay(1000);
+
+            SetPedComponentDisabled(PlayerPedId(), 0x3F1F01E5, 0, false);
+            SetPedComponentDisabled(PlayerPedId(), 0xDA0E2C55, 0, false);
+
+            await BaseScript.Delay(1000);
+
             UpdatePedVariation();
         }
 

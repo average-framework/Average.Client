@@ -43,9 +43,7 @@ namespace Average.Client.Managers
         public void Emit(string eventName, params object[] args)
         {
             if (events.ContainsKey(eventName))
-            {
                 events[eventName].ForEach(w => w.DynamicInvoke(args));
-            }
         }
 
         public void EmitServer(string eventName, params object[] args)

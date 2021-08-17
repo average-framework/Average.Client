@@ -544,7 +544,9 @@ namespace Average.Client.Menu
 
                 SendNUI(new
                 {
-                    request = "menu.close"
+                    eventName = "avg.internal",
+                    on = "menu.close",
+                    plugin = "menu"
                 });
 
                 OnMenuClosed(CurrentMenu);

@@ -77,7 +77,7 @@ namespace Average.Client.Managers
                 receive = true;
             }).Emit();
 
-            while (receive == true) await BaseScript.Delay(0);
+            while (receive == false) await BaseScript.Delay(0);
             return result;
         }
 

@@ -111,100 +111,88 @@ namespace Average.Client.Managers
 
         #region Events
 
-        public void OnGameEventTriggered(string name, int[] data)
+        public async void OnGameEventTriggered(string name, int[] data)
         {
-            if (GameEventTriggered != null)
-            {
-                GameEventTriggered(null, new GameEventTriggeredEventArgs(name, data));
-            }
+            await Main.loader.IsReady();
+            GameEventTriggered?.Invoke(this, new GameEventTriggeredEventArgs(name, data));
+            Emit("GameEvent", name, data);
         }
 
-        public void OnResourceStop(string resource)
+        public async void OnResourceStop(string resource)
         {
-            if (ResourceStop != null)
-            {
-                ResourceStop(null, new ResourceStopEventArgs(resource));
-            }
+            await Main.loader.IsReady();
+            ResourceStop?.Invoke(this, new ResourceStopEventArgs(resource));
+            Emit("ResourceStop", resource);
         }
 
-        public void OnResourceStart(string resource)
+        public async void OnResourceStart(string resource)
         {
-            if (ResourceStart != null)
-            {
-                ResourceStart(null, new ResourceStartEventArgs(resource));
-            }
+            await Main.loader.IsReady();
+            ResourceStart?.Invoke(this, new ResourceStartEventArgs(resource));
+            Emit("ResourceStart", resource);
         }
 
-        public void OnClientResourceStart(string resource)
+        public async void OnClientResourceStart(string resource)
         {
-            if (ClientResourceStart != null)
-            {
-                ClientResourceStart(null, new ClientResourceStartEventArgs(resource));
-            }
+            await Main.loader.IsReady();
+            ClientResourceStart?.Invoke(null, new ClientResourceStartEventArgs(resource));
+            Emit("ClientResourceStart", resource);
         }
 
-        public void OnClientResourceStop(string resource)
+        public async void OnClientResourceStop(string resource)
         {
-            if (ClientResourceStop != null)
-            {
-                ClientResourceStop(null, new ClientResourceStopEventArgs(resource));
-            }
+            await Main.loader.IsReady();
+            ClientResourceStop?.Invoke(this, new ClientResourceStopEventArgs(resource));
+            Emit("ClientResourceStop", resource);
         }
 
-        public void OnResourceStarting(string resource)
+        public async void OnResourceStarting(string resource)
         {
-            if (ResourceStarting != null)
-            {
-                ResourceStarting(null, new ResourceStartingEventArgs(resource));
-            }
+            await Main.loader.IsReady();
+            ResourceStarting?.Invoke(this, new ResourceStartingEventArgs(resource));
+            Emit("ResourceStarting", resource);
         }
 
-        public void OnClientMapStart(string resource)
+        public async void OnClientMapStart(string resource)
         {
-            if (ClientMapStart != null)
-            {
-                ClientMapStart(null, new ClientMapStartEventArgs(resource));
-            }
+            await Main.loader.IsReady();
+            ClientMapStart?.Invoke(this, new ClientMapStartEventArgs(resource));
+            Emit("ClientMapStart", resource);
         }
 
-        public void OnClientMapStop(string resource)
+        public async void OnClientMapStop(string resource)
         {
-            if (ClientMapStop != null)
-            {
-                ClientMapStop(null, new ClientMapStopEventArgs(resource));
-            }
+            await Main.loader.IsReady();
+            ClientMapStop?.Invoke(this, new ClientMapStopEventArgs(resource));
+            Emit("ClientMapStop", resource);
         }
 
-        public void OnClientGameTypeStart(string resource)
+        public async void OnClientGameTypeStart(string resource)
         {
-            if (ClientGameTypeStart != null)
-            {
-                ClientGameTypeStart(null, new ClientMapGameTypeStartEventArgs(resource));
-            }
+            await Main.loader.IsReady();
+            ClientGameTypeStart?.Invoke(this, new ClientMapGameTypeStartEventArgs(resource));
+            Emit("ClientGameTypeStart", resource);
         }
 
-        public void OnClientGameTypeStop(string resource)
+        public async void OnClientGameTypeStop(string resource)
         {
-            if (ClientGameTypeStop != null)
-            {
-                ClientGameTypeStop(null, new ClientMapGameTypeStopEventArgs(resource));
-            }
+            await Main.loader.IsReady();
+            ClientGameTypeStop?.Invoke(this, new ClientMapGameTypeStopEventArgs(resource));
+            Emit("ClientGameTypeStop", resource);
         }
 
-        public void OnPlayerActivated()
+        public async void OnPlayerActivated()
         {
-            if (PlayerActivated != null)
-            {
-                PlayerActivated(null, new PlayerActivatedEventArgs());
-            }
+            await Main.loader.IsReady();
+            PlayerActivated?.Invoke(this, new PlayerActivatedEventArgs());
+            Emit("PlayerActivated");
         }
 
-        public void OnSessionInitialized()
+        public async void OnSessionInitialized()
         {
-            if (SessionInitialized != null)
-            {
-                SessionInitialized(null, new SessionInitializedEventArgs());
-            }
+            await Main.loader.IsReady();
+            SessionInitialized?.Invoke(this, new SessionInitializedEventArgs());
+            Emit("SessionInitialized");
         }
 
         #endregion

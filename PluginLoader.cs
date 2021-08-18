@@ -24,12 +24,19 @@ namespace Average.Client
 
         List<PluginInfo> pluginsInfo;
 
-        public List<IPlugin> Plugins { get; } = new List<IPlugin>();
+        bool isReady;
+
+        public List<Plugin> Plugins { get; } = new List<Plugin>();
 
         public PluginLoader(RpcRequest rpc, CommandManager command)
         {
             this.rpc = rpc;
             this.command = command;
+        }
+
+        public async Task IsReady()
+        {
+            while (!isReady) BaseScript.Delay(0);
         }
 
         async Task<List<PluginInfo>> GetPlugins()
@@ -124,7 +131,8 @@ namespace Average.Client
                                 }
                             }
 
-                            if (script == null) continue;
+                            if (script == null)
+                                continue;
 
                             RegisterThreads(type, script);
                             RegisterEvents(type, script);
@@ -134,6 +142,8 @@ namespace Average.Client
                             RegisterNetworkGetSyncs(type, script);
                             RegisterNUICallbacks(type, script);
                             RegisterCommands(type, script);
+
+                            await BaseScript.Delay(0);
                         }
                     }
                     else
@@ -141,6 +151,9 @@ namespace Average.Client
                         //Main.logger.Error($"Unable to find plugin: {asm.GetName().Name}.dll");
                     }
                 }
+
+                Main.logger.Error("Is instanced");
+                isReady = true;
             }
             catch (Exception ex)
             {
@@ -332,12 +345,12 @@ namespace Average.Client
             }
         }
 
-        void RegisterPlugin(IPlugin script)
+        void RegisterPlugin(Plugin script)
         {
             Plugins.Add(script);
         }
 
-        void UnloadScript(IPlugin script)
+        void UnloadScript(Plugin script)
         {
             Plugins.Remove(script);
         }

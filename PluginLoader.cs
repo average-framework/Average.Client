@@ -36,7 +36,7 @@ namespace Average.Client
 
         public async Task IsReady()
         {
-            while (!isReady) BaseScript.Delay(0);
+            while (!isReady) await BaseScript.Delay(0);
         }
 
         async Task<List<PluginInfo>> GetPlugins()
@@ -142,8 +142,6 @@ namespace Average.Client
                             RegisterNetworkGetSyncs(type, script);
                             RegisterNUICallbacks(type, script);
                             RegisterCommands(type, script);
-
-                            await BaseScript.Delay(0);
                         }
                     }
                     else
@@ -152,7 +150,6 @@ namespace Average.Client
                     }
                 }
 
-                Main.logger.Error("Is instanced");
                 isReady = true;
             }
             catch (Exception ex)

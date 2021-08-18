@@ -58,33 +58,32 @@ namespace Average.Client.Menu
 
         CallbackDelegate OnTabClick(IDictionary<string, object> data, CallbackDelegate result)
         {
-            if (!data.ContainsKey("name")) return result;
+            if (!data.ContainsKey("name"))
+                return result;
+
+            if (CurrentMenu == null)
+                return result;
 
             var name = data["name"].ToString();
             var tab = CurrentTabMenu.GetItem(name);
 
-            Task.Factory.StartNew(async () => 
-            {
-                for (int i = 0; i < CurrentTabMenu.Items.Count; i++)
-                {
-                    CurrentTabMenu.Items[i].IsSelected = false;
-                    CurrentTabMenu.Items[i].UpdateRender();
-                }
+            for (int i = 0; i < CurrentTabMenu.Items.Count; i++)
+                CurrentTabMenu.Items[i].IsSelected = false;
 
-                tab.IsSelected = true;
+            tab.IsSelected = true;
 
-                if (tab.TargetContainer != null)
-                    await OpenMenu(tab.TargetContainer);
+            if (tab.TargetContainer != null)
+                OpenMenu(tab.TargetContainer);
 
-                tab.Action?.Invoke(tab);
-            });
+            tab.Action?.Invoke(tab);
 
             return result;
         }
         
         CallbackDelegate OnClick(IDictionary<string, object> data, CallbackDelegate result)
         {
-            if (!data.ContainsKey("name")) return result;
+            if (!data.ContainsKey("name"))
+                return result;
 
             var name = data["name"].ToString();
             var item = CurrentMenu.GetItem(name);
@@ -237,30 +236,27 @@ namespace Average.Client.Menu
 
         CallbackDelegate OnPrevious(IDictionary<string, object> data, CallbackDelegate result)
         {
-            Task.Factory.StartNew(async () =>
+            if (IsOpen)
             {
-                if (IsOpen)
+                if (containerHistories.Count > 0)
                 {
-                    if (containerHistories.Count > 0)
-                    {
-                        var containerIndex = containerHistories.Count - 1;
-                        var parent = containerHistories[containerIndex];
+                    var containerIndex = containerHistories.Count - 1;
+                    var parent = containerHistories[containerIndex];
 
-                        await OpenMenu(parent);
+                    OpenMenu(parent);
 
-                        containerHistories.RemoveAt(containerIndex);
-                    }
-                    else
+                    containerHistories.RemoveAt(containerIndex);
+                }
+                else
+                {
+                    if (CanCloseMenu)
                     {
-                        if (CanCloseMenu)
-                        {
-                            CloseMenu();
-                            ClearHistory();
-                            Unfocus();
-                        }
+                        CloseMenu();
+                        ClearHistory();
+                        Unfocus();
                     }
                 }
-            });
+            }
 
             return result;
         }
@@ -269,32 +265,15 @@ namespace Average.Client.Menu
 
         public void OnMenuChanged(MenuContainer oldMenu, MenuContainer currentMenu)
         {
-            if (MenuChanged != null)
-                MenuChanged(null, new MenuChangeEventArgs(oldMenu, currentMenu));
+            MenuChanged?.Invoke(this, new MenuChangeEventArgs(oldMenu, currentMenu));
         }
 
         public void OnMenuClosed(MenuContainer currentMenu)
         {
-            if (MenuClosed != null)
-                MenuClosed(null, new MenuCloseEventArgs(currentMenu));
+            MenuClosed?.Invoke(this, new MenuCloseEventArgs(currentMenu));
         }
 
         #region Nui Methods
-
-        public void SelectTab(ref MenuTabItem item)
-        {
-            for(int i = 0; i < CurrentMenu.Items.Count; i++)
-            {
-                var current = CurrentMenu.Items[i];
-
-                if(current is MenuTabItem)
-                {
-                    (current as MenuTabItem).IsSelected = false;
-                }
-            }
-
-            item.IsSelected = true;
-        }
 
         public void UpdateRender(MenuContainer menuContainer, MenuTabContainer menuTabContainer)
         {
@@ -509,31 +488,28 @@ namespace Average.Client.Menu
 
         public async Task OpenMenu(MenuContainer menu)
         {
-            while (!isReady) await BaseScript.Delay(250);
+            while (!isReady) await BaseScript.Delay(0);
 
-            if (Exist(menu))
+            IsOpen = true;
+
+            if (OldMenu != CurrentMenu)
+                OldMenu = CurrentMenu;
+
+            CurrentMenu = menu;
+            MainMenu = CurrentMenu;
+
+            UpdateRender(CurrentMenu, CurrentTabMenu);
+
+            SendNUI(new
             {
-                IsOpen = true;
+                eventName = "avg.internal",
+                on = "menu.open",
+                plugin = "menu",
+                name = CurrentMenu.Name,
+                title = CurrentMenu.Title
+            });
 
-                if (OldMenu != CurrentMenu)
-                    OldMenu = CurrentMenu;
-
-                CurrentMenu = menu;
-                MainMenu = CurrentMenu;
-
-                UpdateRender(CurrentMenu, CurrentTabMenu);
-
-                SendNUI(new
-                {
-                    eventName = "avg.internal",
-                    on = "menu.open",
-                    plugin = "menu",
-                    name = CurrentMenu.Name,
-                    title = CurrentMenu.Title
-                });
-
-                OnMenuChanged(OldMenu, CurrentMenu);
-            }
+            OnMenuChanged(OldMenu, CurrentMenu);
         }
 
         public void CloseMenu()
@@ -541,6 +517,7 @@ namespace Average.Client.Menu
             if (IsOpen)
             {
                 IsOpen = false;
+                ClearHistory();
 
                 SendNUI(new
                 {

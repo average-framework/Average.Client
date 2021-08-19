@@ -42,7 +42,6 @@ namespace Average.Client
 
             // Internal Script
             languageManager = new LanguageManager();
-            commandManager = new CommandManager(logger);
             threadManager = new ThreadManager(c => Tick += c, c => Tick -= c);
             eventManager = new EventManager(EventHandlers, logger);
             exportManager = new ExportManager(logger);
@@ -53,6 +52,7 @@ namespace Average.Client
             npcManager = new NpcManager(EventHandlers);
             userManager = new UserManager(logger, rpc);
             permissionManager = new PermissionManager(logger, rpc, userManager, EventHandlers);
+            commandManager = new CommandManager(logger, permissionManager);
             mapManager = new MapManager(logger, permissionManager, threadManager);
             characterManager = new CharacterManager(logger, threadManager, eventManager, rpc, saveManager);
             cfx = new CfxManager(EventHandlers, eventManager);

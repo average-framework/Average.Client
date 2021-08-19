@@ -71,7 +71,15 @@ namespace Average.Client.Managers
         public async Task<bool> HasPermission(string name, int level)
         {
             await user.IsReady();
-            return Exist(name) && user.CurrentUser.Permission.Level >= level;
+
+            if (Exist(name))
+            {
+                var permissionLevel = Permissions.Find(x => x.Name == user.CurrentUser.Permission.Name).Level;
+                var needLevel = Permissions.Find(x => x.Name == name).Level;
+                return permissionLevel >= needLevel && user.CurrentUser.Permission.Level >= level;
+            }
+
+            return false;
         }
 
         #region Command

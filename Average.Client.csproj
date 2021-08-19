@@ -86,6 +86,7 @@
     <Compile Include="Managers\LanguageManager.cs" />
     <Compile Include="Managers\MapManager.cs" />
     <Compile Include="Managers\NpcManager.cs" />
+    <Compile Include="Managers\ObjectManager.cs" />
     <Compile Include="Managers\PermissionManager.cs" />
     <Compile Include="Managers\SaveManager.cs" />
     <Compile Include="Managers\UserManager.cs" />

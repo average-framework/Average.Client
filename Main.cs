@@ -28,13 +28,19 @@ namespace Average.Client
         internal static CharacterManager characterManager;
         internal static LanguageManager languageManager;
         internal static SaveManager saveManager;
+        internal static ObjectManager objectManager;
 
         CfxManager cfx;
         RpcRequest rpc;
+
+        internal static EventHandlerDictionary eventHandlers;
+
         internal static PluginLoader loader;
 
         public Main()
         {
+            eventHandlers = EventHandlers;
+
             logger = new Logger();
             rpc = new RpcRequest(new RpcHandler(EventHandlers), new RpcTrigger(), new RpcSerializer());
 
@@ -55,10 +61,11 @@ namespace Average.Client
             commandManager = new CommandManager(logger, permissionManager);
             mapManager = new MapManager(logger, permissionManager, threadManager);
             characterManager = new CharacterManager(logger, threadManager, eventManager, rpc, saveManager);
+            objectManager = new ObjectManager();
             cfx = new CfxManager(EventHandlers, eventManager);
 
             // Framework Script
-            framework = new Framework(languageManager, menu, threadManager, eventManager, exportManager, syncManager, logger, commandManager, blipManager, npcManager, userManager, permissionManager, mapManager, characterManager, saveManager, rpc);
+            framework = new Framework(languageManager, menu, threadManager, eventManager, exportManager, syncManager, logger, commandManager, blipManager, npcManager, userManager, permissionManager, mapManager, characterManager, saveManager, objectManager, rpc);
 
             // Plugin Loader
             loader = new PluginLoader(rpc, commandManager);

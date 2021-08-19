@@ -87,6 +87,7 @@
     <Compile Include="Managers\MapManager.cs" />
     <Compile Include="Managers\NpcManager.cs" />
     <Compile Include="Managers\PermissionManager.cs" />
+    <Compile Include="Managers\SaveManager.cs" />
     <Compile Include="Managers\UserManager.cs" />
     <Compile Include="Menu\MenuManager.cs" />
     <Compile Include="Models\CustomImapModel.cs" />

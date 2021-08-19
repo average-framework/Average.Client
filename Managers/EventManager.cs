@@ -42,8 +42,19 @@ namespace Average.Client.Managers
 
         public void Emit(string eventName, params object[] args)
         {
+            //if (events.ContainsKey(eventName))
+            //    events[eventName].ForEach(x => x.DynamicInvoke(args));
+
             if (events.ContainsKey(eventName))
-                events[eventName].ForEach(w => w.DynamicInvoke(args));
+            {
+                logger.Debug($"Calling event: {eventName}.");
+                events[eventName].ForEach(x => x.DynamicInvoke(args));
+            }
+            else
+            {
+                logger.Debug($"Calling external event: {eventName}.");
+                BaseScript.TriggerEvent(eventName, args);
+            }
         }
 
         public void EmitServer(string eventName, params object[] args)

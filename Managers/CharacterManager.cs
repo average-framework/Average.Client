@@ -15,11 +15,12 @@ using static SDK.Client.GameAPI;
 
 namespace Average.Client.Managers
 {
-    public class CharacterManager : ICharacterManager
+    public class CharacterManager : ICharacterManager, ISaveable
     {
         Logger logger;
         EventManager eventManager;
         RpcRequest rpc;
+        SaveManager save;
 
         int textureId = -1;
         const int RefreshPedScaleInternal = 5000;
@@ -32,11 +33,12 @@ namespace Average.Client.Managers
 
         public CharacterData Current { get; private set; }
 
-        public CharacterManager(Logger logger, ThreadManager thread, EventManager eventManager, RpcRequest rpc)
+        public CharacterManager(Logger logger, ThreadManager thread, EventManager eventManager, RpcRequest rpc, SaveManager save)
         {
             this.logger = logger;
             this.eventManager = eventManager;
             this.rpc = rpc;
+            this.save = save;
 
             Clothes = Configuration.Parse<List<CharacterCloth>>("utils/clothes.json");
             BodyTypes = Configuration.Parse<List<int>>("utils/body_types.json");
@@ -44,6 +46,8 @@ namespace Average.Client.Managers
             PedCultures = CharacterUtils.PedCultures;
 
             thread.StartThread(PedScaleUpdate);
+
+            save.AddInQueue(this);
         }
 
         #region Threads
@@ -166,10 +170,9 @@ namespace Average.Client.Managers
             Current.Position = new PositionData(coords.X, coords.Y, coords.Z, heading);
         }
 
-        public void Save()
+        public async Task Save()
         {
-            var ped = PlayerPedId();
-            Current.Core.Health = GetEntityHealth(ped);
+            Current.Core.Health = GetEntityHealth(PlayerPedId());
             eventManager.EmitServer("Character.Save", JsonConvert.SerializeObject(Current));
         }
 

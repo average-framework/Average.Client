@@ -30,7 +30,7 @@ namespace Average.Client.Managers
 
             API.RegisterCommand(command, new Action<int, List<object>, string>(async (source, args, raw) =>
             {
-                if(await permission.HasPermission(commandAttr.PermissionName, commandAttr.PermissionLevel) || commandAttr.PermissionName == null)
+                if (await permission.HasPermission(commandAttr.PermissionName, commandAttr.PermissionLevel) || commandAttr.PermissionName == null)
                 {
                     var newArgs = new List<object>();
 
@@ -43,14 +43,14 @@ namespace Average.Client.Managers
                         }
                         catch
                         {
-                            logger.Error($"Unable to convert command arguments: {command}");
+                            logger.Error($"Unable to convert command arguments.");
                         }
                     }
                     else
                     {
                         var usage = "";
                         methodParams.ToList().ForEach(x => usage += $"<[{x.ParameterType.Name}] {x.Name}> ");
-                        logger.Error($"Invalid command usage: {command} {usage}");
+                        logger.Error($"Invalid command usage: {command} {usage}.");
                     }
                 }
                 else
@@ -62,7 +62,7 @@ namespace Average.Client.Managers
             logger.Debug($"Registering [Command] attribute: {command} on method: {method.Name}");
         }
 
-        public void RegisterCommand(ClientCommandAttribute commandAttr, ClientCommandAliasAttribute aliasAttr, ClientCommandUsageAttribute usageAttr, MethodInfo method, object classObj)
+        public void RegisterCommand(ClientCommandAttribute commandAttr, ClientCommandAliasAttribute aliasAttr, MethodInfo method, object classObj)
         {
             if (commandAttr == null)
                 return;

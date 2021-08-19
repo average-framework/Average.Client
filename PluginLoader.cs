@@ -167,9 +167,8 @@ namespace Average.Client
             {
                 var cmdAttr = method.GetCustomAttribute<ClientCommandAttribute>();
                 var aliasAttr = method.GetCustomAttribute<ClientCommandAliasAttribute>();
-                var usageAttr = method.GetCustomAttribute<ClientCommandUsageAttribute>();
 
-                command.RegisterCommand(cmdAttr, aliasAttr, usageAttr, method, classObj);
+                command.RegisterCommand(cmdAttr, aliasAttr, method, classObj);
             }
         }
 

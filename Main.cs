@@ -71,15 +71,5 @@ namespace Average.Client
             loader = new PluginLoader(rpc, commandManager);
             loader.Load();
         }
-
-        internal void RegisterTick(Func<Task> func)
-        {
-            Tick += func;
-        }
-
-        internal void UnregisterTick(Func<Task> func)
-        {
-            Tick -= func;
-        }
     }
 }

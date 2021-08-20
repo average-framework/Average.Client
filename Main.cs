@@ -29,6 +29,7 @@ namespace Average.Client
         internal static LanguageManager languageManager;
         internal static SaveManager saveManager;
         internal static ObjectManager objectManager;
+        internal static NotificationManager notificationManager;
 
         CfxManager cfx;
         RpcRequest rpc;
@@ -60,12 +61,13 @@ namespace Average.Client
             permissionManager = new PermissionManager(logger, rpc, userManager, EventHandlers);
             commandManager = new CommandManager(logger, permissionManager);
             mapManager = new MapManager(logger, permissionManager, threadManager);
+            notificationManager = new NotificationManager();
             characterManager = new CharacterManager(logger, threadManager, eventManager, rpc, saveManager);
             objectManager = new ObjectManager();
             cfx = new CfxManager(EventHandlers, eventManager);
 
             // Framework Script
-            framework = new Framework(languageManager, menu, threadManager, eventManager, exportManager, syncManager, logger, commandManager, blipManager, npcManager, userManager, permissionManager, mapManager, characterManager, saveManager, objectManager, rpc);
+            framework = new Framework(languageManager, menu, threadManager, eventManager, exportManager, syncManager, logger, commandManager, blipManager, npcManager, userManager, permissionManager, mapManager, characterManager, saveManager, objectManager, notificationManager, rpc);
 
             // Plugin Loader
             loader = new PluginLoader(rpc, commandManager);

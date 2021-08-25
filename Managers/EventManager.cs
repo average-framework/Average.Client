@@ -14,9 +14,7 @@ namespace Average.Client.Managers
 {
     public class EventManager : IEventManager
     {
-        Dictionary<string, List<Delegate>> events;
-        EventHandlerDictionary eventHandlers;
-        Logger logger;
+        private Dictionary<string, List<Delegate>> _events = new Dictionary<string, List<Delegate>>();
 
         public event EventHandler<ResourceStartEventArgs> ResourceStart;
         public event EventHandler<ResourceStopEventArgs> ResourceStop;
@@ -31,28 +29,21 @@ namespace Average.Client.Managers
         public event EventHandler<PlayerActivatedEventArgs> PlayerActivated;
         public event EventHandler<SessionInitializedEventArgs> SessionInitialized;
 
-        public EventManager(EventHandlerDictionary eventHandlers, Logger logger)
+        public EventManager()
         {
-            this.eventHandlers = eventHandlers;
-            this.logger = logger;
-            events = new Dictionary<string, List<Delegate>>();
-
-            eventHandlers["avg.internal.trigger_event"] += new Action<string, List<object>>(InternalTriggerEvent);
+            Main.eventHandlers["avg.internal.trigger_event"] += new Action<string, List<object>>(InternalTriggerEvent);
         }
 
         public void Emit(string eventName, params object[] args)
         {
-            //if (events.ContainsKey(eventName))
-            //    events[eventName].ForEach(x => x.DynamicInvoke(args));
-
-            if (events.ContainsKey(eventName))
+            if (_events.ContainsKey(eventName))
             {
-                logger.Debug($"Calling event: {eventName}.");
-                events[eventName].ForEach(x => x.DynamicInvoke(args));
+                Log.Debug($"Calling event: {eventName}.");
+                _events[eventName].ForEach(x => x.DynamicInvoke(args));
             }
             else
             {
-                logger.Debug($"Calling external event: {eventName}.");
+                Log.Debug($"Calling external event: {eventName}.");
                 BaseScript.TriggerEvent(eventName, args);
             }
         }
@@ -64,43 +55,43 @@ namespace Average.Client.Managers
 
         public void RegisterInternalEvent(string eventName, Delegate action)
         {
-            if (!events.ContainsKey(eventName))
-                events.Add(eventName, new List<Delegate>() { action });
+            if (!_events.ContainsKey(eventName))
+                _events.Add(eventName, new List<Delegate>() { action });
             else
-                events[eventName].Add(action);
+                _events[eventName].Add(action);
 
-            logger.Debug($"Register event: {eventName}");
+            Log.Debug($"Register event: {eventName}");
         }
 
         public void RegisterInternalNUICallbackEvent(string eventName, Func<IDictionary<string, object>, CallbackDelegate, CallbackDelegate> callback)
         {
             API.RegisterNuiCallbackType(eventName);
-            eventHandlers[$"__cfx_nui:{eventName}"] += new Action<IDictionary<string, object>, CallbackDelegate>((body, resultCallback) => callback.Invoke(body, resultCallback));
+            Main.eventHandlers[$"__cfx_nui:{eventName}"] += new Action<IDictionary<string, object>, CallbackDelegate>((body, resultCallback) => callback.Invoke(body, resultCallback));
         }
 
         public void UnregisterInternalEvent(string eventName)
         {
-            if (events.ContainsKey(eventName))
+            if (_events.ContainsKey(eventName))
             {
-                events.Remove(eventName);
-                logger.Debug($"Unregister event: {eventName}");
+                _events.Remove(eventName);
+                Log.Debug($"Unregister event: {eventName}");
             }
             else
             {
-                logger.Error($"Unable to unregister event: {eventName}.");
+                Log.Error($"Unable to unregister event: {eventName}.");
             }
         }
 
         public void UnregisterInternalEventAction(string eventName, Delegate action)
         {
-            if (events.ContainsKey(eventName) && events[eventName].Contains(action))
+            if (_events.ContainsKey(eventName) && _events[eventName].Contains(action))
             {
-                events[eventName].Remove(action);
-                logger.Debug($"Unregister event action: {eventName}");
+                _events[eventName].Remove(action);
+                Log.Debug($"Unregister event action: {eventName}");
             }
             else
             {
-                logger.Error($"Unable to unregister event action: {eventName}.");
+                Log.Error($"Unable to unregister event action: {eventName}.");
             }
         }
 
@@ -111,7 +102,7 @@ namespace Average.Client.Managers
             var action = Action.CreateDelegate(Expression.GetDelegateType((from parameter in method.GetParameters() select parameter.ParameterType).Concat(new[] { method.ReturnType }).ToArray()), classObj, method);
             RegisterInternalEvent(eventAttr.Event, action);
 
-            logger.Debug($"Registering [Event] attribute: {eventAttr.Event} on method: {method.Name}, args count: {methodParams.Count()}");
+            Log.Debug($"Registering [Event] attribute: {eventAttr.Event} on method: {method.Name}, args count: {methodParams.Count()}");
         }
 
         #region Internal

@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using SDK.Client.Diagnostics;
 using static CitizenFX.Core.Native.API;
 using static SDK.Client.GameAPI;
 
@@ -14,21 +15,19 @@ namespace Average.Client.Managers
 {
     public class ObjectManager : IObjectManager
     {
-        bool enableDithering;
-        float ditheringDistance;
-        float lodMaxDistance;
-        int ditheringUpdateInterval;
-        int renderUpdateInterval;
+        private readonly bool enableDithering;
+        private readonly float ditheringDistance;
+        private readonly float lodMaxDistance;
+        private readonly int ditheringUpdateInterval;
+        private readonly int renderUpdateInterval;
 
-        public List<ObjectModel> registeredProps = new List<ObjectModel>();
-
-        JObject baseConfig;
+        private List<ObjectModel> _registeredProps = new List<ObjectModel>();
 
         public ObjectManager()
         {
             #region Configuration
 
-            baseConfig = SDK.Client.Configuration.Parse("config.json");
+            var baseConfig = SDK.Client.Configuration.Parse("config.json");
 
             enableDithering = (bool)baseConfig["Streaming"]["EnableDithering"];
             ditheringDistance = (float)baseConfig["Streaming"]["DitheringDistance"];
@@ -36,9 +35,9 @@ namespace Average.Client.Managers
             ditheringUpdateInterval = (int)baseConfig["Streaming"]["DitheringUpdateInterval"];
             renderUpdateInterval = (int)baseConfig["Streaming"]["RenderUpdateInterval"];
 
-            #endregion
-
             lodMaxDistance += ditheringDistance;
+
+            #endregion
 
             #region Thread
 
@@ -77,7 +76,7 @@ namespace Average.Client.Managers
                 {
                     pos += new Vector3(2f, 0f, 0f);
                     CreateRegisteredEntity((uint)GetHashKey("p_waterpump01x"), pos, Vector3.Zero, true);
-                    Main.logger.Warn("[Object] Create object: " + i);
+                    Log.Warn("[Object] Create object: " + i);
                 }
             }
         }
@@ -88,9 +87,9 @@ namespace Average.Client.Managers
         {
             if (enableDithering)
             {
-                for (int i = 0; i < registeredProps.Count; i++)
+                for (int i = 0; i < _registeredProps.Count; i++)
                 {
-                    var prop = registeredProps.ElementAt(i);
+                    var prop = _registeredProps.ElementAt(i);
                     var pos = GetEntityCoords(PlayerPedId(), true, true);
                     var distance = GetDistanceBetweenCoords(pos.X, pos.Y, pos.Z, prop.Position.X, prop.Position.Y, prop.Position.Z, true);
 
@@ -126,9 +125,9 @@ namespace Average.Client.Managers
 
         protected async Task Update()
         {
-            for (int i = 0; i < registeredProps.Count; i++)
+            for (int i = 0; i < _registeredProps.Count; i++)
             {
-                var prop = registeredProps[i];
+                var prop = _registeredProps[i];
                 var pos = GetEntityCoords(PlayerPedId(), true, true);
                 var distance = GetDistanceBetweenCoords(pos.X, pos.Y, pos.Z, prop.Position.X, prop.Position.Y, prop.Position.Z, true);
 
@@ -140,10 +139,10 @@ namespace Average.Client.Managers
                     }
                     else
                     {
-                        if (!registeredProps[i].IsSpawned)
+                        if (!_registeredProps[i].IsSpawned)
                         {
-                            registeredProps[i].Handle = CreateEntity(prop.Model, prop.Position, prop.Rotation, prop.IsPlacedOnGround);
-                            registeredProps[i].IsSpawned = true;
+                            _registeredProps[i].Handle = CreateEntity(prop.Model, prop.Position, prop.Rotation, prop.IsPlacedOnGround);
+                            _registeredProps[i].IsSpawned = true;
                         }
                     }
                 }
@@ -156,8 +155,8 @@ namespace Average.Client.Managers
                         DeleteEntity(ref entity);
                         DeleteObject(ref entity);
 
-                        registeredProps[i].Handle = 0;
-                        registeredProps[i].IsSpawned = false;
+                        _registeredProps[i].Handle = 0;
+                        _registeredProps[i].IsSpawned = false;
                     }
                 }
             }
@@ -165,9 +164,9 @@ namespace Average.Client.Managers
             await BaseScript.Delay(renderUpdateInterval);
         }
 
-        public ObjectModel GetRegisteredEntity(string uniqueIndex) => registeredProps.Find(x => x.UniqueIndex == uniqueIndex);
+        public ObjectModel GetRegisteredEntity(string uniqueIndex) => _registeredProps.Find(x => x.UniqueIndex == uniqueIndex);
 
-        public bool RegisteredEntityExist(string uniqueIndex) => registeredProps.Exists(x => x.UniqueIndex == uniqueIndex);
+        public bool RegisteredEntityExist(string uniqueIndex) => _registeredProps.Exists(x => x.UniqueIndex == uniqueIndex);
 
         private int CreateEntity(uint model, Vector3 position, Vector3 rotation, bool placeOnGround)
         {
@@ -191,7 +190,7 @@ namespace Average.Client.Managers
             obj.UniqueIndex = uniqueIndex;
             obj.IsSpawned = true;
 
-            registeredProps.Add(obj);
+            _registeredProps.Add(obj);
 
             return obj;
         }
@@ -203,18 +202,18 @@ namespace Average.Client.Managers
             obj.UniqueIndex = RandomString();
             obj.IsSpawned = true;
 
-            registeredProps.Add(obj);
+            _registeredProps.Add(obj);
 
             return obj;
         }
 
         public void DeleteRegisteredEntity(string uniqueIndex)
         {
-            var index = registeredProps.FindIndex(x => x.UniqueIndex == uniqueIndex);
+            var index = _registeredProps.FindIndex(x => x.UniqueIndex == uniqueIndex);
 
-            if (registeredProps.Count > 0 && index >= 0)
+            if (_registeredProps.Count > 0 && index >= 0)
             {
-                var prop = registeredProps[index];
+                var prop = _registeredProps[index];
                 var entity = prop.Handle;
 
                 while (DoesEntityExist(entity))
@@ -223,7 +222,7 @@ namespace Average.Client.Managers
                     DeleteObject(ref entity);
                 }
 
-                registeredProps.RemoveAt(index);
+                _registeredProps.RemoveAt(index);
             }
         }
 
@@ -233,15 +232,15 @@ namespace Average.Client.Managers
         {
             if (resourceName == Constant.RESOURCE_NAME)
             {
-                for (int i = 0; i < registeredProps.Count; i++)
+                for (int i = 0; i < _registeredProps.Count; i++)
                 {
-                    var entity = registeredProps[i].Handle;
+                    var entity = _registeredProps[i].Handle;
 
                     DeleteEntity(ref entity);
                     DeleteObject(ref entity);
                 }
 
-                registeredProps.Clear();
+                _registeredProps.Clear();
             }
         }
 

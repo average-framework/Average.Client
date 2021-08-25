@@ -9,35 +9,29 @@ namespace Average.Client.Managers
 {
     public class SaveManager : ISaveManager
     {
-        Logger logger;
-        EventManager eventManager;
+        private List<ISaveable> _tasks = new List<ISaveable>();
 
-        List<ISaveable> tasks = new List<ISaveable>();
-
-        public SaveManager(Logger logger, EventManager eventManager, EventHandlerDictionary eventHandlers)
+        public SaveManager()
         {
-            this.logger = logger;
-            this.eventManager = eventManager;
-
             #region Event
 
-            eventHandlers["Save.All"] += new Action(SaveAllEvent);
+            Main.eventHandlers["Save.All"] += new Action(SaveAllEvent);
 
             #endregion
         }
 
         public async Task SaveAll()
         {
-            for (int i = 0; i < tasks.Count; i++)
-                await tasks[i].Save();
+            for (int i = 0; i < _tasks.Count; i++)
+                await _tasks[i].Save();
 
-            eventManager.EmitServer("Save.All");
-            logger.Debug("[Save] Player data sended to server.");
+            Main.eventManager.EmitServer("Save.All");
+            Log.Debug("[Save] Player data sended to server.");
         }
 
-        public void AddInQueue(ISaveable saveable) => tasks.Add(saveable);
+        public void AddInQueue(ISaveable saveable) => _tasks.Add(saveable);
 
-        public void DeleteFromQueue(ISaveable saveable) => tasks.Remove(saveable);
+        public void DeleteFromQueue(ISaveable saveable) => _tasks.Remove(saveable);
 
         #region Event
 

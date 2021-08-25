@@ -10,18 +10,17 @@ namespace Average.Client.Managers
 {
     public class BlipManager : IBlipManager
     {
-        public List<int> Blips { get; } = new List<int>();
+        private List<int> _blips = new List<int>();
 
-        public BlipManager(EventHandlerDictionary eventHandlers)
+        public BlipManager()
         {
-            eventHandlers["onResourceStop"] += new Action<string>(OnResourceStop);
+            Main.eventHandlers["onResourceStop"] += new Action<string>(OnResourceStop);
         }
 
         public int Create(int sprite, string text, float scale, Vector3 position)
         {
             var handle = CreateBlip(sprite, text, scale, position);
-
-            Blips.Add(handle);
+            _blips.Add(handle);
             return handle;
         }
 
@@ -32,14 +31,14 @@ namespace Average.Client.Managers
                 if (DoesBlipExist(handle))
                     RemoveBlip(ref handle);
 
-                if (Blips.Exists(x => x == handle))
-                    Blips.Remove(handle);
+                if (_blips.Exists(x => x == handle))
+                    _blips.Remove(handle);
             }
         }
 
-        public int Get(int handle) => Exist(handle) ? Blips.Find(x => x == handle) : -1;
+        public int Get(int handle) => Exist(handle) ? _blips.Find(x => x == handle) : -1;
 
-        public bool Exist(int handle) => Blips.Exists(x => x == handle);
+        public bool Exist(int handle) => _blips.Exists(x => x == handle);
 
         #region Events
 
@@ -47,8 +46,8 @@ namespace Average.Client.Managers
         {
             if (resource == Constant.RESOURCE_NAME)
             {
-                for (int i = 0; i < Blips.Count; i++)
-                    Delete(Blips[i]);
+                for (int i = 0; i < _blips.Count; i++)
+                    Delete(_blips[i]);
 
                 GC.SuppressFinalize(this);
             }

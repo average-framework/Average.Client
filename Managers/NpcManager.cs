@@ -11,11 +11,11 @@ namespace Average.Client.Managers
 {
     public class NpcManager : INpcManager
     {
-        public List<int> Npcs { get; } = new List<int>();
+        private List<int> _npcs = new List<int>();
 
-        public NpcManager(EventHandlerDictionary eventHandlers)
+        public NpcManager()
         {
-            eventHandlers["onResourceStop"] += new Action<string>(OnResourceStop);
+            Main.eventHandlers["onResourceStop"] += new Action<string>(OnResourceStop);
         }
 
         public async Task<int> Create(uint model, int variation, Vector3 position, float heading, bool isNetwork = false, bool netMissionEntity = false)
@@ -28,13 +28,13 @@ namespace Average.Client.Managers
             SetEntityVisible(handle, true);
             SetPedOutfitPreset(handle, variation);
 
-            Npcs.Add(handle);
+            _npcs.Add(handle);
             return handle;
         }
 
-        public int Get(int handle) => Exist(handle) ? Npcs.Find(x => x == handle) : -1;
+        public int Get(int handle) => Exist(handle) ? _npcs.Find(x => x == handle) : -1;
 
-        public bool Exist(int handle) => Npcs.Exists(x => x == handle);
+        public bool Exist(int handle) => _npcs.Exists(x => x == handle);
 
         public void Delete(int handle)
         {
@@ -43,8 +43,8 @@ namespace Average.Client.Managers
                 if (DoesEntityExist(handle))
                     DeleteEntity(ref handle);
 
-                if (Npcs.Exists(x => x == handle))
-                    Npcs.Remove(Get(handle));
+                if (_npcs.Exists(x => x == handle))
+                    _npcs.Remove(Get(handle));
             }
         }
 
@@ -54,8 +54,8 @@ namespace Average.Client.Managers
         {
             if (resource == Constant.RESOURCE_NAME)
             {
-                for (int i = 0; i < Npcs.Count; i++)
-                    Delete(Npcs[i]);
+                for (int i = 0; i < _npcs.Count; i++)
+                    Delete(_npcs[i]);
 
                 GC.SuppressFinalize(this);
             }

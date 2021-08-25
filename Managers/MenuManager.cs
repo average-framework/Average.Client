@@ -1,5 +1,4 @@
-﻿using Average.Client.Managers;
-using CitizenFX.Core;
+﻿using CitizenFX.Core;
 using SDK.Client.Events;
 using SDK.Client.Interfaces;
 using SDK.Client.Menu;
@@ -13,9 +12,9 @@ namespace Average.Client.Menu
 {
     public class MenuManager : IMenuManager
     {
-        bool isReady;
+        private bool isReady;
 
-        List<MenuContainer> containerHistories = new List<MenuContainer>();
+        private List<MenuContainer> _containerHistories = new List<MenuContainer>();
 
         public MenuContainer MainMenu { get; set; }
         public MenuContainer OldMenu { get; private set; }
@@ -27,13 +26,13 @@ namespace Average.Client.Menu
         public event EventHandler<MenuChangeEventArgs> MenuChanged;
         public event EventHandler<MenuCloseEventArgs> MenuClosed;
 
-        public MenuManager(EventManager eventManager)
+        public MenuManager()
         {
-            eventManager.RegisterInternalNUICallbackEvent("window_ready", WindowReady);
-            eventManager.RegisterInternalNUICallbackEvent("menu/avg.ready", Ready);
-            eventManager.RegisterInternalNUICallbackEvent("menu/on_click", OnClick);
-            eventManager.RegisterInternalNUICallbackEvent("menu/on_tab_click", OnTabClick);
-            eventManager.RegisterInternalNUICallbackEvent("menu/on_previous", OnPrevious);
+            Main.eventManager.RegisterInternalNUICallbackEvent("window_ready", WindowReady);
+            Main.eventManager.RegisterInternalNUICallbackEvent("menu/avg.ready", Ready);
+            Main.eventManager.RegisterInternalNUICallbackEvent("menu/on_click", OnClick);
+            Main.eventManager.RegisterInternalNUICallbackEvent("menu/on_tab_click", OnTabClick);
+            Main.eventManager.RegisterInternalNUICallbackEvent("menu/on_previous", OnPrevious);
         }
 
         #region Nui Callback
@@ -101,7 +100,7 @@ namespace Average.Client.Menu
                 case MenuButtonContainer menuItem:
                     if (menuItem.TargetContainer != null)
                     {
-                        containerHistories.Add(CurrentMenu);
+                        _containerHistories.Add(CurrentMenu);
                         OpenMenu(menuItem.TargetContainer);
                     }
 
@@ -238,14 +237,14 @@ namespace Average.Client.Menu
         {
             if (IsOpen)
             {
-                if (containerHistories.Count > 0)
+                if (_containerHistories.Count > 0)
                 {
-                    var containerIndex = containerHistories.Count - 1;
-                    var parent = containerHistories[containerIndex];
+                    var containerIndex = _containerHistories.Count - 1;
+                    var parent = _containerHistories[containerIndex];
 
                     OpenMenu(parent);
 
-                    containerHistories.RemoveAt(containerIndex);
+                    _containerHistories.RemoveAt(containerIndex);
                 }
                 else
                 {
@@ -534,20 +533,20 @@ namespace Average.Client.Menu
 
         #region Methods
 
-        public void ClearHistory() => containerHistories.Clear();
+        public void ClearHistory() => _containerHistories.Clear();
 
-        public bool Exist(MenuContainer menuContainer) => containerHistories.Exists(x => x == menuContainer);
+        public bool Exist(MenuContainer menuContainer) => _containerHistories.Exists(x => x == menuContainer);
 
         public void AddMenuToHistory(MenuContainer menuContainer)
         {
             if (!Exist(menuContainer))
-                containerHistories.Add(menuContainer);
+                _containerHistories.Add(menuContainer);
         }
 
         public void RemoveMenuInHistory(MenuContainer menuContainer)
         {
             if (Exist(menuContainer))
-                containerHistories.Remove(menuContainer);
+                _containerHistories.Remove(menuContainer);
         }
 
         public void SetTabMenu(MenuTabContainer menuTabContainer)

@@ -13,11 +13,7 @@ namespace Average.Client.Managers
 {
     public class MapManager : IMapManager
     {
-        Logger logger;
-        PermissionManager permission;
-        ThreadManager thread;
-
-        float lodDistance = 600f;
+        private float lodDistance = 600f;
 
         public List<ImapModel> ScannedImaps { get; } = new List<ImapModel>();
         public List<ImapModel> Imaps { get; private set; }
@@ -26,12 +22,8 @@ namespace Average.Client.Managers
         public List<CustomInteriorModel> CustomInteriors { get; private set; }
         public List<InteriorSetModel> InteriorsSet { get; private set; }
 
-        public MapManager(Logger logger, PermissionManager permission, ThreadManager thread)
+        public MapManager()
         {
-            this.logger = logger;
-            this.permission = permission;
-            this.thread = thread;
-
             Imaps = Configuration.Parse<List<ImapModel>>("utils/imaps.json");
             Interiors = Configuration.Parse<List<InteriorModel>>("utils/interiors.json");
             CustomImaps = Configuration.Parse<List<CustomImapModel>>("configs/custom_imaps.json");
@@ -69,9 +61,9 @@ namespace Average.Client.Managers
         [Command("map.lowspecmode_disable")]
         public async void LowSpecModeDisableCommand()
         {
-            if (await permission.HasPermission("player"))
+            if (await Main.permissionManager.HasPermission("player"))
             {
-                thread.StopThread(LowSpecModeUpdate);
+                Main.threadManager.StopThread(LowSpecModeUpdate);
 
                 await BaseScript.Delay(1000);
 
@@ -106,7 +98,7 @@ namespace Average.Client.Managers
         [Command("map.lowspecmode_dist")]
         public async void LowSpecModeDistanceCommand(int source, List<object> args, string raw)
         {
-            if (await permission.HasPermission("player"))
+            if (await Main.permissionManager.HasPermission("player"))
             {
                 if (args.Count == 1)
                 {
@@ -118,7 +110,7 @@ namespace Average.Client.Managers
         [Command("map.lowspecmode")]
         public async void LowSpecModeCommand(int source, List<object> args, string raw)
         {
-            if (await permission.HasPermission("player"))
+            if (await Main.permissionManager.HasPermission("player"))
             {
                 // Décharge tout les imaps par défaut
                 for (int i = 0; i < Imaps.Count; i++)
@@ -129,21 +121,21 @@ namespace Average.Client.Managers
                     if (IsImapActive(hash))
                     {
                         RemoveImap(hash);
-                        logger.Debug("[Map] Unloading imap: " + imap.Hash);
+                        Log.Debug("[Map] Unloading imap: " + imap.Hash);
                     }
                 }
 
-                logger.Debug("[Map] All imaps was removed.");
-                logger.Debug("[Map] Starting deferring imap loading.");
+                Log.Debug("[Map] All imaps was removed.");
+                Log.Debug("[Map] Starting deferring imap loading.");
 
-                thread.StartThread(LowSpecModeUpdate);
+                Main.threadManager.StartThread(LowSpecModeUpdate);
             }
         }
 
         [Command("map.reload_custom_imaps")]
         public async void ReloadCustomImapsCommand(int source, List<object> args, string raw)
         {
-            if (await permission.HasPermission("owner"))
+            if (await Main.permissionManager.HasPermission("owner"))
             {
                 UnloadCustomImaps();
                 await BaseScript.Delay(0);
@@ -154,7 +146,7 @@ namespace Average.Client.Managers
         [Command("map.load_imaps")]
         public async void LoadImapsCommand(int source, List<object> args, string raw)
         {
-            if (await permission.HasPermission("owner"))
+            if (await Main.permissionManager.HasPermission("owner"))
             {
                 foreach (var imap in Imaps)
                 {
@@ -169,7 +161,7 @@ namespace Average.Client.Managers
         [ClientCommand("map.load_custom_imaps")]
         public async void LoadCustomImapsCommand(int source, List<object> args, string raw)
         {
-            if (await permission.HasPermission("owner"))
+            if (await Main.permissionManager.HasPermission("owner"))
             {
                 foreach (var imap in Imaps)
                 {
@@ -184,21 +176,21 @@ namespace Average.Client.Managers
         [ClientCommand("map.remove_imaps")]
         public async void RemoveImapsCommand(int source, List<object> args, string raw)
         {
-            if (await permission.HasPermission("owner"))
+            if (await Main.permissionManager.HasPermission("owner"))
                 UnloadImaps();
         }
 
         [ClientCommand("map.remove_custom_imaps")]
         public async void RemoveCustomImapsCommand(int source, List<object> args, string raw)
         {
-            if (await permission.HasPermission("owner"))
+            if (await Main.permissionManager.HasPermission("owner"))
                 UnloadCustomImaps();
         }
 
         [ClientCommand("map.scan_proximity")]
         public async void ScanProximityCommand(int source, List<object> args, string raw)
         {
-            if (await permission.HasPermission("owner"))
+            if (await Main.permissionManager.HasPermission("owner"))
             {
                 var distance = float.Parse(args[0].ToString());
                 var pos = GetEntityCoords(PlayerPedId(), true, true);
@@ -209,12 +201,12 @@ namespace Average.Client.Managers
                 {
                     if (GetDistanceBetweenCoords(pos.X, pos.Y, pos.Z, imap.X, imap.Y, imap.Z, true) <= distance)
                     {
-                        logger.Debug("[Map] Scanning: " + imap.Hash);
+                        Log.Debug("[Map] Scanning: " + imap.Hash);
                         ScannedImaps.Add(imap);
                     }
                 }
 
-                logger.Debug("[Map] Scanned imap count: " + ScannedImaps.Count);
+                Log.Debug("[Map] Scanned imap count: " + ScannedImaps.Count);
             }
         }
 

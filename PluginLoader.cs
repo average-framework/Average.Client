@@ -1,9 +1,7 @@
-﻿using Average.Client.Managers;
-using CitizenFX.Core;
+﻿using CitizenFX.Core;
 using Newtonsoft.Json;
 using SDK.Client;
 using SDK.Client.Plugins;
-using SDK.Client.Rpc;
 using SDK.Shared;
 using SDK.Shared.Extensions;
 using SDK.Shared.Plugins;
@@ -14,25 +12,19 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
+using SDK.Client.Diagnostics;
+
+#pragma warning disable 8600
 
 namespace Average.Client
 {
     internal class PluginLoader
     {
-        RpcRequest rpc;
-        CommandManager command;
-
-        List<PluginInfo> pluginsInfo;
+        private List<PluginInfo> _pluginsInfo;
 
         bool isReady;
 
-        public List<Plugin> Plugins { get; } = new List<Plugin>();
-
-        public PluginLoader(RpcRequest rpc, CommandManager command)
-        {
-            this.rpc = rpc;
-            this.command = command;
-        }
+        private List<Plugin> _plugins;
 
         public async Task IsReady()
         {
@@ -41,29 +33,29 @@ namespace Average.Client
 
         async Task<List<PluginInfo>> GetPlugins()
         {
-            rpc.Event("avg.internal.get_plugins").On(message =>
+            Main.rpc.Event("avg.internal.get_plugins").On(message =>
             {
-                pluginsInfo = message.Args[0].Convert<List<PluginInfo>>();
+                _pluginsInfo = message.Args[0].Convert<List<PluginInfo>>();
             }).Emit();
 
-            while (pluginsInfo == null) await BaseScript.Delay(250);
-            return pluginsInfo;
+            while (_pluginsInfo == null) await BaseScript.Delay(0);
+            return _pluginsInfo;
         }
 
         public async void Load()
         {
-            Main.logger.Debug("Getting plugins..");
+            Log.Debug("Getting plugins..");
 
-            var pluginsInfo = await GetPlugins();
+            _pluginsInfo = await GetPlugins();
 
-            Main.logger.Debug("Plugins getted.");
+            Log.Debug("Plugins getted.");
 
             try
             {
                 foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
                 {
                     var types = asm.GetTypes().Where(x => !x.IsAbstract && x.IsClass).ToList();
-                    var pluginInfo = pluginsInfo.Find(x => x.Client == asm.GetName().Name + ".dll");
+                    var pluginInfo = _pluginsInfo.Find(x => x.Client == asm.GetName().Name + ".dll");
 
                     if (pluginInfo != null)
                     {
@@ -79,13 +71,13 @@ namespace Average.Client
 
                         if (mainScriptCount > 1)
                         {
-                            Main.logger.Error("Unable to load multiples [MainScript] attribute in same plugin. Fix this error to continue.");
+                            Log.Error("Unable to load multiples [MainScript] attribute in same plugin. Fix this error to continue.");
                             return;
                         }
 
                         if (mainScriptCount == 0)
                         {
-                            Main.logger.Error($"Unable to load this plugin: {asm.FullName}, he does not contains [MainScript] attribute. Fix this error to continue.");
+                            Log.Error($"Unable to load this plugin: {asm.FullName}, he does not contains [MainScript] attribute. Fix this error to continue.");
                             return;
                         }
 
@@ -106,27 +98,30 @@ namespace Average.Client
                                             script.PluginInfo = pluginInfo;
                                             RegisterPlugin(script);
 
-                                            Main.logger.Info($"Plugin {asm.GetName().Name} -> script: {script.Name} successfully loaded.");
+                                            Log.Info($"Plugin {asm.GetName().Name} -> script: {script.Name} successfully loaded.");
                                         }
                                     }
                                     catch (InvalidCastException ex)
                                     {
-                                        Main.logger.Error($"Unable to load {asm.GetName().Name}");
+                                        Log.Error($"Unable to load {asm.GetName().Name}");
                                     }
                                 }
                                 else
                                 {
-                                    try
+                                    if (pluginInfo != null)
                                     {
-                                        script = (Plugin)Activator.CreateInstance(type, Main.framework, pluginInfo);
-                                        script.PluginInfo = pluginInfo;
-                                        RegisterPlugin(script);
+                                        try
+                                        {
+                                            script = (Plugin)Activator.CreateInstance(type, Main.framework, pluginInfo);
+                                            script.PluginInfo = pluginInfo;
+                                            RegisterPlugin(script);
 
-                                        Main.logger.Info($"Plugin {asm.GetName().Name} -> script: {script.Name} successfully loaded.");
-                                    }
-                                    catch
-                                    {
-                                        Main.logger.Error($"Unable to load script: {script.Name}");
+                                            Log.Info($"Plugin {asm.GetName().Name} -> script: {script.Name} successfully loaded.");
+                                        }
+                                        catch
+                                        {
+                                            Log.Error($"Unable to load script: {pluginInfo.Name}");
+                                        }   
                                     }
                                 }
                             }
@@ -146,7 +141,7 @@ namespace Average.Client
                     }
                     else
                     {
-                        //Main.logger.Error($"Unable to find plugin: {asm.GetName().Name}.dll");
+                        //Log.Error($"Unable to find plugin: {asm.GetName().Name}.dll");
                     }
                 }
 
@@ -154,7 +149,7 @@ namespace Average.Client
             }
             catch (Exception ex)
             {
-                Main.logger.Error("Unknow StackTrace: " + JsonConvert.SerializeObject(ex, Formatting.Indented));
+                Log.Error("Unknow StackTrace: " + JsonConvert.SerializeObject(ex, Formatting.Indented));
             }
         }
 
@@ -168,7 +163,7 @@ namespace Average.Client
                 var cmdAttr = method.GetCustomAttribute<ClientCommandAttribute>();
                 var aliasAttr = method.GetCustomAttribute<ClientCommandAliasAttribute>();
 
-                command.RegisterCommand(cmdAttr, aliasAttr, method, classObj);
+                Main.commandManager.RegisterCommand(cmdAttr, aliasAttr, method, classObj);
             }
         }
 
@@ -322,21 +317,21 @@ namespace Average.Client
                             {
                                 var action = (Func<IDictionary<string, object>, CallbackDelegate, CallbackDelegate>)Action.CreateDelegate(Expression.GetDelegateType((from parameter in method.GetParameters() select parameter.ParameterType).Concat(new[] { method.ReturnType }).ToArray()), classObj, method);
                                 Main.eventManager.RegisterInternalNUICallbackEvent(attr.Name, action);
-                                Main.logger.Debug($"Registering [UICallback] attribute: {attr.Name} on method: {method.Name}");
+                                Log.Debug($"Registering [UICallback] attribute: {attr.Name} on method: {method.Name}");
                             }
                             catch
                             {
-                                Main.logger.Error($"Unable to cast [UICallback] attribute on method: {method.Name} to return type {method.ReturnType}. The return type need to be \"CallbackDelegate\".");
+                                Log.Error($"Unable to cast [UICallback] attribute on method: {method.Name} to return type {method.ReturnType}. The return type need to be \"CallbackDelegate\".");
                             }
                         }
                         else
                         {
-                            Main.logger.Error($"Unable to register [UICallback] attribute on method: {method.Name} because parameters type does not match with required parameters type. Method parameters need to be of type \"IDictionary<string, object>, CallbackDelegate\"");
+                            Log.Error($"Unable to register [UICallback] attribute on method: {method.Name} because parameters type does not match with required parameters type. Method parameters need to be of type \"IDictionary<string, object>, CallbackDelegate\"");
                         }
                     }
                     else
                     {
-                        Main.logger.Error($"Unable to register [UICallback] attribute on method: {method.Name} because this method does not contains required parameters count.");
+                        Log.Error($"Unable to register [UICallback] attribute on method: {method.Name} because this method does not contains required parameters count.");
                     }
                 }
             }
@@ -344,12 +339,12 @@ namespace Average.Client
 
         void RegisterPlugin(Plugin script)
         {
-            Plugins.Add(script);
+            _plugins.Add(script);
         }
 
         void UnloadScript(Plugin script)
         {
-            Plugins.Remove(script);
+            _plugins.Remove(script);
         }
     }
 }

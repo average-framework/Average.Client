@@ -14,26 +14,21 @@ namespace Average.Client.Managers
 {
     public class PermissionManager : IPermissionManager
     {
-        Logger logger;
-        UserManager user;
+        private List<PermissionData> _permissions;
 
-        public List<PermissionData> Permissions { get; private set; }
-
-        public PermissionManager(Logger logger, RpcRequest rpc, UserManager user, EventHandlerDictionary eventHandler)
+        public PermissionManager()
         {
-            this.logger = logger;
-            this.user = user;
-
             #region Event
 
-            eventHandler["Permission.Set"] += new Action<string, int>(SetPermissionEvent);
+            Main.eventHandlers["Permission.Set"] += new Action<string, int>(SetPermissionEvent);
             
-            logger.Debug("Getting permissions..");
+            Log.Debug("Getting permissions..");
 
-            rpc.Event("Permission.GetAll").On<List<PermissionData>>(permissions =>
+            Main.rpc.Event("Permission.GetAll").On<List<PermissionData>>(permissions =>
             {
-                logger.Debug("Getted permissions");
-                Permissions = permissions;
+                _permissions = permissions;
+                
+                Log.Debug("Getted permissions");
             }).Emit();
 
             #endregion
@@ -47,21 +42,21 @@ namespace Average.Client.Managers
 
         public async Task IsReady()
         {
-            while (Permissions == null)await BaseScript.Delay(0);
+            while (_permissions == null)await BaseScript.Delay(0);
         }
 
-        public bool Exist(string name) => Permissions.Exists(x => x.Name == name);
+        public bool Exist(string name) => _permissions.Exists(x => x.Name == name);
 
-        public bool Exist(int level) => Permissions.Exists(x => x.Level == level);
+        public bool Exist(int level) => _permissions.Exists(x => x.Level == level);
 
         public async Task<bool> HasPermission(string name)
         {
-            await user.IsReady();
+            await Main.userManager.IsReady();
 
             if (Exist(name))
             {
-                var permissionLevel = Permissions.Find(x => x.Name == user.CurrentUser.Permission.Name).Level;
-                var needLevel = Permissions.Find(x => x.Name == name).Level;
+                var permissionLevel = _permissions.Find(x => x.Name == Main.userManager.CurrentUser.Permission.Name).Level;
+                var needLevel = _permissions.Find(x => x.Name == name).Level;
                 return permissionLevel >= needLevel;
             }
 
@@ -70,13 +65,13 @@ namespace Average.Client.Managers
 
         public async Task<bool> HasPermission(string name, int level)
         {
-            await user.IsReady();
+            await Main.userManager.IsReady();
 
             if (Exist(name))
             {
-                var permissionLevel = Permissions.Find(x => x.Name == user.CurrentUser.Permission.Name).Level;
-                var needLevel = Permissions.Find(x => x.Name == name).Level;
-                return permissionLevel >= needLevel && user.CurrentUser.Permission.Level >= level;
+                var permissionLevel = _permissions.Find(x => x.Name == Main.userManager.CurrentUser.Permission.Name).Level;
+                var needLevel = _permissions.Find(x => x.Name == name).Level;
+                return permissionLevel >= needLevel && Main.userManager.CurrentUser.Permission.Level >= level;
             }
 
             return false;
@@ -102,9 +97,10 @@ namespace Average.Client.Managers
 
         private void SetPermissionEvent(string permissionName, int permissionLevel)
         {
-            user.CurrentUser.Permission.Name = permissionName;
-            user.CurrentUser.Permission.Level = permissionLevel;
-            logger.Info($"New permission: [{permissionName}, {permissionLevel}]");
+            Main.userManager.CurrentUser.Permission.Name = permissionName;
+            Main.userManager.CurrentUser.Permission.Level = permissionLevel;
+            
+            Log.Info($"New permission: [{permissionName}, {permissionLevel}]");
         }
 
         #endregion

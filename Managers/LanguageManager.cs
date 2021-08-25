@@ -6,20 +6,19 @@ namespace Average.Client.Managers
 {
     public class LanguageManager : ILanguageManager
     {
-        Dictionary<string, string> language = new Dictionary<string, string>();
+        private readonly Dictionary<string, string> _language;
+        
         public string Current { get; private set; }
 
-        public LanguageManager() => Load();
-
-        void Load()
+        public LanguageManager()
         {
             var config = Configuration.Parse("config.json");
             Current = (string)config["Language"];
-            language = Configuration.ParseToDictionary($"languages/{Current}.json");
+            _language = Configuration.ParseToDictionary($"languages/{Current}.json");
         }
 
-        bool KeyExist(string key) => language.ContainsKey(key);
+        bool KeyExist(string key) => _language.ContainsKey(key);
 
-        public string Get(string key) => KeyExist(key) ? language[key] : string.Empty;
+        public string Get(string key) => KeyExist(key) ? _language[key] : string.Empty;
     }
 }

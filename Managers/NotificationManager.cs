@@ -11,9 +11,9 @@ namespace Average.Client.Managers
 {
     public class NotificationManager : INotificationManager
     {
-        List<INotification> queue = new List<INotification>();
+        private List<INotification> _queue = new List<INotification>();
 
-        const int updateStateInterval = 100;
+        private const int UpdateStateInterval = 100;
 
         public NotificationManager()
         {
@@ -68,11 +68,11 @@ namespace Average.Client.Managers
 
         #region Thread
 
-        protected async Task Update()
+        private async Task Update()
         {
-            for (int i = 0; i < queue.Count; i++)
+            for (int i = 0; i < _queue.Count; i++)
             {
-                var notification = queue[i];
+                var notification = _queue[i];
 
                 if (!notification.IsCreated)
                 {
@@ -101,20 +101,20 @@ namespace Average.Client.Managers
 
         protected async Task UpdateState()
         {
-            for (int i = 0; i < queue.Count; i++)
+            for (int i = 0; i < _queue.Count; i++)
             {
-                var notification = queue[i];
+                var notification = _queue[i];
 
                 if (notification.IsCreated)
                 {
-                    notification.CurrentDuration += updateStateInterval;
+                    notification.CurrentDuration += UpdateStateInterval;
 
                     if (notification.CurrentDuration >= notification.Duration)
                         Delete(notification);
                 }
             }
 
-            await BaseScript.Delay(updateStateInterval);
+            await BaseScript.Delay(UpdateStateInterval);
         }
 
         #endregion
@@ -130,13 +130,13 @@ namespace Average.Client.Managers
                 duration = notification.Duration
             });
 
-            queue.Remove(notification);
+            _queue.Remove(notification);
         }
 
 
         public void Schedule(string title, string content, int duration)
         {
-            queue.Add(new SimpleNotification(title, content, duration));
+            _queue.Add(new SimpleNotification(title, content, duration));
         }
 
         #region Command

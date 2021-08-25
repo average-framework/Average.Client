@@ -3,7 +3,6 @@ using Newtonsoft.Json;
 using SDK.Client;
 using SDK.Client.Diagnostics;
 using SDK.Client.Interfaces;
-using SDK.Client.Rpc;
 using SDK.Client.Utils;
 using SDK.Shared.DataModels;
 using SDK.Shared.Models;
@@ -17,37 +16,26 @@ namespace Average.Client.Managers
 {
     public class CharacterManager : ICharacterManager, ISaveable
     {
-        Logger logger;
-        EventManager eventManager;
-        RpcRequest rpc;
-        SaveManager save;
+        private int textureId = -1;
+        
+        private const int RefreshPedScaleInternal = 5000;
 
-        int textureId = -1;
-        const int RefreshPedScaleInternal = 5000;
-
-        public List<CharacterCloth> Clothes { get; private set; }
-        public List<PedCulture> PedCultures { get; private set; }
-        public List<int> BodyTypes { get; private set; }
-        public List<int> WaistTypes { get; private set; }
-
-
+        public List<CharacterCloth> Clothes { get; }
+        public List<PedCulture> PedCultures { get; }
+        public List<int> BodyTypes { get; }
+        public List<int> WaistTypes { get; }
+        
         public CharacterData Current { get; private set; }
 
-        public CharacterManager(Logger logger, ThreadManager thread, EventManager eventManager, RpcRequest rpc, SaveManager save)
+        public CharacterManager()
         {
-            this.logger = logger;
-            this.eventManager = eventManager;
-            this.rpc = rpc;
-            this.save = save;
-
             Clothes = Configuration.Parse<List<CharacterCloth>>("utils/clothes.json");
             BodyTypes = Configuration.Parse<List<int>>("utils/body_types.json");
             WaistTypes = Configuration.Parse<List<int>>("utils/waist_types.json");
             PedCultures = CharacterUtils.PedCultures;
 
-            thread.StartThread(PedScaleUpdate);
-
-            save.AddInQueue(this);
+            Main.threadManager.StartThread(PedScaleUpdate);
+            Main.saveManager.AddInQueue(this);
         }
 
         #region Threads
@@ -75,7 +63,7 @@ namespace Average.Client.Managers
             var receive = false;
             var result = false;
 
-            rpc.Event("Character.Exist").On<bool>((exist) =>
+            Main.rpc.Event("Character.Exist").On<bool>((exist) =>
             {
                 result = exist;
                 receive = true;
@@ -89,11 +77,11 @@ namespace Average.Client.Managers
         {
             Current = null;
 
-            logger.Debug("Getting character..");
+            Log.Debug("Getting character..");
 
-            rpc.Event("Character.Load").On<CharacterData>(data =>
+            Main.rpc.Event("Character.Load").On<CharacterData>(data =>
             {
-                logger.Debug("Getted character: " + (data == null ? "No character" : data.RockstarId));
+                Log.Debug("Getted character: " + (data == null ? "No character" : data.RockstarId));
                 Current = data;
             }).Emit();
 
@@ -108,9 +96,9 @@ namespace Average.Client.Managers
 
             Current = null;
 
-            logger.Debug("Getting character..");
+            Log.Debug("Getting character..");
 
-            rpc.Event("Character.Load").On<CharacterData>(data =>
+            Main.rpc.Event("Character.Load").On<CharacterData>(data =>
             {
                 Current = data;
                 Current.Core.Health = health;
@@ -173,10 +161,10 @@ namespace Average.Client.Managers
         public async Task Save()
         {
             Current.Core.Health = GetEntityHealth(PlayerPedId());
-            eventManager.EmitServer("Character.Save", JsonConvert.SerializeObject(Current));
+            Main.eventManager.EmitServer("Character.Save", JsonConvert.SerializeObject(Current));
         }
 
-        public void Create(CharacterData data) => eventManager.EmitServer("Character.Save", JsonConvert.SerializeObject(data));
+        public void Create(CharacterData data) => Main.eventManager.EmitServer("Character.Save", JsonConvert.SerializeObject(data));
 
         public void SetPedBody()
         {

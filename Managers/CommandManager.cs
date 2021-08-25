@@ -11,18 +11,8 @@ namespace Average.Client.Managers
 {
     public class CommandManager : ICommandManager
     {
-        Logger logger;
-        PermissionManager permission;
-
-        List<Tuple<ClientCommandAttribute, ClientCommandAliasAttribute>> Commands { get; }
-
-        public CommandManager(Logger logger, PermissionManager permission)
-        {
-            this.logger = logger;
-            this.permission = permission;
-
-            Commands = new List<Tuple<ClientCommandAttribute, ClientCommandAliasAttribute>>();
-        }
+        private List<Tuple<ClientCommandAttribute, ClientCommandAliasAttribute>> _commands =
+            new List<Tuple<ClientCommandAttribute, ClientCommandAliasAttribute>>();
 
         internal void RegisterCommandInternal(string command, object classObj, MethodInfo method, ClientCommandAttribute commandAttr)
         {
@@ -30,7 +20,7 @@ namespace Average.Client.Managers
 
             API.RegisterCommand(command, new Action<int, List<object>, string>(async (source, args, raw) =>
             {
-                if (await permission.HasPermission(commandAttr.PermissionName, commandAttr.PermissionLevel) || commandAttr.PermissionName == null)
+                if (await Main.permissionManager.HasPermission(commandAttr.PermissionName, commandAttr.PermissionLevel) || commandAttr.PermissionName == null)
                 {
                     var newArgs = new List<object>();
 
@@ -43,23 +33,23 @@ namespace Average.Client.Managers
                         }
                         catch
                         {
-                            logger.Error($"Unable to convert command arguments.");
+                            Log.Error($"Unable to convert command arguments.");
                         }
                     }
                     else
                     {
                         var usage = "";
                         methodParams.ToList().ForEach(x => usage += $"<[{x.ParameterType.Name}] {x.Name}> ");
-                        logger.Error($"Invalid command usage: {command} {usage}.");
+                        Log.Error($"Invalid command usage: {command} {usage}.");
                     }
                 }
                 else
                 {
-                    logger.Error($"Unable to execute this command.");
+                    Log.Error($"Unable to execute this command.");
                 }
             }), false);
 
-            logger.Debug($"Registering [Command] attribute: {command} on method: {method.Name}");
+            Log.Debug($"Registering [Command] attribute: {command} on method: {method.Name}");
         }
 
         public void RegisterCommand(ClientCommandAttribute commandAttr, ClientCommandAliasAttribute aliasAttr, MethodInfo method, object classObj)
@@ -74,18 +64,18 @@ namespace Average.Client.Managers
             if (aliasAttr != null)
             {
                 aliasAttr.Alias.ToList().ForEach(x => RegisterCommandInternal(x, classObj, method, commandAttr));
-                logger.Debug($"Registering {aliasAttr.Alias.Length} alias for command: {commandAttr.Command} [{string.Join(", ", aliasAttr.Alias)}]");
+                Log.Debug($"Registering {aliasAttr.Alias.Length} alias for command: {commandAttr.Command} [{string.Join(", ", aliasAttr.Alias)}]");
             }
 
-            Commands.Add(new Tuple<ClientCommandAttribute, ClientCommandAliasAttribute>(commandAttr, aliasAttr));
+            _commands.Add(new Tuple<ClientCommandAttribute, ClientCommandAliasAttribute>(commandAttr, aliasAttr));
         }
 
-        public IEnumerable<Tuple<ClientCommandAttribute, ClientCommandAliasAttribute>> GetCommands() => Commands.AsEnumerable();
+        public IEnumerable<Tuple<ClientCommandAttribute, ClientCommandAliasAttribute>> GetCommands() => _commands.AsEnumerable();
 
-        public ClientCommandAttribute GetCommand(string command) => Commands.Find(x => x.Item1.Command == command).Item1;
+        public ClientCommandAttribute GetCommand(string command) => _commands.Find(x => x.Item1.Command == command).Item1;
 
-        public ClientCommandAliasAttribute GetCommandAlias(string command) => Commands.Find(x => x.Item1.Command == command).Item2;
+        public ClientCommandAliasAttribute GetCommandAlias(string command) => _commands.Find(x => x.Item1.Command == command).Item2;
 
-        public int Count() => Commands.Count();
+        public int Count() => _commands.Count();
     }
 }

@@ -2,17 +2,13 @@
 using Average.Client.Menu;
 using CitizenFX.Core;
 using SDK.Client;
-using SDK.Client.Diagnostics;
 using SDK.Client.Rpc;
 using SDK.Shared.Rpc;
-using System;
-using System.Threading.Tasks;
 
 namespace Average.Client
 {
     internal class Main : BaseScript
     {
-        internal static Logger logger;
         internal static CommandManager commandManager;
         internal static Framework framework;
         internal static ThreadManager threadManager;
@@ -30,9 +26,9 @@ namespace Average.Client
         internal static SaveManager saveManager;
         internal static ObjectManager objectManager;
         internal static NotificationManager notificationManager;
+        internal static RpcRequest rpc;
 
         CfxManager cfx;
-        RpcRequest rpc;
 
         internal static EventHandlerDictionary eventHandlers;
 
@@ -41,36 +37,34 @@ namespace Average.Client
         public Main()
         {
             eventHandlers = EventHandlers;
-
-            logger = new Logger();
+            
             rpc = new RpcRequest(new RpcHandler(EventHandlers), new RpcTrigger(), new RpcSerializer());
-
-            Configuration.Init(logger);
 
             // Internal Script
             languageManager = new LanguageManager();
             threadManager = new ThreadManager(c => Tick += c, c => Tick -= c);
-            eventManager = new EventManager(EventHandlers, logger);
-            exportManager = new ExportManager(logger);
-            syncManager = new SyncManager(logger, EventHandlers, threadManager);
-            saveManager = new SaveManager(logger, eventManager, EventHandlers);
-            menu = new MenuManager(eventManager);
-            blipManager = new BlipManager(EventHandlers);
-            npcManager = new NpcManager(EventHandlers);
-            userManager = new UserManager(logger, rpc);
-            permissionManager = new PermissionManager(logger, rpc, userManager, EventHandlers);
-            commandManager = new CommandManager(logger, permissionManager);
-            mapManager = new MapManager(logger, permissionManager, threadManager);
+            eventManager = new EventManager();
+            exportManager = new ExportManager();
+            syncManager = new SyncManager();
+            saveManager = new SaveManager();
+            menu = new MenuManager();
+            blipManager = new BlipManager();
+            npcManager = new NpcManager();
+            userManager = new UserManager();
+            permissionManager = new PermissionManager();
+            commandManager = new CommandManager();
+            mapManager = new MapManager();
             notificationManager = new NotificationManager();
-            characterManager = new CharacterManager(logger, threadManager, eventManager, rpc, saveManager);
+            characterManager = new CharacterManager();
             objectManager = new ObjectManager();
-            cfx = new CfxManager(EventHandlers, eventManager);
+            
+            cfx = new CfxManager();
 
             // Framework Script
-            framework = new Framework(languageManager, menu, threadManager, eventManager, exportManager, syncManager, logger, commandManager, blipManager, npcManager, userManager, permissionManager, mapManager, characterManager, saveManager, objectManager, notificationManager, rpc);
+            framework = new Framework(languageManager, menu, threadManager, eventManager, exportManager, syncManager, commandManager, blipManager, npcManager, userManager, permissionManager, mapManager, characterManager, saveManager, objectManager, notificationManager, rpc);
 
             // Plugin Loader
-            loader = new PluginLoader(rpc, commandManager);
+            loader = new PluginLoader();
             loader.Load();
         }
     }

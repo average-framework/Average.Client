@@ -14,39 +14,34 @@ namespace Average.Client.Managers
 {
     public class SyncManager : ISyncManager
     {
-        Dictionary<string, SyncPropertyState> propertiesSyncs;
-        Dictionary<string, SyncFieldState> fieldsSyncs;
+        private Dictionary<string, SyncPropertyState> _propertiesSyncs = new Dictionary<string, SyncPropertyState>();
+        private Dictionary<string, SyncFieldState> _fieldsSyncs = new Dictionary<string, SyncFieldState>();
 
-        List<GetSyncPropertyState> networkedPropertiesGetSyncs;
-        List<GetSyncFieldState> networkedFieldsGetSyncs;
+        private List<GetSyncPropertyState> _networkedPropertiesGetSyncs = new List<GetSyncPropertyState>();
+        private List<GetSyncFieldState> _networkedFieldsGetSyncs = new List<GetSyncFieldState>();
 
-        List<GetSyncPropertyState> propertiesGetSyncs;
-        List<GetSyncFieldState> fieldsGetSyncs;
-
-        Logger logger;
+        private List<GetSyncPropertyState> _propertiesGetSyncs = new List<GetSyncPropertyState>();
+        private List<GetSyncFieldState> _fieldsGetSyncs = new List<GetSyncFieldState>();
 
         public int SyncRate { get; set; } = 60;
 
-        public SyncManager(Logger logger, EventHandlerDictionary eventHandlers, ThreadManager thread)
+        public SyncManager()
         {
-            this.logger = logger;
+            #region Event
 
-            propertiesSyncs = new Dictionary<string, SyncPropertyState>();
-            fieldsSyncs = new Dictionary<string, SyncFieldState>();
+            Main.eventHandlers["avg.internal.sync_property"] += new Action<string, object>(InternalNetworkSyncPropertyEvent);
+            Main.eventHandlers["avg.internal.sync_field"] += new Action<string, object>(InternalNetworkSyncFieldEvent);
 
-            networkedPropertiesGetSyncs = new List<GetSyncPropertyState>();
-            networkedFieldsGetSyncs = new List<GetSyncFieldState>();
+            #endregion
 
-            propertiesGetSyncs = new List<GetSyncPropertyState>();
-            fieldsGetSyncs = new List<GetSyncFieldState>();
+            #region Thread
 
-            eventHandlers["avg.internal.sync_property"] += new Action<string, object>(InternalNetworkSyncPropertyEvent);
-            eventHandlers["avg.internal.sync_field"] += new Action<string, object>(InternalNetworkSyncFieldEvent);
+            Main.threadManager.StartThread(Update);
 
-            thread.StartThread(Update);
+            #endregion
         }
 
-        protected async Task Update()
+        private async Task Update()
         {
             await BaseScript.Delay(SyncRate);
 
@@ -54,7 +49,7 @@ namespace Average.Client.Managers
             SyncProperties();
         }
 
-        object GetPropertyValue(PropertyInfo property, object classObj)
+        private object GetPropertyValue(PropertyInfo property, object classObj)
         {
             if (property.GetIndexParameters().Length == 0)
                 return property.GetValue(classObj, null);
@@ -62,17 +57,17 @@ namespace Average.Client.Managers
             return null;
         }
 
-        object GetFieldValue(FieldInfo field, object classObj) => field.GetValue(classObj);
+        private object GetFieldValue(FieldInfo field, object classObj) => field.GetValue(classObj);
 
         public void SyncProperties()
         {
-            for (int i = 0; i < propertiesGetSyncs.Count; i++)
+            for (var i = 0; i < _propertiesGetSyncs.Count; i++)
             {
-                var getSync = propertiesGetSyncs[i];
+                var getSync = _propertiesGetSyncs[i];
 
-                if (propertiesSyncs.ContainsKey(getSync.Attribute.Name))
+                if (_propertiesSyncs.ContainsKey(getSync.Attribute.Name))
                 {
-                    var sync = propertiesSyncs[getSync.Attribute.Name];
+                    var sync = _propertiesSyncs[getSync.Attribute.Name];
 
                     if (sync.Property.PropertyType == getSync.Property.PropertyType)
                     {
@@ -86,7 +81,7 @@ namespace Average.Client.Managers
                     }
                     else
                     {
-                        logger.Error($"Unable to sync properties from {sync.Attribute.Name}: {sync.Property.Name} with {getSync.Attribute.Name}: {getSync.Property.Name} because types is not the same [{string.Join(", ", sync.Property.PropertyType, getSync.Property.PropertyType)}]");
+                        Log.Error($"Unable to sync properties from {sync.Attribute.Name}: {sync.Property.Name} with {getSync.Attribute.Name}: {getSync.Property.Name} because types is not the same [{string.Join(", ", sync.Property.PropertyType, getSync.Property.PropertyType)}]");
                     }
                 }
             }
@@ -94,13 +89,13 @@ namespace Average.Client.Managers
 
         public void SyncFields()
         {
-            for (int i = 0; i < fieldsGetSyncs.Count; i++)
+            for (int i = 0; i < _fieldsGetSyncs.Count; i++)
             {
-                var getSync = fieldsGetSyncs[i];
+                var getSync = _fieldsGetSyncs[i];
 
-                if (fieldsSyncs.ContainsKey(getSync.Attribute.Name))
+                if (_fieldsSyncs.ContainsKey(getSync.Attribute.Name))
                 {
-                    var sync = fieldsSyncs[getSync.Attribute.Name];
+                    var sync = _fieldsSyncs[getSync.Attribute.Name];
 
                     if (sync.Field.FieldType == getSync.Field.FieldType)
                     {
@@ -114,7 +109,7 @@ namespace Average.Client.Managers
                     }
                     else
                     {
-                        logger.Error($"Unable to sync fields from {sync.Attribute.Name}: {sync.Field.Name} with {getSync.Attribute.Name}: {getSync.Field.Name} because types is not the same [{string.Join(", ", sync.Field.FieldType, getSync.Field.FieldType)}]");
+                        Log.Error($"Unable to sync fields from {sync.Attribute.Name}: {sync.Field.Name} with {getSync.Attribute.Name}: {getSync.Field.Name} because types is not the same [{string.Join(", ", sync.Field.FieldType, getSync.Field.FieldType)}]");
                     }
                 }
             }
@@ -122,34 +117,34 @@ namespace Average.Client.Managers
 
         public void RegisterSync(ref PropertyInfo property, SyncAttribute syncAttr, object classObj)
         {
-            if (!propertiesSyncs.ContainsKey(syncAttr.Name))
+            if (!_propertiesSyncs.ContainsKey(syncAttr.Name))
             {
                 if (property.CanWrite && property.CanRead)
                 {
-                    propertiesSyncs.Add(syncAttr.Name, new SyncPropertyState(syncAttr, property, classObj));
-                    logger.Debug($"Registering [Sync] attribute: {syncAttr.Name} on property: {property.Name}");
+                    _propertiesSyncs.Add(syncAttr.Name, new SyncPropertyState(syncAttr, property, classObj));
+                    Log.Debug($"Registering [Sync] attribute: {syncAttr.Name} on property: {property.Name}");
                 }
                 else
                 {
-                    logger.Error($"Unable to register [Sync] attribute: {syncAttr.Name} on property: {property.Name}, [Sync] attribute can only be placed on getter & setter property.");
+                    Log.Error($"Unable to register [Sync] attribute: {syncAttr.Name} on property: {property.Name}, [Sync] attribute can only be placed on getter & setter property.");
                 }
             }
             else
             {
-                logger.Error($"Unable to register [Sync] attribute: {syncAttr.Name} on property: {property.Name}, an [Sync] attribute have already been registered with this name.");
+                Log.Error($"Unable to register [Sync] attribute: {syncAttr.Name} on property: {property.Name}, an [Sync] attribute have already been registered with this name.");
             }
         }
 
         public void RegisterSync(ref FieldInfo field, SyncAttribute syncAttr, object classObj)
         {
-            if (!fieldsSyncs.ContainsKey(syncAttr.Name))
+            if (!_fieldsSyncs.ContainsKey(syncAttr.Name))
             {
-                fieldsSyncs.Add(syncAttr.Name, new SyncFieldState(syncAttr, field, classObj));
-                logger.Debug($"Registering [Sync] attribute: {syncAttr.Name} on field: {field.Name}");
+                _fieldsSyncs.Add(syncAttr.Name, new SyncFieldState(syncAttr, field, classObj));
+                Log.Debug($"Registering [Sync] attribute: {syncAttr.Name} on field: {field.Name}");
             }
             else
             {
-                logger.Error($"Unable to register [Sync] attribute: {syncAttr.Name} on field: {field.Name}, an [Sync] attribute have already been registered with this name.");
+                Log.Error($"Unable to register [Sync] attribute: {syncAttr.Name} on field: {field.Name}, an [Sync] attribute have already been registered with this name.");
             }
         }
 
@@ -157,19 +152,19 @@ namespace Average.Client.Managers
         {
             if (property.CanWrite && property.CanRead)
             {
-                propertiesGetSyncs.Add(new GetSyncPropertyState(getSyncAttr, property, classObj));
-                logger.Debug($"Registering [GetSync] attribute: {getSyncAttr.Name} on property: {property.Name}.");
+                _propertiesGetSyncs.Add(new GetSyncPropertyState(getSyncAttr, property, classObj));
+                Log.Debug($"Registering [GetSync] attribute: {getSyncAttr.Name} on property: {property.Name}.");
             }
             else
             {
-                logger.Error($"Unable to register [GetSync] attribute: {getSyncAttr.Name} on property: {property.Name}, [GetSync] attribute can only be placed on getter & setter property.");
+                Log.Error($"Unable to register [GetSync] attribute: {getSyncAttr.Name} on property: {property.Name}, [GetSync] attribute can only be placed on getter & setter property.");
             }
         }
 
         public void RegisterGetSync(ref FieldInfo field, GetSyncAttribute getSyncAttr, object classObj)
         {
-            fieldsGetSyncs.Add(new GetSyncFieldState(getSyncAttr, field, classObj));
-            logger.Debug($"Registering [GetSync] attribute: {getSyncAttr.Name} on field: {field.Name}.");
+            _fieldsGetSyncs.Add(new GetSyncFieldState(getSyncAttr, field, classObj));
+            Log.Debug($"Registering [GetSync] attribute: {getSyncAttr.Name} on field: {field.Name}.");
         }
 
         #region Network
@@ -178,28 +173,28 @@ namespace Average.Client.Managers
         {
             if (property.CanWrite && property.CanRead)
             {
-                networkedPropertiesGetSyncs.Add(new GetSyncPropertyState(getSyncAttr, property, classObj));
-                logger.Debug($"Registering [NetworkGetSync] attribute: {getSyncAttr.Name} on property: {property.Name}.");
+                _networkedPropertiesGetSyncs.Add(new GetSyncPropertyState(getSyncAttr, property, classObj));
+                Log.Debug($"Registering [NetworkGetSync] attribute: {getSyncAttr.Name} on property: {property.Name}.");
             }
             else
             {
-                logger.Error($"Unable to register [NetworkGetSync] attribute: {getSyncAttr.Name} on property: {property.Name}, [NetworkGetSync] attribute can only be placed on getter & setter property.");
+                Log.Error($"Unable to register [NetworkGetSync] attribute: {getSyncAttr.Name} on property: {property.Name}, [NetworkGetSync] attribute can only be placed on getter & setter property.");
             }
         }
 
         public void RegisterNetworkGetSync(ref FieldInfo field, NetworkGetSyncAttribute getSyncAttr, object classObj)
         {
-            networkedFieldsGetSyncs.Add(new GetSyncFieldState(getSyncAttr, field, classObj));
-            logger.Debug($"Registering [NetworkGetSync] attribute: {getSyncAttr.Name} on field: {field.Name}.");
+            _networkedFieldsGetSyncs.Add(new GetSyncFieldState(getSyncAttr, field, classObj));
+            Log.Debug($"Registering [NetworkGetSync] attribute: {getSyncAttr.Name} on field: {field.Name}.");
         }
 
         #endregion
 
         #region Internal Event
 
-        void InternalNetworkSyncPropertyEvent(string attrName, object value)
+        private void InternalNetworkSyncPropertyEvent(string attrName, object value)
         {
-            var getSyncs = networkedPropertiesGetSyncs.Where(x => x.Attribute.Name == attrName).ToList();
+            var getSyncs = _networkedPropertiesGetSyncs.Where(x => x.Attribute.Name == attrName).ToList();
 
             for (int i = 0; i < getSyncs.Count; i++)
             {
@@ -215,14 +210,14 @@ namespace Average.Client.Managers
                 }
                 else
                 {
-                    logger.Error($"Unable to sync property from {attrName} with {getSync.Attribute.Name}: {getSync.Property.Name} because types is not the same [{string.Join(", ", newValue.GetType(), getSync.Property.PropertyType)}]");
+                    Log.Error($"Unable to sync property from {attrName} with {getSync.Attribute.Name}: {getSync.Property.Name} because types is not the same [{string.Join(", ", newValue.GetType(), getSync.Property.PropertyType)}]");
                 }
             }
         }
 
-        void InternalNetworkSyncFieldEvent(string attrName, object value)
+        private void InternalNetworkSyncFieldEvent(string attrName, object value)
         {
-            var getSyncs = networkedFieldsGetSyncs.Where(x => x.Attribute.Name == attrName).ToList();
+            var getSyncs = _networkedFieldsGetSyncs.Where(x => x.Attribute.Name == attrName).ToList();
 
             for (int i = 0; i < getSyncs.Count; i++)
             {
@@ -238,22 +233,22 @@ namespace Average.Client.Managers
                 }
                 else
                 {
-                    logger.Error($"Unable to sync field from {attrName} with {getSync.Attribute.Name}: {getSync.Field.Name} because types is not the same [{string.Join(", ", newValue.GetType(), getSync.Field.FieldType)}]");
+                    Log.Error($"Unable to sync field from {attrName} with {getSync.Attribute.Name}: {getSync.Field.Name} because types is not the same [{string.Join(", ", newValue.GetType(), getSync.Field.FieldType)}]");
                 }
             }
         }
 
-        public IEnumerable<SyncPropertyState> GetAllSyncProperties() => propertiesSyncs.Values.AsEnumerable();
+        public IEnumerable<SyncPropertyState> GetAllSyncProperties() => _propertiesSyncs.Values.AsEnumerable();
 
-        public IEnumerable<SyncFieldState> GetAllSyncFields() => fieldsSyncs.Values.AsEnumerable();
+        public IEnumerable<SyncFieldState> GetAllSyncFields() => _fieldsSyncs.Values.AsEnumerable();
 
-        public IEnumerable<GetSyncPropertyState> GetAllNetworkedGetSyncProperties() => networkedPropertiesGetSyncs.AsEnumerable();
+        public IEnumerable<GetSyncPropertyState> GetAllNetworkedGetSyncProperties() => _networkedPropertiesGetSyncs.AsEnumerable();
 
-        public IEnumerable<GetSyncFieldState> GetAllNetworkedGetSyncFields() => networkedFieldsGetSyncs.AsEnumerable();
+        public IEnumerable<GetSyncFieldState> GetAllNetworkedGetSyncFields() => _networkedFieldsGetSyncs.AsEnumerable();
 
-        public IEnumerable<GetSyncPropertyState> GetAllGetSyncProperties() => propertiesGetSyncs.AsEnumerable();
+        public IEnumerable<GetSyncPropertyState> GetAllGetSyncProperties() => _propertiesGetSyncs.AsEnumerable();
 
-        public IEnumerable<GetSyncFieldState> GetAllGetSyncFields() => fieldsGetSyncs.AsEnumerable();
+        public IEnumerable<GetSyncFieldState> GetAllGetSyncFields() => _fieldsGetSyncs.AsEnumerable();
 
         #endregion
     }

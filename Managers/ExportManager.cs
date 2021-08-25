@@ -11,29 +11,22 @@ namespace Average.Client.Managers
 {
     public class ExportManager : IExportManager
     {
-        Dictionary<string, Delegate> exports;
-        Logger logger;
-
-        public ExportManager(Logger logger)
-        {
-            this.logger = logger;
-            exports = new Dictionary<string, Delegate>();
-        }
+        private Dictionary<string, Delegate> _exports = new Dictionary<string, Delegate>();
 
         public void CallMethod(string exportName, params object[] args)
         {
-            if (exports.ContainsKey(exportName))
-                exports[exportName].DynamicInvoke(args);
+            if (_exports.ContainsKey(exportName))
+                _exports[exportName].DynamicInvoke(args);
             else
-                logger.Debug($"Unable to call export: {exportName}, this export does not exists.");
+                Log.Debug($"Unable to call export: {exportName}, this export does not exists.");
         }
 
         public T CallMethod<T>(string exportName, params object[] args)
         {
-            if (exports.ContainsKey(exportName))
-                return (T)exports[exportName].DynamicInvoke(args);
+            if (_exports.ContainsKey(exportName))
+                return (T)_exports[exportName].DynamicInvoke(args);
             else
-                logger.Debug($"Unable to call export: {exportName}, this export does not exists.");
+                Log.Debug($"Unable to call export: {exportName}, this export does not exists.");
 
             return (T)Activator.CreateInstance(typeof(T));
         }
@@ -42,16 +35,16 @@ namespace Average.Client.Managers
         {
             var methodParams = method.GetParameters();
 
-            if (!exports.ContainsKey(exportAttr.Name))
+            if (!_exports.ContainsKey(exportAttr.Name))
             {
                 var action = Action.CreateDelegate(Expression.GetDelegateType((from parameter in method.GetParameters() select parameter.ParameterType).Concat(new[] { method.ReturnType }).ToArray()), classObj, method);
-                exports.Add(exportAttr.Name, action);
+                _exports.Add(exportAttr.Name, action);
 
-                logger.Debug($"Registering [Export] attribute: {exportAttr.Name} on method: {method.Name}, args count: {methodParams.Count()}.");
+                Log.Debug($"Registering [Export] attribute: {exportAttr.Name} on method: {method.Name}, args count: {methodParams.Count()}.");
             }
             else
             {
-                logger.Error($"Unable to register [Export] attribute: {exportAttr.Name} on method: {method.Name}, an export have already been registered with this name.");
+                Log.Error($"Unable to register [Export] attribute: {exportAttr.Name} on method: {method.Name}, an export have already been registered with this name.");
             }
         }
 

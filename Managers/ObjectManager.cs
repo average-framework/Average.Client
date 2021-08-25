@@ -123,7 +123,7 @@ namespace Average.Client.Managers
             await BaseScript.Delay(ditheringUpdateInterval);
         }
 
-        protected async Task Update()
+        private async Task Update()
         {
             for (int i = 0; i < _registeredProps.Count; i++)
             {
@@ -228,7 +228,7 @@ namespace Average.Client.Managers
 
         #region Event
 
-        protected void OnResourceStop(string resourceName)
+        private void OnResourceStop(string resourceName)
         {
             if (resourceName == Constant.RESOURCE_NAME)
             {

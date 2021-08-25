@@ -30,8 +30,11 @@ namespace Average.Client
         internal static EventHandlerDictionary eventHandlers;
         internal static PluginLoader loader;
 
+        internal static Main instance;
+        
         public Main()
         {
+            instance = this;
             eventHandlers = EventHandlers;
             
             rpc = new RpcRequest(new RpcHandler(EventHandlers), new RpcTrigger(), new RpcSerializer());

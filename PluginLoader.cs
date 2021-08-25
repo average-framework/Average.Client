@@ -28,7 +28,7 @@ namespace Average.Client
             while (!_isReady) await BaseScript.Delay(0);
         }
 
-        async Task<List<PluginInfo>> GetPlugins()
+        private async Task<List<PluginInfo>> GetPlugins()
         {
             Main.rpc.Event("avg.internal.get_plugins").On(message =>
             {
@@ -80,7 +80,7 @@ namespace Average.Client
 
                         foreach (var type in types)
                         {
-                            Plugin script = null;
+                            Plugin? script = null;
 
                             if (type.IsSubclassOf(typeof(Plugin)))
                             {
@@ -123,8 +123,7 @@ namespace Average.Client
                                 }
                             }
 
-                            if (script == null)
-                                continue;
+                            if (script == null) continue;
 
                             RegisterThreads(type, script);
                             RegisterEvents(type, script);
@@ -150,7 +149,7 @@ namespace Average.Client
             }
         }
 
-        void RegisterCommands(Type type, object classObj)
+        private void RegisterCommands(Type type, object classObj)
         {
             var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy;
 
@@ -164,7 +163,7 @@ namespace Average.Client
             }
         }
 
-        void RegisterThreads(Type type, object classObj)
+        private void RegisterThreads(Type type, object classObj)
         {
             // Registering threads
             var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy;
@@ -180,7 +179,7 @@ namespace Average.Client
             }
         }
 
-        void RegisterEvents(Type type, object classObj)
+        private void RegisterEvents(Type type, object classObj)
         {
             // Registering events
             var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy;
@@ -196,7 +195,7 @@ namespace Average.Client
             }
         }
 
-        void RegisterExports(Type type, object classObj)
+        private void RegisterExports(Type type, object classObj)
         {
             // Registering exports
             var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy;
@@ -212,7 +211,7 @@ namespace Average.Client
             }
         }
 
-        void RegisterSyncs(Type type, object classObj)
+        private void RegisterSyncs(Type type, object classObj)
         {
             // Registering syncs
             var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy;
@@ -240,7 +239,7 @@ namespace Average.Client
             }
         }
 
-        void RegisterGetSyncs(Type type, object classObj)
+        private void RegisterGetSyncs(Type type, object classObj)
         {
             // Registering getSyncs
             var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy;
@@ -268,7 +267,7 @@ namespace Average.Client
             }
         }
 
-        void RegisterNetworkGetSyncs(Type type, object classObj)
+        private void RegisterNetworkGetSyncs(Type type, object classObj)
         {
             var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy;
 
@@ -297,7 +296,7 @@ namespace Average.Client
             }
         }
 
-        void RegisterNUICallbacks(Type type, object classObj)
+        private void RegisterNUICallbacks(Type type, object classObj)
         {
             foreach (var method in type.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
             {

@@ -163,7 +163,7 @@ namespace Average.Client.Managers
         public async Task Save()
         {
             Current.Core.Health = GetEntityHealth(PlayerPedId());
-            Main.eventManager.EmitServer("Character.Save", await JsonConvert.SerializeObjectAsync(Current));
+            Main.eventManager.EmitServer("Character.Save", JsonConvert.SerializeObject(Current));
         }
 
         public void Create(CharacterData data) => Main.eventManager.EmitServer("Character.Save", JsonConvert.SerializeObject(data));

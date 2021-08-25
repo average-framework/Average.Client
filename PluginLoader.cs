@@ -14,21 +14,18 @@ using System.Reflection;
 using System.Threading.Tasks;
 using SDK.Client.Diagnostics;
 
-#pragma warning disable 8600
-
 namespace Average.Client
 {
     internal class PluginLoader
     {
+        private bool _isReady;
+
         private List<PluginInfo> _pluginsInfo;
-
-        bool isReady;
-
-        private List<Plugin> _plugins;
+        private List<Plugin> _plugins = new List<Plugin>();
 
         public async Task IsReady()
         {
-            while (!isReady) await BaseScript.Delay(0);
+            while (!_isReady) await BaseScript.Delay(0);
         }
 
         async Task<List<PluginInfo>> GetPlugins()
@@ -101,7 +98,7 @@ namespace Average.Client
                                             Log.Info($"Plugin {asm.GetName().Name} -> script: {script.Name} successfully loaded.");
                                         }
                                     }
-                                    catch (InvalidCastException ex)
+                                    catch
                                     {
                                         Log.Error($"Unable to load {asm.GetName().Name}");
                                     }
@@ -145,7 +142,7 @@ namespace Average.Client
                     }
                 }
 
-                isReady = true;
+                _isReady = true;
             }
             catch (Exception ex)
             {
@@ -337,12 +334,12 @@ namespace Average.Client
             }
         }
 
-        void RegisterPlugin(Plugin script)
+        private void RegisterPlugin(Plugin script)
         {
             _plugins.Add(script);
         }
 
-        void UnloadScript(Plugin script)
+        private void UnloadScript(Plugin script)
         {
             _plugins.Remove(script);
         }

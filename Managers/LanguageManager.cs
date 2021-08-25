@@ -12,7 +12,7 @@ namespace Average.Client.Managers
 
         public LanguageManager()
         {
-            var config = Configuration.Parse("config.json");
+            var config = Configuration.ParseToObject("config.json");
             Current = (string)config["Language"];
             _language = Configuration.ParseToDictionary($"languages/{Current}.json");
         }

@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using SDK.Client.Diagnostics;
 using static CitizenFX.Core.Native.API;
 using static SDK.Client.GameAPI;
+using Newtonsoft.Json.Linq;
 
 namespace Average.Client.Managers
 {
@@ -26,7 +27,7 @@ namespace Average.Client.Managers
         {
             #region Configuration
 
-            var baseConfig = SDK.Client.Configuration.Parse("config.json");
+            JObject baseConfig = SDK.Client.Configuration.ParseToObject("config.json");
 
             enableDithering = (bool)baseConfig["Streaming"]["EnableDithering"];
             ditheringDistance = (float)baseConfig["Streaming"]["DitheringDistance"];

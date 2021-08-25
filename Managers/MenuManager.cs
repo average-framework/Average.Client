@@ -1,14 +1,14 @@
-﻿using CitizenFX.Core;
-using SDK.Client.Events;
-using SDK.Client.Interfaces;
-using SDK.Client.Menu;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CitizenFX.Core;
+using SDK.Client.Events;
+using SDK.Client.Interfaces;
+using SDK.Client.Menu;
 using static SDK.Client.GameAPI;
 
-namespace Average.Client.Menu
+namespace Average.Client.Managers
 {
     public class MenuManager : IMenuManager
     {
@@ -28,16 +28,20 @@ namespace Average.Client.Menu
 
         public MenuManager()
         {
+            #region Event
+
             Main.eventManager.RegisterInternalNUICallbackEvent("window_ready", WindowReady);
             Main.eventManager.RegisterInternalNUICallbackEvent("menu/avg.ready", Ready);
             Main.eventManager.RegisterInternalNUICallbackEvent("menu/on_click", OnClick);
             Main.eventManager.RegisterInternalNUICallbackEvent("menu/on_tab_click", OnTabClick);
             Main.eventManager.RegisterInternalNUICallbackEvent("menu/on_previous", OnPrevious);
+
+            #endregion
         }
 
         #region Nui Callback
 
-        CallbackDelegate WindowReady(IDictionary<string, object> data, CallbackDelegate result)
+        private CallbackDelegate WindowReady(IDictionary<string, object> data, CallbackDelegate result)
         {
             // Load menu in html page
             SendNUI(new
@@ -49,13 +53,13 @@ namespace Average.Client.Menu
             return result;
         }
 
-        CallbackDelegate Ready(IDictionary<string, object> data, CallbackDelegate result)
+        private CallbackDelegate Ready(IDictionary<string, object> data, CallbackDelegate result)
         {
             isReady = true;
             return result;
         }
 
-        CallbackDelegate OnTabClick(IDictionary<string, object> data, CallbackDelegate result)
+        private CallbackDelegate OnTabClick(IDictionary<string, object> data, CallbackDelegate result)
         {
             if (!data.ContainsKey("name"))
                 return result;
@@ -79,7 +83,7 @@ namespace Average.Client.Menu
             return result;
         }
         
-        CallbackDelegate OnClick(IDictionary<string, object> data, CallbackDelegate result)
+        private CallbackDelegate OnClick(IDictionary<string, object> data, CallbackDelegate result)
         {
             if (!data.ContainsKey("name"))
                 return result;
@@ -233,7 +237,7 @@ namespace Average.Client.Menu
             return result;
         }
 
-        CallbackDelegate OnPrevious(IDictionary<string, object> data, CallbackDelegate result)
+        private CallbackDelegate OnPrevious(IDictionary<string, object> data, CallbackDelegate result)
         {
             if (IsOpen)
             {
@@ -262,12 +266,12 @@ namespace Average.Client.Menu
 
         #endregion
 
-        public void OnMenuChanged(MenuContainer oldMenu, MenuContainer currentMenu)
+        private void OnMenuChanged(MenuContainer oldMenu, MenuContainer currentMenu)
         {
             MenuChanged?.Invoke(this, new MenuChangeEventArgs(oldMenu, currentMenu));
         }
 
-        public void OnMenuClosed(MenuContainer currentMenu)
+        private void OnMenuClosed(MenuContainer currentMenu)
         {
             MenuClosed?.Invoke(this, new MenuCloseEventArgs(currentMenu));
         }

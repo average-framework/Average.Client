@@ -40,7 +40,7 @@ namespace Average.Client.Managers
 
         #region NUI
 
-        CallbackDelegate WindowReady(IDictionary<string, object> data, CallbackDelegate result)
+        private CallbackDelegate WindowReady(IDictionary<string, object> data, CallbackDelegate result)
         {
             // Load menu in html page
             SendNUI(new
@@ -52,7 +52,7 @@ namespace Average.Client.Managers
             return result;
         }
 
-        CallbackDelegate Ready(IDictionary<string, object> data, CallbackDelegate result)
+        private CallbackDelegate Ready(IDictionary<string, object> data, CallbackDelegate result)
         {
             SendNUI(new
             {
@@ -99,7 +99,7 @@ namespace Average.Client.Managers
             await BaseScript.Delay(250);
         }
 
-        protected async Task UpdateState()
+        private async Task UpdateState()
         {
             for (int i = 0; i < _queue.Count; i++)
             {
@@ -132,7 +132,6 @@ namespace Average.Client.Managers
 
             _queue.Remove(notification);
         }
-
 
         public void Schedule(string title, string content, int duration)
         {

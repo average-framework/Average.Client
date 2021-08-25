@@ -7,6 +7,7 @@ using SDK.Shared.Models;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
+using SDK.Client.Models;
 using static CitizenFX.Core.Native.API;
 
 namespace Average.Client.Managers
@@ -16,11 +17,11 @@ namespace Average.Client.Managers
         private float lodDistance = 600f;
 
         public List<ImapModel> ScannedImaps { get; } = new List<ImapModel>();
-        public List<ImapModel> Imaps { get; private set; }
-        public List<InteriorModel> Interiors { get; private set; }
-        public List<CustomImapModel> CustomImaps { get; private set; }
-        public List<CustomInteriorModel> CustomInteriors { get; private set; }
-        public List<InteriorSetModel> InteriorsSet { get; private set; }
+        public List<ImapModel> Imaps { get; }
+        public List<InteriorModel> Interiors { get; }
+        public List<CustomImapModel> CustomImaps { get; }
+        public List<CustomInteriorModel> CustomInteriors { get; }
+        public List<InteriorSetModel> InteriorsSet { get; }
 
         public MapManager()
         {
@@ -31,7 +32,7 @@ namespace Average.Client.Managers
             InteriorsSet = Configuration.Parse<List<InteriorSetModel>>("utils/interiors_set.json");
         }
 
-        protected async Task LowSpecModeUpdate()
+        private async Task LowSpecModeUpdate()
         {
             var ped = PlayerPedId();
             var pos = GetEntityCoords(ped, true, true);
@@ -56,10 +57,10 @@ namespace Average.Client.Managers
             await BaseScript.Delay(1000);
         }
 
-        #region Commands
+        #region Command
 
         [Command("map.lowspecmode_disable")]
-        public async void LowSpecModeDisableCommand()
+        private async void LowSpecModeDisableCommand()
         {
             if (await Main.permissionManager.HasPermission("player"))
             {
@@ -79,7 +80,7 @@ namespace Average.Client.Managers
                 for (int i = 0; i < CustomImaps.Count; i++)
                 {
                     var imap = CustomImaps[i];
-                    var hash = (uint)long.Parse(imap.Hash);
+                    var hash = (uint) long.Parse(imap.Hash);
 
                     if (imap.Enabled)
                     {
@@ -96,7 +97,7 @@ namespace Average.Client.Managers
         }
 
         [Command("map.lowspecmode_dist")]
-        public async void LowSpecModeDistanceCommand(int source, List<object> args, string raw)
+        private async void LowSpecModeDistanceCommand(int source, List<object> args, string raw)
         {
             if (await Main.permissionManager.HasPermission("player"))
             {
@@ -108,7 +109,7 @@ namespace Average.Client.Managers
         }
 
         [Command("map.lowspecmode")]
-        public async void LowSpecModeCommand(int source, List<object> args, string raw)
+        private async void LowSpecModeCommand(int source, List<object> args, string raw)
         {
             if (await Main.permissionManager.HasPermission("player"))
             {
@@ -133,7 +134,7 @@ namespace Average.Client.Managers
         }
 
         [Command("map.reload_custom_imaps")]
-        public async void ReloadCustomImapsCommand(int source, List<object> args, string raw)
+        private async void ReloadCustomImapsCommand(int source, List<object> args, string raw)
         {
             if (await Main.permissionManager.HasPermission("owner"))
             {
@@ -144,7 +145,7 @@ namespace Average.Client.Managers
         }
 
         [Command("map.load_imaps")]
-        public async void LoadImapsCommand(int source, List<object> args, string raw)
+        private async void LoadImapsCommand(int source, List<object> args, string raw)
         {
             if (await Main.permissionManager.HasPermission("owner"))
             {
@@ -159,7 +160,7 @@ namespace Average.Client.Managers
         }
 
         [ClientCommand("map.load_custom_imaps")]
-        public async void LoadCustomImapsCommand(int source, List<object> args, string raw)
+        private async void LoadCustomImapsCommand(int source, List<object> args, string raw)
         {
             if (await Main.permissionManager.HasPermission("owner"))
             {
@@ -174,21 +175,21 @@ namespace Average.Client.Managers
         }
 
         [ClientCommand("map.remove_imaps")]
-        public async void RemoveImapsCommand(int source, List<object> args, string raw)
+        private async void RemoveImapsCommand(int source, List<object> args, string raw)
         {
             if (await Main.permissionManager.HasPermission("owner"))
                 UnloadImaps();
         }
 
         [ClientCommand("map.remove_custom_imaps")]
-        public async void RemoveCustomImapsCommand(int source, List<object> args, string raw)
+        private async void RemoveCustomImapsCommand(int source, List<object> args, string raw)
         {
             if (await Main.permissionManager.HasPermission("owner"))
                 UnloadCustomImaps();
         }
 
         [ClientCommand("map.scan_proximity")]
-        public async void ScanProximityCommand(int source, List<object> args, string raw)
+        private async void ScanProximityCommand(int source, List<object> args, string raw)
         {
             if (await Main.permissionManager.HasPermission("owner"))
             {
@@ -216,7 +217,7 @@ namespace Average.Client.Managers
         {
             foreach (var imap in CustomImaps)
             {
-                var hash = (uint)long.Parse(imap.Hash);
+                var hash = (uint) long.Parse(imap.Hash);
 
                 if (imap.Enabled)
                 {
@@ -246,7 +247,7 @@ namespace Average.Client.Managers
         {
             foreach (var imap in Imaps)
             {
-                var hash = (uint)long.Parse(imap.Hash);
+                var hash = (uint) long.Parse(imap.Hash);
 
                 if (IsImapActive(hash))
                     RemoveImap(hash);
@@ -257,7 +258,7 @@ namespace Average.Client.Managers
         {
             foreach (var imap in CustomImaps)
             {
-                var hash = (uint)long.Parse(imap.Hash);
+                var hash = (uint) long.Parse(imap.Hash);
 
                 if (IsImapActive(hash))
                     RemoveImap(hash);
@@ -286,13 +287,13 @@ namespace Average.Client.Managers
         public void LoadInterior(int interior, string entitySetName)
         {
             if (!IsInteriorEntitySetActive(interior, entitySetName))
-                Function.Call((Hash)0x174D0AAB11CED739, interior, entitySetName);
+                Function.Call((Hash) 0x174D0AAB11CED739, interior, entitySetName);
         }
 
         public void UnloadInterior(int interior, string entitySetName)
         {
             if (IsInteriorEntitySetActive(interior, entitySetName))
-                Function.Call((Hash)0x33B81A2C07A51FFF, interior, entitySetName, true);
+                Function.Call((Hash) 0x33B81A2C07A51FFF, interior, entitySetName, true);
         }
     }
 }

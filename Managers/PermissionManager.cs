@@ -1,9 +1,6 @@
 ﻿using CitizenFX.Core;
-using CitizenFX.Core.Native;
-using SDK.Client;
 using SDK.Client.Diagnostics;
 using SDK.Client.Interfaces;
-using SDK.Client.Rpc;
 using SDK.Shared.DataModels;
 using System;
 using System.Collections.Generic;
@@ -21,9 +18,12 @@ namespace Average.Client.Managers
             #region Event
 
             Main.eventHandlers["Permission.Set"] += new Action<string, int>(SetPermissionEvent);
-            
-            Log.Debug("Getting permissions..");
 
+            #endregion
+
+            #region Rpc
+
+            Log.Debug("Getting permissions..");
             Main.rpc.Event("Permission.GetAll").On<List<PermissionData>>(permissions =>
             {
                 _permissions = permissions;
@@ -32,7 +32,7 @@ namespace Average.Client.Managers
             }).Emit();
 
             #endregion
-
+            
             #region Command
 
             RegisterCommand("permission.set", new Action<int, List<object>, string>(SetPermissionCommand), false);

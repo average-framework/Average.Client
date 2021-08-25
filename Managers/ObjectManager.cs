@@ -1,5 +1,4 @@
 ﻿using CitizenFX.Core;
-using Newtonsoft.Json.Linq;
 using SDK.Client.Interfaces;
 using SDK.Client.Models;
 using SDK.Shared;

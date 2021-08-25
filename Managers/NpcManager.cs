@@ -15,7 +15,11 @@ namespace Average.Client.Managers
 
         public NpcManager()
         {
+            #region Event
+
             Main.eventHandlers["onResourceStop"] += new Action<string>(OnResourceStop);
+
+            #endregion
         }
 
         public async Task<int> Create(uint model, int variation, Vector3 position, float heading, bool isNetwork = false, bool netMissionEntity = false)
@@ -48,9 +52,9 @@ namespace Average.Client.Managers
             }
         }
 
-        #region Events
+        #region Event
 
-        protected void OnResourceStop(string resource)
+        private void OnResourceStop(string resource)
         {
             if (resource == Constant.RESOURCE_NAME)
             {

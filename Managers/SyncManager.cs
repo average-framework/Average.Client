@@ -23,7 +23,7 @@ namespace Average.Client.Managers
         private List<GetSyncPropertyState> _propertiesGetSyncs = new List<GetSyncPropertyState>();
         private List<GetSyncFieldState> _fieldsGetSyncs = new List<GetSyncFieldState>();
 
-        public int SyncRate { get; set; } = 60;
+        private const int SyncRate = 60;
 
         public SyncManager()
         {

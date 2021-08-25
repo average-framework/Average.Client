@@ -14,7 +14,11 @@ namespace Average.Client.Managers
 
         public BlipManager()
         {
+            #region Event
+
             Main.eventHandlers["onResourceStop"] += new Action<string>(OnResourceStop);
+
+            #endregion
         }
 
         public int Create(int sprite, string text, float scale, Vector3 position)
@@ -26,23 +30,22 @@ namespace Average.Client.Managers
 
         public void Delete(int handle)
         {
-            if (Exist(handle))
-            {
-                if (DoesBlipExist(handle))
-                    RemoveBlip(ref handle);
+            if (!Exist(handle)) return;
+            
+            if (DoesBlipExist(handle))
+                RemoveBlip(ref handle);
 
-                if (_blips.Exists(x => x == handle))
-                    _blips.Remove(handle);
-            }
+            if (_blips.Exists(x => x == handle))
+                _blips.Remove(handle);
         }
 
         public int Get(int handle) => Exist(handle) ? _blips.Find(x => x == handle) : -1;
 
         public bool Exist(int handle) => _blips.Exists(x => x == handle);
 
-        #region Events
+        #region Event
 
-        protected void OnResourceStop(string resource)
+        private void OnResourceStop(string resource)
         {
             if (resource == Constant.RESOURCE_NAME)
             {

@@ -47,11 +47,5 @@ namespace Average.Client.Managers
                 Log.Error($"Unable to register [Export] attribute: {exportAttr.Name} on method: {method.Name}, an export have already been registered with this name.");
             }
         }
-
-        #region Internal
-
-        internal void InternalCallMethod(string methodName, List<object> args) => CallMethod(methodName, args.ToArray());
-
-        #endregion
     }
 }

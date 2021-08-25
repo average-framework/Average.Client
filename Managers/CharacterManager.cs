@@ -9,6 +9,7 @@ using SDK.Shared.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using SDK.Client.Models;
 using static CitizenFX.Core.Native.API;
 using static SDK.Client.GameAPI;
 
@@ -40,7 +41,7 @@ namespace Average.Client.Managers
 
         #region Threads
 
-        protected async Task PedScaleUpdate()
+        private async Task PedScaleUpdate()
         {
             if (Current == null)
                 return;
@@ -81,8 +82,8 @@ namespace Average.Client.Managers
 
             Main.rpc.Event("Character.Load").On<CharacterData>(data =>
             {
-                Log.Debug("Getted character: " + (data == null ? "No character" : data.RockstarId));
                 Current = data;
+                Log.Debug("Getted character: " + (data == null ? "No character" : data.RockstarId));
             }).Emit();
 
             while (Current == null) await BaseScript.Delay(0);
@@ -126,7 +127,7 @@ namespace Average.Client.Managers
 
             await UpdateOverlay();
             await SetPedClothes();
-            await SetPedFaceFeatures();
+            SetPedFaceFeatures();
 
             await BaseScript.Delay(1000);
 
@@ -145,9 +146,10 @@ namespace Average.Client.Managers
             var ped = PlayerPedId();
             var coords = GetEntityCoords(ped, true, true);
             var heading = GetEntityHeading(ped);
+            
             Current.Position = new PositionData(coords.X, coords.Y, coords.Z, heading);
 
-            Save();
+            await Save();
         }
 
         public void SavePosition()
@@ -161,7 +163,7 @@ namespace Average.Client.Managers
         public async Task Save()
         {
             Current.Core.Health = GetEntityHealth(PlayerPedId());
-            Main.eventManager.EmitServer("Character.Save", JsonConvert.SerializeObject(Current));
+            Main.eventManager.EmitServer("Character.Save", await JsonConvert.SerializeObjectAsync(Current));
         }
 
         public void Create(CharacterData data) => Main.eventManager.EmitServer("Character.Save", JsonConvert.SerializeObject(data));
@@ -189,13 +191,13 @@ namespace Average.Client.Managers
             RemovePedComponent(CharacterClothComponents.Pants);
         }
 
-        async Task SetPedFaceFeatures()
+        private void SetPedFaceFeatures()
         {
             foreach (var part in Current.FaceParts)
                 SetPedFaceFeature(part.Key, part.Value);
         }
 
-        async Task SetPedClothes()
+        private async Task SetPedClothes()
         {
             foreach (var cloth in Current.Clothes)
             {
@@ -225,7 +227,7 @@ namespace Average.Client.Managers
             }
         }
 
-        void SetPedBodyComponents()
+        private void SetPedBodyComponents()
         {
             SetPedBodyComponent((uint)BodyTypes[Current.BodyType]);
             SetPedBodyComponent((uint)WaistTypes[Current.WaistType]);
@@ -267,31 +269,31 @@ namespace Average.Client.Managers
             }
         }
 
-        public void SetMoney(decimal amount)
+        public async void SetMoney(decimal amount)
         {
             Current.Economy.Money = amount;
-            Save();
+            await Save();
         }
 
-        public void SetBank(decimal amount)
+        public async void SetBank(decimal amount)
         {
             Current.Economy.Bank = amount;
-            Save();
+            await Save();
         }
 
-        public void AddMoney(decimal amount)
+        public async void AddMoney(decimal amount)
         {
             Current.Economy.Money += amount;
-            Save();
+            await Save();
         }
 
-        public void AddBank(decimal amount)
+        public async void AddBank(decimal amount)
         {
             Current.Economy.Bank += amount;
-            Save();
+            await Save();
         }
 
-        public void RemoveMoney(decimal amount)
+        public async void RemoveMoney(decimal amount)
         {
             var newAmount = Current.Economy.Money - amount;
 
@@ -300,10 +302,10 @@ namespace Average.Client.Managers
                 Current.Economy.Money -= amount;
             }
 
-            Save();
+            await Save();
         }
 
-        public void RemoveBank(decimal amount)
+        public async void RemoveBank(decimal amount)
         {
             var newAmount = Current.Economy.Bank - amount;
 
@@ -312,7 +314,7 @@ namespace Average.Client.Managers
                 Current.Economy.Bank -= amount;
             }
 
-            Save();
+            await Save();
         }
 
         public void RemoveAllClothes()
@@ -373,7 +375,7 @@ namespace Average.Client.Managers
 
         #endregion
 
-        #region Events
+        #region Event
 
         [EventHandler("Character.SetPed")]
         private async void OnSetPedEvent(uint model, int variante) => await SetPed(model, variante);

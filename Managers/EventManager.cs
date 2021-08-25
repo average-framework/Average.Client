@@ -31,7 +31,11 @@ namespace Average.Client.Managers
 
         public EventManager()
         {
+            #region Event
+
             Main.eventHandlers["avg.internal.trigger_event"] += new Action<string, List<object>>(InternalTriggerEvent);
+
+            #endregion
         }
 
         public void Emit(string eventName, params object[] args)
@@ -53,7 +57,7 @@ namespace Average.Client.Managers
             BaseScript.TriggerServerEvent("avg.internal.trigger_event", eventName, args);
         }
 
-        public void RegisterInternalEvent(string eventName, Delegate action)
+        private void RegisterInternalEvent(string eventName, Delegate action)
         {
             if (!_events.ContainsKey(eventName))
                 _events.Add(eventName, new List<Delegate>() { action });
@@ -107,11 +111,11 @@ namespace Average.Client.Managers
 
         #region Internal
 
-        internal void InternalTriggerEvent(string eventName, List<object> args) => Emit(eventName, args.ToArray());
+        private void InternalTriggerEvent(string eventName, List<object> args) => Emit(eventName, args.ToArray());
 
         #endregion
 
-        #region Events
+        #region Event
 
         public async void OnGameEventTriggered(string name, int[] data)
         {

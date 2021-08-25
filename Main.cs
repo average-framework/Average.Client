@@ -1,5 +1,4 @@
 ﻿using Average.Client.Managers;
-using Average.Client.Menu;
 using CitizenFX.Core;
 using SDK.Client;
 using SDK.Client.Rpc;
@@ -27,11 +26,8 @@ namespace Average.Client
         internal static ObjectManager objectManager;
         internal static NotificationManager notificationManager;
         internal static RpcRequest rpc;
-
-        CfxManager cfx;
-
+        internal static CfxManager cfx;
         internal static EventHandlerDictionary eventHandlers;
-
         internal static PluginLoader loader;
 
         public Main()
@@ -57,7 +53,6 @@ namespace Average.Client
             notificationManager = new NotificationManager();
             characterManager = new CharacterManager();
             objectManager = new ObjectManager();
-            
             cfx = new CfxManager();
 
             // Framework Script

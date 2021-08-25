@@ -11,10 +11,9 @@ namespace Average.Client.Managers
 {
     public class CommandManager : ICommandManager
     {
-        private List<Tuple<ClientCommandAttribute, ClientCommandAliasAttribute>> _commands =
-            new List<Tuple<ClientCommandAttribute, ClientCommandAliasAttribute>>();
+        private List<Tuple<ClientCommandAttribute, ClientCommandAliasAttribute>> _commands = new List<Tuple<ClientCommandAttribute, ClientCommandAliasAttribute>>();
 
-        internal void RegisterCommandInternal(string command, object classObj, MethodInfo method, ClientCommandAttribute commandAttr)
+        private void RegisterCommandInternal(string command, object classObj, MethodInfo method, ClientCommandAttribute commandAttr)
         {
             var methodParams = method.GetParameters();
 

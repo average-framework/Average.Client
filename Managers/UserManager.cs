@@ -12,13 +12,16 @@ namespace Average.Client.Managers
 
         public UserManager()
         {
-            Log.Warn("Getting user..");
+            #region Rpc
 
+            Log.Warn("Getting user..");
             Main.rpc.Event("User.GetUser").On<UserData>((user) =>
             {
                 Log.Warn("Getted user");
                 CurrentUser = user;
             }).Emit();
+
+            #endregion
         }
 
         public async Task IsReady()

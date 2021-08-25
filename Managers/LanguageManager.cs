@@ -8,7 +8,7 @@ namespace Average.Client.Managers
     {
         private readonly Dictionary<string, string> _language;
         
-        public string Current { get; private set; }
+        public string Current { get; }
 
         public LanguageManager()
         {

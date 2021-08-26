@@ -47,6 +47,30 @@ namespace Average.Client
 
             Log.Debug("Plugins getted.");
 
+            var mainAsm = Main.instance.GetType().Assembly;
+            
+            foreach (var type in mainAsm.GetTypes())
+            {
+                // If the type is not good, try catch
+                try
+                {
+                    if (type != Main.instance.GetType())
+                    {
+                        var classObj = Activator.CreateInstance(type);
+                        RegisterThreads(type, classObj);
+                        RegisterEvents(type, classObj);
+                        RegisterExports(type, classObj);
+                        RegisterSyncs(type, classObj);
+                        RegisterGetSyncs(type, classObj);
+                        RegisterCommands(type, classObj);
+                    }
+                }
+                catch
+                {
+                    
+                }
+            }
+            
             try
             {
                 foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())

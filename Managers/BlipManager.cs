@@ -8,11 +8,11 @@ using static SDK.Client.GameAPI;
 
 namespace Average.Client.Managers
 {
-    public class BlipManager : IBlipManager
+    public class BlipManager : InternalPlugin, IBlipManager
     {
         private List<int> _blips = new List<int>();
 
-        public BlipManager()
+        public override void OnInitialized()
         {
             #region Event
 

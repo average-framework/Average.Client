@@ -9,11 +9,11 @@ using static SDK.Client.GameAPI;
 
 namespace Average.Client.Managers
 {
-    public class NpcManager : INpcManager
+    public class NpcManager : InternalPlugin, INpcManager
     {
         private List<int> _npcs = new List<int>();
 
-        public NpcManager()
+        public override void OnInitialized()
         {
             #region Event
 

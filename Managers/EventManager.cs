@@ -12,9 +12,9 @@ using System.Reflection;
 
 namespace Average.Client.Managers
 {
-    public class EventManager : IEventManager
+    public class EventManager : InternalPlugin, IEventManager
     {
-        private Dictionary<string, List<Delegate>> _events = new Dictionary<string, List<Delegate>>();
+        private static Dictionary<string, List<Delegate>> _events = new Dictionary<string, List<Delegate>>();
 
         public event EventHandler<ResourceStartEventArgs> ResourceStart;
         public event EventHandler<ResourceStopEventArgs> ResourceStop;
@@ -29,7 +29,7 @@ namespace Average.Client.Managers
         public event EventHandler<PlayerActivatedEventArgs> PlayerActivated;
         public event EventHandler<SessionInitializedEventArgs> SessionInitialized;
 
-        public EventManager()
+        public override void OnInitialized()
         {
             #region Event
 
@@ -57,17 +57,7 @@ namespace Average.Client.Managers
             BaseScript.TriggerServerEvent("avg.internal.trigger_event", eventName, args);
         }
 
-        private void RegisterInternalEvent(string eventName, Delegate action)
-        {
-            if (!_events.ContainsKey(eventName))
-                _events.Add(eventName, new List<Delegate>() { action });
-            else
-                _events[eventName].Add(action);
-
-            Log.Debug($"Register event: {eventName}");
-        }
-
-        public void RegisterInternalNUICallbackEvent(string eventName, Func<IDictionary<string, object>, CallbackDelegate, CallbackDelegate> callback)
+        public static void RegisterInternalNUICallbackEvent(string eventName, Func<IDictionary<string, object>, CallbackDelegate, CallbackDelegate> callback)
         {
             API.RegisterNuiCallbackType(eventName);
             Main.eventHandlers[$"__cfx_nui:{eventName}"] += new Action<IDictionary<string, object>, CallbackDelegate>((body, resultCallback) => callback.Invoke(body, resultCallback));
@@ -99,13 +89,17 @@ namespace Average.Client.Managers
             }
         }
 
-        public void RegisterEvent(MethodInfo method, ClientEventAttribute eventAttr, object classObj)
+        internal static void RegisterInternalEvent(MethodInfo method, ClientEventAttribute eventAttr, object classObj)
         {
             var methodParams = method.GetParameters();
 
             var action = Action.CreateDelegate(Expression.GetDelegateType((from parameter in method.GetParameters() select parameter.ParameterType).Concat(new[] { method.ReturnType }).ToArray()), classObj, method);
-            RegisterInternalEvent(eventAttr.Event, action);
 
+            if (!_events.ContainsKey(eventAttr.Event))
+                _events.Add(eventAttr.Event, new List<Delegate> { action });
+            else
+                _events[eventAttr.Event].Add(action);
+            
             Log.Debug($"Registering [Event] attribute: {eventAttr.Event} on method: {method.Name}, args count: {methodParams.Count()}");
         }
 

@@ -1,72 +1,79 @@
 ﻿using CitizenFX.Core.Native;
 using SDK.Client;
 using SDK.Client.Diagnostics;
-using SDK.Client.Managers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using SDK.Client.Interfaces;
 
 namespace Average.Client.Managers
 {
-    public class CommandManager : ICommandManager
+    public class CommandManager : InternalPlugin, ICommandManager
     {
-        private List<Tuple<ClientCommandAttribute, ClientCommandAliasAttribute>> _commands = new List<Tuple<ClientCommandAttribute, ClientCommandAliasAttribute>>();
+        private static List<Tuple<ClientCommandAttribute, ClientCommandAliasAttribute>> _commands = new List<Tuple<ClientCommandAttribute, ClientCommandAliasAttribute>>();
 
-        private void RegisterCommandInternal(string command, object classObj, MethodInfo method, ClientCommandAttribute commandAttr)
+        private static PermissionManager _permissionManager;
+        
+        public override void OnInitialized()
+        {
+            _permissionManager = Permission;
+        }
+
+        internal static void RegisterInternalCommand(ClientCommandAttribute commandAttr, ClientCommandAliasAttribute aliasAttr, object classObj, MethodInfo method)
+        {
+            API.RegisterCommand(commandAttr.Command, new Action<int, List<object>, string>(async (source, args, raw) =>
+            {
+                ExecuteCommand(commandAttr, method, classObj, args.ToArray());
+            }), false);
+
+            if (aliasAttr != null)
+            {
+                foreach (var alias in aliasAttr.Alias)
+                {
+                    API.RegisterCommand(alias, new Action<int, List<object>, string>(async (source, args, raw) =>
+                    {
+                        ExecuteCommand(commandAttr, method, classObj, args.ToArray());
+                    }), false);
+                }
+            }
+            
+            _commands.Add(new Tuple<ClientCommandAttribute, ClientCommandAliasAttribute>(commandAttr, aliasAttr));
+            
+            Log.Debug($"Registering [Command] attribute: {commandAttr.Command} on method: {method.Name} with alias: {(aliasAttr != null ? $"[{string.Join(", ", aliasAttr.Alias)}]" : "empty")}");
+        }
+
+        private static async void ExecuteCommand(ClientCommandAttribute commandAttr, MethodInfo method, object classObj, params object[] args)
         {
             var methodParams = method.GetParameters();
-
-            API.RegisterCommand(command, new Action<int, List<object>, string>(async (source, args, raw) =>
+            
+            if (await _permissionManager.HasPermission(commandAttr.PermissionName, commandAttr.PermissionLevel) || string.IsNullOrEmpty(commandAttr.PermissionName))
             {
-                if (await Main.permissionManager.HasPermission(commandAttr.PermissionName, commandAttr.PermissionLevel) || commandAttr.PermissionName == null)
-                {
-                    var newArgs = new List<object>();
+                var newArgs = new List<object>();
 
-                    if (args.Count == methodParams.Length)
+                if (args.Count() == methodParams.Length)
+                {
+                    try
                     {
-                        try
-                        {
-                            args.ForEach(x => newArgs.Add(Convert.ChangeType(x, methodParams[args.FindIndex(p => p == x)].ParameterType)));
-                            method.Invoke(classObj, newArgs.ToArray());
-                        }
-                        catch
-                        {
-                            Log.Error($"Unable to convert command arguments.");
-                        }
+                        args.ToList().ForEach(x => newArgs.Add(Convert.ChangeType(x, methodParams[args.ToList().FindIndex(p => p == x)].ParameterType)));
+                        method.Invoke(classObj, newArgs.ToArray());
                     }
-                    else
+                    catch
                     {
-                        var usage = "";
-                        methodParams.ToList().ForEach(x => usage += $"<[{x.ParameterType.Name}] {x.Name}> ");
-                        Log.Error($"Invalid command usage: {command} {usage}.");
+                        Log.Error($"Unable to convert command arguments.");
                     }
                 }
                 else
                 {
-                    Log.Error($"Unable to execute this command.");
+                    var usage = "";
+                    methodParams.ToList().ForEach(x => usage += $"<[{x.ParameterType.Name}] {x.Name}> ");
+                    Log.Error($"Invalid command usage: {commandAttr.Command} {usage}.");
                 }
-            }), false);
-
-            Log.Debug($"Registering [Command] attribute: {command} on method: {method.Name}");
-        }
-
-        public void RegisterCommand(ClientCommandAttribute commandAttr, ClientCommandAliasAttribute aliasAttr, MethodInfo method, object classObj)
-        {
-            if (commandAttr == null)
-                return;
-
-            var methodParams = method.GetParameters();
-
-            RegisterCommandInternal(commandAttr.Command, classObj, method, commandAttr);
-
-            if (aliasAttr != null)
-            {
-                aliasAttr.Alias.ToList().ForEach(x => RegisterCommandInternal(x, classObj, method, commandAttr));
-                Log.Debug($"Registering {aliasAttr.Alias.Length} alias for command: {commandAttr.Command} [{string.Join(", ", aliasAttr.Alias)}]");
             }
-
-            _commands.Add(new Tuple<ClientCommandAttribute, ClientCommandAliasAttribute>(commandAttr, aliasAttr));
+            else
+            {
+                Log.Error($"Unable to execute this command.");
+            }
         }
 
         public IEnumerable<Tuple<ClientCommandAttribute, ClientCommandAliasAttribute>> GetCommands() => _commands.AsEnumerable();

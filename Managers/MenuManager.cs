@@ -10,7 +10,7 @@ using static SDK.Client.GameAPI;
 
 namespace Average.Client.Managers
 {
-    public class MenuManager : IMenuManager
+    public class MenuManager : InternalPlugin, IMenuManager
     {
         private bool isReady;
 
@@ -26,15 +26,15 @@ namespace Average.Client.Managers
         public event EventHandler<MenuChangeEventArgs> MenuChanged;
         public event EventHandler<MenuCloseEventArgs> MenuClosed;
 
-        public MenuManager()
+        public override void OnInitialized()
         {
             #region Event
 
-            Main.eventManager.RegisterInternalNUICallbackEvent("window_ready", WindowReady);
-            Main.eventManager.RegisterInternalNUICallbackEvent("menu/avg.ready", Ready);
-            Main.eventManager.RegisterInternalNUICallbackEvent("menu/on_click", OnClick);
-            Main.eventManager.RegisterInternalNUICallbackEvent("menu/on_tab_click", OnTabClick);
-            Main.eventManager.RegisterInternalNUICallbackEvent("menu/on_previous", OnPrevious);
+            EventManager.RegisterInternalNUICallbackEvent("window_ready", WindowReady);
+            EventManager.RegisterInternalNUICallbackEvent("menu/avg.ready", Ready);
+            EventManager.RegisterInternalNUICallbackEvent("menu/on_click", OnClick);
+            EventManager.RegisterInternalNUICallbackEvent("menu/on_tab_click", OnTabClick);
+            EventManager.RegisterInternalNUICallbackEvent("menu/on_previous", OnPrevious);
 
             #endregion
         }

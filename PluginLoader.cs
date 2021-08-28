@@ -1,7 +1,6 @@
 ﻿using CitizenFX.Core;
 using Newtonsoft.Json;
 using SDK.Client;
-using SDK.Client.Plugins;
 using SDK.Shared;
 using SDK.Shared.Extensions;
 using SDK.Shared.Plugins;
@@ -12,6 +11,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
+using Average.Client.Managers;
 using SDK.Client.Diagnostics;
 
 namespace Average.Client
@@ -21,6 +21,7 @@ namespace Average.Client
         private bool _isReady;
 
         private List<PluginInfo> _pluginsInfo;
+        private List<InternalPlugin> _internalPlugins = new List<InternalPlugin>();
         private List<Plugin> _plugins = new List<Plugin>();
 
         public async Task IsReady()
@@ -39,132 +40,58 @@ namespace Average.Client
             return _pluginsInfo;
         }
 
+        internal void LoadScript(Type type, PluginInfo pluginInfo)
+        {
+            try
+            {
+                var script = (Plugin) Activator.CreateInstance(type);
+                
+                script.SetDependencies(Main.rpc, Main.thread, Main.character, Main.command, Main.evnt, Main.export, Main.permission, Main.save, Main.sync, Main.user, Main.streaming, Main.npc, Main.menu, Main.notification, Main.language, Main.map, Main.blip, pluginInfo);
+                
+                RegisterThreads(script.GetType(), script);
+                RegisterEvents(script.GetType(), script);
+                RegisterExports(script.GetType(), script);
+                RegisterSyncs(script.GetType(), script);
+                RegisterGetSyncs(script.GetType(), script);
+                RegisterNetworkGetSyncs(script.GetType(), script);
+                RegisterCommands(script.GetType(), script);
+                RegisterPlugin(script);
+                
+                script.LoadConfiguration();
+                script.OnInitialized();
+             
+                Log.Info($"Script: {script.Name} registered successfully.");
+                // Log.Write("Script", $"% {script.Name} % registered successfully.", new Log.TextColor(ConsoleColor.Blue, ConsoleColor.White));
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"Unable to loading script: {type.Name}. Error: {ex.Message}\n{ex.StackTrace}.");
+            }
+        }
+        
         public async void Load()
         {
             Log.Debug("Getting plugins..");
-
+            
             _pluginsInfo = await GetPlugins();
-
+            
             Log.Debug("Plugins getted.");
 
-            var mainAsm = Main.instance.GetType().Assembly;
-            
-            foreach (var type in mainAsm.GetTypes())
-            {
-                // If the type is not good, try catch
-                try
-                {
-                    if (type != Main.instance.GetType())
-                    {
-                        var classObj = Activator.CreateInstance(type);
-                        RegisterThreads(type, classObj);
-                        RegisterEvents(type, classObj);
-                        RegisterExports(type, classObj);
-                        RegisterSyncs(type, classObj);
-                        RegisterGetSyncs(type, classObj);
-                        RegisterCommands(type, classObj);
-                    }
-                }
-                catch
-                {
-                    
-                }
-            }
-            
             try
             {
                 foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
                 {
-                    var types = asm.GetTypes().Where(x => !x.IsAbstract && x.IsClass).ToList();
+                    var types = asm.GetTypes().Where(x => !x.IsAbstract && x.IsClass && x.IsSubclassOf(typeof(Plugin))).ToList();
                     var pluginInfo = _pluginsInfo.Find(x => x.Client == asm.GetName().Name + ".dll");
+            
+                    if (pluginInfo is null) continue;
 
-                    if (pluginInfo != null)
+                    foreach (var type in types)
                     {
-                        var mainScriptCount = 0;
-
-                        foreach (var type in types)
-                        {
-                            var attr = type.GetCustomAttribute<MainScriptAttribute>();
-
-                            if (attr != null)
-                                mainScriptCount++;
-                        }
-
-                        if (mainScriptCount > 1)
-                        {
-                            Log.Error("Unable to load multiples [MainScript] attribute in same plugin. Fix this error to continue.");
-                            return;
-                        }
-
-                        if (mainScriptCount == 0)
-                        {
-                            Log.Error($"Unable to load this plugin: {asm.FullName}, he does not contains [MainScript] attribute. Fix this error to continue.");
-                            return;
-                        }
-
-                        foreach (var type in types)
-                        {
-                            Plugin? script = null;
-
-                            if (type.IsSubclassOf(typeof(Plugin)))
-                            {
-                                // Load script dynamically at runtime
-                                if (type.GetCustomAttribute<MainScriptAttribute>() != null)
-                                {
-                                    try
-                                    {
-                                        if (pluginInfo != null)
-                                        {
-                                            script = (Plugin)Activator.CreateInstance(type, Main.framework, pluginInfo);
-                                            script.PluginInfo = pluginInfo;
-                                            RegisterPlugin(script);
-
-                                            Log.Info($"Plugin {asm.GetName().Name} -> script: {script.Name} successfully loaded.");
-                                        }
-                                    }
-                                    catch
-                                    {
-                                        Log.Error($"Unable to load {asm.GetName().Name}");
-                                    }
-                                }
-                                else
-                                {
-                                    if (pluginInfo != null)
-                                    {
-                                        try
-                                        {
-                                            script = (Plugin)Activator.CreateInstance(type, Main.framework, pluginInfo);
-                                            script.PluginInfo = pluginInfo;
-                                            RegisterPlugin(script);
-
-                                            Log.Info($"Plugin {asm.GetName().Name} -> script: {script.Name} successfully loaded.");
-                                        }
-                                        catch
-                                        {
-                                            Log.Error($"Unable to load script: {pluginInfo.Name}");
-                                        }   
-                                    }
-                                }
-                            }
-
-                            if (script == null) continue;
-
-                            RegisterThreads(type, script);
-                            RegisterEvents(type, script);
-                            RegisterExports(type, script);
-                            RegisterSyncs(type, script);
-                            RegisterGetSyncs(type, script);
-                            RegisterNetworkGetSyncs(type, script);
-                            RegisterNUICallbacks(type, script);
-                            RegisterCommands(type, script);
-                        }
-                    }
-                    else
-                    {
-                        //Log.Error($"Unable to find plugin: {asm.GetName().Name}.dll");
+                        LoadScript(type, pluginInfo);
                     }
                 }
-
+            
                 _isReady = true;
             }
             catch (Exception ex)
@@ -173,9 +100,26 @@ namespace Average.Client
             }
         }
 
-        private void RegisterCommands(Type type, object classObj)
+        internal void RegisterInternalPlugin(InternalPlugin script)
         {
-            var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy;
+            _internalPlugins.Add(script);
+        }
+
+        internal void UnloadInternalScript(InternalPlugin script)
+        {
+            _internalPlugins.Remove(script);
+        }
+        
+        internal T GetInternalInstance<T>()
+        {
+            var result = _internalPlugins.Find(x => x.GetType() == typeof(T));
+            return (T) Convert.ChangeType(result, typeof(T));
+        }
+        
+        internal void RegisterCommands(Type type, object classObj)
+        {
+            var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance |
+                        BindingFlags.FlattenHierarchy;
 
             // Registering commands (method need to be public to be detected)
             foreach (var method in type.GetMethods(flags))
@@ -183,62 +127,61 @@ namespace Average.Client
                 var cmdAttr = method.GetCustomAttribute<ClientCommandAttribute>();
                 var aliasAttr = method.GetCustomAttribute<ClientCommandAliasAttribute>();
 
-                Main.commandManager.RegisterCommand(cmdAttr, aliasAttr, method, classObj);
+                if(cmdAttr != null)
+                    CommandManager.RegisterInternalCommand(cmdAttr, aliasAttr, classObj, method);
             }
         }
 
-        private void RegisterThreads(Type type, object classObj)
+        internal void RegisterThreads(Type type, object classObj)
         {
             // Registering threads
-            var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy;
+            var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance |
+                        BindingFlags.FlattenHierarchy;
 
             foreach (var method in type.GetMethods(flags))
             {
                 var threadAttr = method.GetCustomAttribute<ThreadAttribute>();
 
                 if (threadAttr != null)
-                {
-                    Main.threadManager.RegisterThread(method, threadAttr, classObj);
-                }
+                    ThreadManager.RegisterInternalThread(method, threadAttr, classObj);
             }
         }
 
-        private void RegisterEvents(Type type, object classObj)
+        internal void RegisterEvents(Type type, object classObj)
         {
             // Registering events
-            var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy;
+            var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance |
+                        BindingFlags.FlattenHierarchy;
 
             foreach (var method in type.GetMethods(flags))
             {
                 var eventAttr = method.GetCustomAttribute<ClientEventAttribute>();
 
                 if (eventAttr != null)
-                {
-                    Main.eventManager.RegisterEvent(method, eventAttr, classObj);
-                }
+                    EventManager.RegisterInternalEvent(method, eventAttr, classObj);
             }
         }
 
-        private void RegisterExports(Type type, object classObj)
+        internal void RegisterExports(Type type, object classObj)
         {
             // Registering exports
-            var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy;
+            var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance |
+                        BindingFlags.FlattenHierarchy;
 
             foreach (var method in type.GetMethods(flags))
             {
                 var exportAttr = method.GetCustomAttribute<ExportAttribute>();
 
                 if (exportAttr != null)
-                {
-                    Main.exportManager.RegisterExport(method, exportAttr, classObj);
-                }
+                    ExportManager.RegisterInternalExport(method, exportAttr, classObj);
             }
         }
 
-        private void RegisterSyncs(Type type, object classObj)
+        internal void RegisterSyncs(Type type, object classObj)
         {
             // Registering syncs
-            var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy;
+            var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance |
+                        BindingFlags.FlattenHierarchy;
 
             for (int i = 0; i < type.GetProperties(flags).Count(); i++)
             {
@@ -246,9 +189,7 @@ namespace Average.Client
                 var syncAttr = property.GetCustomAttribute<SyncAttribute>();
 
                 if (syncAttr != null)
-                {
-                    Main.syncManager.RegisterSync(ref property, syncAttr, classObj);
-                }
+                    SyncManager.RegisterInternalSync(ref property, syncAttr, classObj);
             }
 
             for (int i = 0; i < type.GetFields(flags).Count(); i++)
@@ -257,16 +198,15 @@ namespace Average.Client
                 var syncAttr = field.GetCustomAttribute<SyncAttribute>();
 
                 if (syncAttr != null)
-                {
-                    Main.syncManager.RegisterSync(ref field, syncAttr, classObj);
-                }
+                    SyncManager.RegisterInternalSync(ref field, syncAttr, classObj);
             }
         }
 
-        private void RegisterGetSyncs(Type type, object classObj)
+        internal void RegisterGetSyncs(Type type, object classObj)
         {
             // Registering getSyncs
-            var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy;
+            var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance |
+                        BindingFlags.FlattenHierarchy;
 
             for (int i = 0; i < type.GetProperties(flags).Count(); i++)
             {
@@ -274,9 +214,7 @@ namespace Average.Client
                 var getSyncAttr = property.GetCustomAttribute<GetSyncAttribute>();
 
                 if (getSyncAttr != null)
-                {
-                    Main.syncManager.RegisterGetSync(ref property, getSyncAttr, classObj);
-                }
+                    SyncManager.RegisterInternalGetSync(ref property, getSyncAttr, classObj);
             }
 
             for (int i = 0; i < type.GetFields(flags).Count(); i++)
@@ -285,15 +223,14 @@ namespace Average.Client
                 var getSyncAttr = field.GetCustomAttribute<GetSyncAttribute>();
 
                 if (getSyncAttr != null)
-                {
-                    Main.syncManager.RegisterGetSync(ref field, getSyncAttr, classObj);
-                }
+                    SyncManager.RegisterInternalGetSync(ref field, getSyncAttr, classObj);
             }
         }
 
-        private void RegisterNetworkGetSyncs(Type type, object classObj)
+        internal void RegisterNetworkGetSyncs(Type type, object classObj)
         {
-            var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy;
+            var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance |
+                        BindingFlags.FlattenHierarchy;
 
             // Registering networkGetSyncs (property need to be public to be detected)
             for (int i = 0; i < type.GetProperties(flags).Count(); i++)
@@ -302,9 +239,7 @@ namespace Average.Client
                 var getSyncAttr = property.GetCustomAttribute<NetworkGetSyncAttribute>();
 
                 if (getSyncAttr != null)
-                {
-                    Main.syncManager.RegisterNetworkGetSync(ref property, getSyncAttr, classObj);
-                }
+                    SyncManager.RegisterInternalNetworkGetSync(ref property, getSyncAttr, classObj);
             }
 
             // Registering networkGetSyncs (field need to be public to be detected)
@@ -314,15 +249,14 @@ namespace Average.Client
                 var getSyncAttr = field.GetCustomAttribute<NetworkGetSyncAttribute>();
 
                 if (getSyncAttr != null)
-                {
-                    Main.syncManager.RegisterNetworkGetSync(ref field, getSyncAttr, classObj);
-                }
+                    SyncManager.RegisterInternalNetworkGetSync(ref field, getSyncAttr, classObj);
             }
         }
 
-        private void RegisterNUICallbacks(Type type, object classObj)
+        internal void RegisterNUICallbacks(Type type, object classObj)
         {
-            foreach (var method in type.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
+            foreach (var method in
+                type.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
             {
                 var attr = method.GetCustomAttribute<UICallbackAttribute>();
                 var methodParams = method.GetParameters();
@@ -331,12 +265,13 @@ namespace Average.Client
                 {
                     if (methodParams.Count() == 2)
                     {
-                        if (methodParams[0].ParameterType == typeof(IDictionary<string, object>) && methodParams[1].ParameterType == typeof(CallbackDelegate))
+                        if (methodParams[0].ParameterType == typeof(IDictionary<string, object>) &&
+                            methodParams[1].ParameterType == typeof(CallbackDelegate))
                         {
                             try
                             {
-                                var action = (Func<IDictionary<string, object>, CallbackDelegate, CallbackDelegate>)Action.CreateDelegate(Expression.GetDelegateType((from parameter in method.GetParameters() select parameter.ParameterType).Concat(new[] { method.ReturnType }).ToArray()), classObj, method);
-                                Main.eventManager.RegisterInternalNUICallbackEvent(attr.Name, action);
+                                var action = (Func<IDictionary<string, object>, CallbackDelegate, CallbackDelegate>) Delegate.CreateDelegate(Expression.GetDelegateType((from parameter in method.GetParameters() select parameter.ParameterType).Concat(new[] {method.ReturnType}).ToArray()), classObj, method);
+                                EventManager.RegisterInternalNUICallbackEvent(attr.Name, action);
                                 Log.Debug($"Registering [UICallback] attribute: {attr.Name} on method: {method.Name}");
                             }
                             catch
@@ -357,12 +292,12 @@ namespace Average.Client
             }
         }
 
-        private void RegisterPlugin(Plugin script)
+        internal void RegisterPlugin(Plugin script)
         {
             _plugins.Add(script);
         }
 
-        private void UnloadScript(Plugin script)
+        internal void UnloadScript(Plugin script)
         {
             _plugins.Remove(script);
         }

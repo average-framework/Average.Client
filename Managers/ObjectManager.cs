@@ -13,17 +13,17 @@ using Newtonsoft.Json.Linq;
 
 namespace Average.Client.Managers
 {
-    public class ObjectManager : IObjectManager
+    public class ObjectManager : InternalPlugin, IObjectManager
     {
-        private readonly bool enableDithering;
-        private readonly float ditheringDistance;
-        private readonly float lodMaxDistance;
-        private readonly int ditheringUpdateInterval;
-        private readonly int renderUpdateInterval;
+        private bool enableDithering;
+        private float ditheringDistance;
+        private float lodMaxDistance;
+        private int ditheringUpdateInterval;
+        private int renderUpdateInterval;
 
         private List<ObjectModel> _registeredProps = new List<ObjectModel>();
 
-        public ObjectManager()
+        public override void OnInitialized()
         {
             #region Configuration
 
@@ -41,8 +41,8 @@ namespace Average.Client.Managers
 
             #region Thread
 
-            Main.threadManager.StartThread(DitheringUpdate);
-            Main.threadManager.StartThread(Update);
+            Thread.StartThread(DitheringUpdate);
+            Thread.StartThread(Update);
 
             #endregion
 
@@ -58,7 +58,7 @@ namespace Average.Client.Managers
         [Command("object.create")]
         private async void CreateCommand(int source, List<object> args, string raw)
         {
-            if (await Main.permissionManager.HasPermission("owner"))
+            if (await Permission.HasPermission("owner"))
             {
                 var pos = GetEntityCoords(PlayerPedId(), true, true);
                 CreateRegisteredEntity((uint)GetHashKey("p_waterpump01x"), pos, Vector3.Zero, true);
@@ -68,7 +68,7 @@ namespace Average.Client.Managers
         [Command("object.mass_create")]
         private async void MassCreateCommand(int source, List<object> args, string raw)
         {
-            if (await Main.permissionManager.HasPermission("owner"))
+            if (await Permission.HasPermission("owner"))
             {
                 var pos = GetEntityCoords(PlayerPedId(), true, true);
 
@@ -117,7 +117,7 @@ namespace Average.Client.Managers
             }
             else
             {
-                Main.threadManager.StopThread(DitheringUpdate);
+                Thread.StopThread(DitheringUpdate);
             }
 
             await BaseScript.Delay(ditheringUpdateInterval);

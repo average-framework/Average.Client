@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Average.Client.Managers
 {
-    public class LanguageManager : ILanguageManager
+    public class LanguageManager : InternalPlugin, ILanguageManager
     {
         private readonly Dictionary<string, string> _language;
         

@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace Average.Client.Managers
 {
-    public class UserManager : IUserManager
+    public class UserManager : InternalPlugin, IUserManager
     {
         public UserData CurrentUser { get; private set; }
 
-        public UserManager()
+        public override void OnInitialized()
         {
             #region Rpc
 

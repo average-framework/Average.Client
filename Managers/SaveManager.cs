@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace Average.Client.Managers
 {
-    public class SaveManager : ISaveManager
+    public class SaveManager : InternalPlugin, ISaveManager
     {
         private List<ISaveable> _tasks = new List<ISaveable>();
 
-        public SaveManager()
+        public override void OnInitialized()
         {
             #region Event
 
@@ -22,9 +22,9 @@ namespace Average.Client.Managers
         public async Task SaveAll()
         {
             for (int i = 0; i < _tasks.Count; i++)
-                await _tasks[i].Save();
+                await _tasks[i].SaveData();
 
-            Main.eventManager.EmitServer("Save.All");
+            Event.EmitServer("Save.All");
             Log.Debug("[Save] Player data sended to server.");
         }
 

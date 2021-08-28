@@ -5,17 +5,16 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using static CitizenFX.Core.Native.API;
-using static SDK.Client.GameAPI;
 
 namespace Average.Client.Managers
 {
-    public class NotificationManager : INotificationManager
+    public class NotificationManager : InternalPlugin, INotificationManager
     {
         private List<INotification> _queue = new List<INotification>();
 
         private const int UpdateStateInterval = 100;
 
-        public NotificationManager()
+        public override void OnInitialized()
         {
             #region Command
 
@@ -25,15 +24,15 @@ namespace Average.Client.Managers
 
             #region Event
 
-            Main.eventManager.RegisterInternalNUICallbackEvent("window_ready", WindowReady);
-            Main.eventManager.RegisterInternalNUICallbackEvent("notification/avg.ready", Ready);
+            EventManager.RegisterInternalNUICallbackEvent("window_ready", WindowReady);
+            EventManager.RegisterInternalNUICallbackEvent("notification/avg.ready", Ready);
 
             #endregion
 
             #region Thread
 
-            Main.threadManager.StartThread(Update);
-            Main.threadManager.StartThread(UpdateState);
+            Thread.StartThread(Update);
+            Thread.StartThread(UpdateState);
 
             #endregion
         }
@@ -142,7 +141,7 @@ namespace Average.Client.Managers
 
         private async void TestNotificationCommand(int source, List<object> args, string raw)
         {
-            if (await Main.permissionManager.HasPermission("owner"))
+            if (await Permission.HasPermission("owner"))
             {
                 var title = args[0].ToString();
                 var content = args[1].ToString();

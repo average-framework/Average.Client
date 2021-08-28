@@ -9,9 +9,9 @@ using System.Reflection;
 
 namespace Average.Client.Managers
 {
-    public class ExportManager : IExportManager
+    public class ExportManager : InternalPlugin, IExportManager
     {
-        private Dictionary<string, Delegate> _exports = new Dictionary<string, Delegate>();
+        private static Dictionary<string, Delegate> _exports = new Dictionary<string, Delegate>();
 
         public void CallMethod(string exportName, params object[] args)
         {
@@ -31,13 +31,13 @@ namespace Average.Client.Managers
             return (T)Activator.CreateInstance(typeof(T));
         }
 
-        public void RegisterExport(MethodInfo method, ExportAttribute exportAttr, object classObj)
+        internal static void RegisterInternalExport(MethodInfo method, ExportAttribute exportAttr, object classObj)
         {
             var methodParams = method.GetParameters();
 
             if (!_exports.ContainsKey(exportAttr.Name))
             {
-                var action = Action.CreateDelegate(Expression.GetDelegateType((from parameter in method.GetParameters() select parameter.ParameterType).Concat(new[] { method.ReturnType }).ToArray()), classObj, method);
+                var action = Delegate.CreateDelegate(Expression.GetDelegateType((from parameter in method.GetParameters() select parameter.ParameterType).Concat(new[] { method.ReturnType }).ToArray()), classObj, method);
                 _exports.Add(exportAttr.Name, action);
 
                 Log.Debug($"Registering [Export] attribute: {exportAttr.Name} on method: {method.Name}, args count: {methodParams.Count()}.");

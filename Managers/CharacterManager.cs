@@ -15,36 +15,35 @@ using static SDK.Client.GameAPI;
 
 namespace Average.Client.Managers
 {
-    public class CharacterManager : ICharacterManager, ISaveable
+    public class CharacterManager : InternalPlugin, ICharacterManager, ISaveable
     {
         private int textureId = -1;
         
         private const int RefreshPedScaleInternal = 5000;
 
-        public List<CharacterCloth> Clothes { get; }
-        public List<PedCulture> PedCultures { get; }
-        public List<int> BodyTypes { get; }
-        public List<int> WaistTypes { get; }
+        public List<CharacterCloth> Clothes { get; private set; }
+        public List<PedCulture> PedCultures { get; private set; }
+        public List<int> BodyTypes { get; private set; }
+        public List<int> WaistTypes { get; private set; }
         
         public CharacterData Current { get; private set; }
 
-        public CharacterManager()
+        public override void OnInitialized()
         {
             Clothes = Configuration.Parse<List<CharacterCloth>>("utils/clothes.json");
             BodyTypes = Configuration.Parse<List<int>>("utils/body_types.json");
             WaistTypes = Configuration.Parse<List<int>>("utils/waist_types.json");
             PedCultures = CharacterUtils.PedCultures;
 
-            Main.threadManager.StartThread(PedScaleUpdate);
-            Main.saveManager.AddInQueue(this);
+            Thread.StartThread(PedScaleUpdate);
+            Save.AddInQueue(this);
         }
 
         #region Threads
 
         private async Task PedScaleUpdate()
         {
-            if (Current == null)
-                return;
+            if (Current == null) return;
 
             GameAPI.SetPedScale(PlayerPedId(), Current.Scale);
             await BaseScript.Delay(RefreshPedScaleInternal);
@@ -149,7 +148,7 @@ namespace Average.Client.Managers
             
             Current.Position = new PositionData(coords.X, coords.Y, coords.Z, heading);
 
-            await Save();
+            await SaveData();
         }
 
         public void SavePosition()
@@ -160,13 +159,13 @@ namespace Average.Client.Managers
             Current.Position = new PositionData(coords.X, coords.Y, coords.Z, heading);
         }
 
-        public async Task Save()
+        public async Task SaveData()
         {
             Current.Core.Health = GetEntityHealth(PlayerPedId());
-            Main.eventManager.EmitServer("Character.Save", JsonConvert.SerializeObject(Current));
+            Event.EmitServer("Character.Save", JsonConvert.SerializeObject(Current));
         }
 
-        public void Create(CharacterData data) => Main.eventManager.EmitServer("Character.Save", JsonConvert.SerializeObject(data));
+        public void Create(CharacterData data) => Event.EmitServer("Character.Save", JsonConvert.SerializeObject(data));
 
         public void SetPedBody()
         {
@@ -272,25 +271,25 @@ namespace Average.Client.Managers
         public async void SetMoney(decimal amount)
         {
             Current.Economy.Money = amount;
-            await Save();
+            await SaveData();
         }
 
         public async void SetBank(decimal amount)
         {
             Current.Economy.Bank = amount;
-            await Save();
+            await SaveData();
         }
 
         public async void AddMoney(decimal amount)
         {
             Current.Economy.Money += amount;
-            await Save();
+            await SaveData();
         }
 
         public async void AddBank(decimal amount)
         {
             Current.Economy.Bank += amount;
-            await Save();
+            await SaveData();
         }
 
         public async void RemoveMoney(decimal amount)
@@ -302,7 +301,7 @@ namespace Average.Client.Managers
                 Current.Economy.Money -= amount;
             }
 
-            await Save();
+            await SaveData();
         }
 
         public async void RemoveBank(decimal amount)
@@ -314,7 +313,7 @@ namespace Average.Client.Managers
                 Current.Economy.Bank -= amount;
             }
 
-            await Save();
+            await SaveData();
         }
 
         public void RemoveAllClothes()

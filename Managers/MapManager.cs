@@ -12,18 +12,18 @@ using static CitizenFX.Core.Native.API;
 
 namespace Average.Client.Managers
 {
-    public class MapManager : IMapManager
+    public class MapManager : InternalPlugin, IMapManager
     {
         private float lodDistance = 600f;
 
         public List<ImapModel> ScannedImaps { get; } = new List<ImapModel>();
-        public List<ImapModel> Imaps { get; }
-        public List<InteriorModel> Interiors { get; }
-        public List<CustomImapModel> CustomImaps { get; }
-        public List<CustomInteriorModel> CustomInteriors { get; }
-        public List<InteriorSetModel> InteriorsSet { get; }
+        public List<ImapModel> Imaps { get; private set; }
+        public List<InteriorModel> Interiors { get; private set; }
+        public List<CustomImapModel> CustomImaps { get; private set; }
+        public List<CustomInteriorModel> CustomInteriors { get; private set; }
+        public List<InteriorSetModel> InteriorsSet { get; private set; }
 
-        public MapManager()
+        public override void OnInitialized()
         {
             Imaps = Configuration.Parse<List<ImapModel>>("utils/imaps.json");
             Interiors = Configuration.Parse<List<InteriorModel>>("utils/interiors.json");
@@ -59,12 +59,12 @@ namespace Average.Client.Managers
 
         #region Command
 
-        [Command("map.lowspecmode_disable")]
+        [ClientCommand("map.lowspecmode_disable")]
         private async void LowSpecModeDisableCommand()
         {
-            if (await Main.permissionManager.HasPermission("player"))
+            if (await Permission.HasPermission("player"))
             {
-                Main.threadManager.StopThread(LowSpecModeUpdate);
+                Thread.StopThread(LowSpecModeUpdate);
 
                 await BaseScript.Delay(1000);
 
@@ -96,22 +96,17 @@ namespace Average.Client.Managers
             }
         }
 
-        [Command("map.lowspecmode_dist")]
-        private async void LowSpecModeDistanceCommand(int source, List<object> args, string raw)
+        [ClientCommand("map.lowspecmode_dist")]
+        private async void LowSpecModeDistanceCommand(float range)
         {
-            if (await Main.permissionManager.HasPermission("player"))
-            {
-                if (args.Count == 1)
-                {
-                    lodDistance = float.Parse(args[0].ToString());
-                }
-            }
+            if (await Permission.HasPermission("player"))
+                lodDistance = range;
         }
 
-        [Command("map.lowspecmode")]
-        private async void LowSpecModeCommand(int source, List<object> args, string raw)
+        [ClientCommand("map.lowspecmode")]
+        private async void LowSpecModeCommand()
         {
-            if (await Main.permissionManager.HasPermission("player"))
+            if (await Permission.HasPermission("player"))
             {
                 // Décharge tout les imaps par défaut
                 for (int i = 0; i < Imaps.Count; i++)
@@ -129,14 +124,14 @@ namespace Average.Client.Managers
                 Log.Debug("[Map] All imaps was removed.");
                 Log.Debug("[Map] Starting deferring imap loading.");
 
-                Main.threadManager.StartThread(LowSpecModeUpdate);
+                Thread.StartThread(LowSpecModeUpdate);
             }
         }
 
-        [Command("map.reload_custom_imaps")]
-        private async void ReloadCustomImapsCommand(int source, List<object> args, string raw)
+        [ClientCommand("map.reload_custom_imaps")]
+        private async void ReloadCustomImapsCommand()
         {
-            if (await Main.permissionManager.HasPermission("owner"))
+            if (await Permission.HasPermission("owner"))
             {
                 UnloadCustomImaps();
                 await BaseScript.Delay(0);
@@ -144,10 +139,10 @@ namespace Average.Client.Managers
             }
         }
 
-        [Command("map.load_imaps")]
-        private async void LoadImapsCommand(int source, List<object> args, string raw)
+        [ClientCommand("map.load_imaps")]
+        private async void LoadImapsCommand()
         {
-            if (await Main.permissionManager.HasPermission("owner"))
+            if (await Permission.HasPermission("owner"))
             {
                 foreach (var imap in Imaps)
                 {
@@ -160,9 +155,9 @@ namespace Average.Client.Managers
         }
 
         [ClientCommand("map.load_custom_imaps")]
-        private async void LoadCustomImapsCommand(int source, List<object> args, string raw)
+        private async void LoadCustomImapsCommand()
         {
-            if (await Main.permissionManager.HasPermission("owner"))
+            if (await Permission.HasPermission("owner"))
             {
                 foreach (var imap in Imaps)
                 {
@@ -175,32 +170,31 @@ namespace Average.Client.Managers
         }
 
         [ClientCommand("map.remove_imaps")]
-        private async void RemoveImapsCommand(int source, List<object> args, string raw)
+        private async void RemoveImapsCommand()
         {
-            if (await Main.permissionManager.HasPermission("owner"))
+            if (await Permission.HasPermission("owner"))
                 UnloadImaps();
         }
 
         [ClientCommand("map.remove_custom_imaps")]
-        private async void RemoveCustomImapsCommand(int source, List<object> args, string raw)
+        private async void RemoveCustomImapsCommand()
         {
-            if (await Main.permissionManager.HasPermission("owner"))
+            if (await Permission.HasPermission("owner"))
                 UnloadCustomImaps();
         }
 
         [ClientCommand("map.scan_proximity")]
-        private async void ScanProximityCommand(int source, List<object> args, string raw)
+        private async void ScanProximityCommand(float range)
         {
-            if (await Main.permissionManager.HasPermission("owner"))
+            if (await Permission.HasPermission("owner"))
             {
-                var distance = float.Parse(args[0].ToString());
                 var pos = GetEntityCoords(PlayerPedId(), true, true);
 
                 ScannedImaps.Clear();
 
                 foreach (var imap in Imaps)
                 {
-                    if (GetDistanceBetweenCoords(pos.X, pos.Y, pos.Z, imap.X, imap.Y, imap.Z, true) <= distance)
+                    if (GetDistanceBetweenCoords(pos.X, pos.Y, pos.Z, imap.X, imap.Y, imap.Z, true) <= range)
                     {
                         Log.Debug("[Map] Scanning: " + imap.Hash);
                         ScannedImaps.Add(imap);

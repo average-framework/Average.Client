@@ -12,20 +12,20 @@ using System.Threading.Tasks;
 
 namespace Average.Client.Managers
 {
-    public class SyncManager : ISyncManager
+    public class SyncManager : InternalPlugin, ISyncManager
     {
-        private Dictionary<string, SyncPropertyState> _propertiesSyncs = new Dictionary<string, SyncPropertyState>();
-        private Dictionary<string, SyncFieldState> _fieldsSyncs = new Dictionary<string, SyncFieldState>();
+        private static Dictionary<string, SyncPropertyState> _propertiesSyncs = new Dictionary<string, SyncPropertyState>();
+        private static Dictionary<string, SyncFieldState> _fieldsSyncs = new Dictionary<string, SyncFieldState>();
 
-        private List<GetSyncPropertyState> _networkedPropertiesGetSyncs = new List<GetSyncPropertyState>();
-        private List<GetSyncFieldState> _networkedFieldsGetSyncs = new List<GetSyncFieldState>();
+        private static List<GetSyncPropertyState> _networkedPropertiesGetSyncs = new List<GetSyncPropertyState>();
+        private static List<GetSyncFieldState> _networkedFieldsGetSyncs = new List<GetSyncFieldState>();
 
-        private List<GetSyncPropertyState> _propertiesGetSyncs = new List<GetSyncPropertyState>();
-        private List<GetSyncFieldState> _fieldsGetSyncs = new List<GetSyncFieldState>();
+        private static List<GetSyncPropertyState> _propertiesGetSyncs = new List<GetSyncPropertyState>();
+        private static List<GetSyncFieldState> _fieldsGetSyncs = new List<GetSyncFieldState>();
 
         private const int SyncRate = 60;
 
-        public SyncManager()
+        public override void OnInitialized()
         {
             #region Event
 
@@ -36,7 +36,7 @@ namespace Average.Client.Managers
 
             #region Thread
 
-            Main.threadManager.StartThread(Update);
+            Thread.StartThread(Update);
 
             #endregion
         }
@@ -46,7 +46,7 @@ namespace Average.Client.Managers
             await BaseScript.Delay(SyncRate);
 
             SyncProperties();
-            SyncProperties();
+            SyncFields();
         }
 
         private object GetPropertyValue(PropertyInfo property, object classObj)
@@ -59,7 +59,7 @@ namespace Average.Client.Managers
 
         private object GetFieldValue(FieldInfo field, object classObj) => field.GetValue(classObj);
 
-        public void SyncProperties()
+        private void SyncProperties()
         {
             for (var i = 0; i < _propertiesGetSyncs.Count; i++)
             {
@@ -87,7 +87,7 @@ namespace Average.Client.Managers
             }
         }
 
-        public void SyncFields()
+        private void SyncFields()
         {
             for (int i = 0; i < _fieldsGetSyncs.Count; i++)
             {
@@ -115,7 +115,7 @@ namespace Average.Client.Managers
             }
         }
 
-        public void RegisterSync(ref PropertyInfo property, SyncAttribute syncAttr, object classObj)
+        internal static void RegisterInternalSync(ref PropertyInfo property, SyncAttribute syncAttr, object classObj)
         {
             if (!_propertiesSyncs.ContainsKey(syncAttr.Name))
             {
@@ -135,7 +135,7 @@ namespace Average.Client.Managers
             }
         }
 
-        public void RegisterSync(ref FieldInfo field, SyncAttribute syncAttr, object classObj)
+        internal static void RegisterInternalSync(ref FieldInfo field, SyncAttribute syncAttr, object classObj)
         {
             if (!_fieldsSyncs.ContainsKey(syncAttr.Name))
             {
@@ -148,7 +148,7 @@ namespace Average.Client.Managers
             }
         }
 
-        public void RegisterGetSync(ref PropertyInfo property, GetSyncAttribute getSyncAttr, object classObj)
+        internal static void RegisterInternalGetSync(ref PropertyInfo property, GetSyncAttribute getSyncAttr, object classObj)
         {
             if (property.CanWrite && property.CanRead)
             {
@@ -161,15 +161,13 @@ namespace Average.Client.Managers
             }
         }
 
-        public void RegisterGetSync(ref FieldInfo field, GetSyncAttribute getSyncAttr, object classObj)
+        internal static void RegisterInternalGetSync(ref FieldInfo field, GetSyncAttribute getSyncAttr, object classObj)
         {
             _fieldsGetSyncs.Add(new GetSyncFieldState(getSyncAttr, field, classObj));
             Log.Debug($"Registering [GetSync] attribute: {getSyncAttr.Name} on field: {field.Name}.");
         }
 
-        #region Network
-
-        public void RegisterNetworkGetSync(ref PropertyInfo property, NetworkGetSyncAttribute getSyncAttr, object classObj)
+        internal static void RegisterInternalNetworkGetSync(ref PropertyInfo property, NetworkGetSyncAttribute getSyncAttr, object classObj)
         {
             if (property.CanWrite && property.CanRead)
             {
@@ -182,13 +180,11 @@ namespace Average.Client.Managers
             }
         }
 
-        public void RegisterNetworkGetSync(ref FieldInfo field, NetworkGetSyncAttribute getSyncAttr, object classObj)
+        internal static void RegisterInternalNetworkGetSync(ref FieldInfo field, NetworkGetSyncAttribute getSyncAttr, object classObj)
         {
             _networkedFieldsGetSyncs.Add(new GetSyncFieldState(getSyncAttr, field, classObj));
             Log.Debug($"Registering [NetworkGetSync] attribute: {getSyncAttr.Name} on field: {field.Name}.");
         }
-
-        #endregion
 
         #region Internal Event
 

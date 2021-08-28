@@ -8,20 +8,20 @@ using SDK.Client.Diagnostics;
 
 namespace Average.Client.Managers
 {
-    public class ThreadManager : IThreadManager
+    public class ThreadManager : InternalPlugin, IThreadManager
     {
-        private List<Thread> _threads = new List<Thread>();
+        private static List<Thread> _threads = new List<Thread>();
 
-        private Action<Func<Task>> _attachCallback;
-        private Action<Func<Task>> _detachCallback;
-
-        public ThreadManager(Action<Func<Task>> attachCallback, Action<Func<Task>> detachCallback)
+        private static Action<Func<Task>> _attachCallback;
+        private static Action<Func<Task>> _detachCallback;
+        
+        public override void OnInitialized()
         {
-            _attachCallback = attachCallback;
-            _detachCallback = detachCallback;
+            _attachCallback = Main.attachCallback;
+            _detachCallback = Main.detachCallback;
         }
 
-        internal void RegisterThread(MethodInfo method, ThreadAttribute threadAttr, object classObj)
+        internal static void RegisterInternalThread(MethodInfo method, ThreadAttribute threadAttr, object classObj)
         {
             var methodParams = method.GetParameters();
 

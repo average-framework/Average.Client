@@ -9,11 +9,11 @@ using static CitizenFX.Core.Native.API;
 
 namespace Average.Client.Managers
 {
-    public class PermissionManager : IPermissionManager
+    public class PermissionManager : InternalPlugin, IPermissionManager
     {
         private List<PermissionData> _permissions;
 
-        public PermissionManager()
+        public override void OnInitialized()
         {
             #region Event
 
@@ -51,11 +51,11 @@ namespace Average.Client.Managers
 
         public async Task<bool> HasPermission(string name)
         {
-            await Main.userManager.IsReady();
+            await User.IsReady();
 
             if (Exist(name))
             {
-                var permissionLevel = _permissions.Find(x => x.Name == Main.userManager.CurrentUser.Permission.Name).Level;
+                var permissionLevel = _permissions.Find(x => x.Name == User.CurrentUser.Permission.Name).Level;
                 var needLevel = _permissions.Find(x => x.Name == name).Level;
                 return permissionLevel >= needLevel;
             }
@@ -65,13 +65,13 @@ namespace Average.Client.Managers
 
         public async Task<bool> HasPermission(string name, int level)
         {
-            await Main.userManager.IsReady();
+            await User.IsReady();
 
             if (Exist(name))
             {
-                var permissionLevel = _permissions.Find(x => x.Name == Main.userManager.CurrentUser.Permission.Name).Level;
+                var permissionLevel = _permissions.Find(x => x.Name == User.CurrentUser.Permission.Name).Level;
                 var needLevel = _permissions.Find(x => x.Name == name).Level;
-                return permissionLevel >= needLevel && Main.userManager.CurrentUser.Permission.Level >= level;
+                return permissionLevel >= needLevel && User.CurrentUser.Permission.Level >= level;
             }
 
             return false;
@@ -97,8 +97,8 @@ namespace Average.Client.Managers
 
         private void SetPermissionEvent(string permissionName, int permissionLevel)
         {
-            Main.userManager.CurrentUser.Permission.Name = permissionName;
-            Main.userManager.CurrentUser.Permission.Level = permissionLevel;
+            User.CurrentUser.Permission.Name = permissionName;
+            User.CurrentUser.Permission.Level = permissionLevel;
             
             Log.Info($"New permission: [{permissionName}, {permissionLevel}]");
         }

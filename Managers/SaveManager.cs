@@ -1,23 +1,14 @@
 ﻿using SDK.Client.Diagnostics;
 using SDK.Client.Interfaces;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using SDK.Client;
 
 namespace Average.Client.Managers
 {
     public class SaveManager : InternalPlugin, ISaveManager
     {
-        private List<ISaveable> _tasks = new List<ISaveable>();
-
-        public override void OnInitialized()
-        {
-            #region Event
-
-            Main.eventHandlers["Save.All"] += new Action(SaveAllEvent);
-
-            #endregion
-        }
+        private readonly List<ISaveable> _tasks = new List<ISaveable>();
 
         public async Task SaveAll()
         {
@@ -34,7 +25,8 @@ namespace Average.Client.Managers
 
         #region Event
 
-        protected async void SaveAllEvent() => await SaveAll();
+        [ClientEvent("Save.All")]
+        private async void SaveAllEvent() => await SaveAll();
 
         #endregion
     }

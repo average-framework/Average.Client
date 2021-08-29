@@ -32,6 +32,8 @@ namespace Average.Client.Managers
             InteriorsSet = Configuration.Parse<List<InteriorSetModel>>("utils/interiors_set.json");
         }
 
+        #region Thread
+
         private async Task LowSpecModeUpdate()
         {
             var ped = PlayerPedId();
@@ -57,152 +59,133 @@ namespace Average.Client.Managers
             await BaseScript.Delay(1000);
         }
 
+        #endregion
+
         #region Command
 
-        [ClientCommand("map.lowspecmode_disable")]
+        [ClientCommand("map.lowspecmode_disable", "player", 0)]
         private async void LowSpecModeDisableCommand()
         {
-            if (await Permission.HasPermission("player"))
+            Thread.StopThread(LowSpecModeUpdate);
+
+            await BaseScript.Delay(1000);
+
+            for (int i = 0; i < Imaps.Count; i++)
             {
-                Thread.StopThread(LowSpecModeUpdate);
+                var imap = Imaps[i];
+                var hash = uint.Parse(imap.Hash, NumberStyles.AllowHexSpecifier);
 
-                await BaseScript.Delay(1000);
+                if (!IsImapActive(hash))
+                    RequestImap(hash);
+            }
 
-                for (int i = 0; i < Imaps.Count; i++)
+            for (int i = 0; i < CustomImaps.Count; i++)
+            {
+                var imap = CustomImaps[i];
+                var hash = (uint) long.Parse(imap.Hash);
+
+                if (imap.Enabled)
                 {
-                    var imap = Imaps[i];
-                    var hash = uint.Parse(imap.Hash, NumberStyles.AllowHexSpecifier);
-
                     if (!IsImapActive(hash))
                         RequestImap(hash);
                 }
-
-                for (int i = 0; i < CustomImaps.Count; i++)
+                else
                 {
-                    var imap = CustomImaps[i];
-                    var hash = (uint) long.Parse(imap.Hash);
-
-                    if (imap.Enabled)
-                    {
-                        if (!IsImapActive(hash))
-                            RequestImap(hash);
-                    }
-                    else
-                    {
-                        if (IsImapActive(hash))
-                            RemoveImap(hash);
-                    }
+                    if (IsImapActive(hash))
+                        RemoveImap(hash);
                 }
             }
         }
 
-        [ClientCommand("map.lowspecmode_dist")]
-        private async void LowSpecModeDistanceCommand(float range)
+        [ClientCommand("map.lowspecmode_dist", "player", 0)]
+        private void LowSpecModeDistanceCommand(float range)
         {
-            if (await Permission.HasPermission("player"))
-                lodDistance = range;
+            lodDistance = range;
         }
 
-        [ClientCommand("map.lowspecmode")]
+        [ClientCommand("map.lowspecmode", "player", 0)]
         private async void LowSpecModeCommand()
         {
-            if (await Permission.HasPermission("player"))
+            // Décharge tout les imaps par défaut
+            for (int i = 0; i < Imaps.Count; i++)
             {
-                // Décharge tout les imaps par défaut
-                for (int i = 0; i < Imaps.Count; i++)
+                var imap = Imaps[i];
+                var hash = uint.Parse(imap.Hash, NumberStyles.AllowHexSpecifier);
+
+                if (IsImapActive(hash))
                 {
-                    var imap = Imaps[i];
-                    var hash = uint.Parse(imap.Hash, NumberStyles.AllowHexSpecifier);
-
-                    if (IsImapActive(hash))
-                    {
-                        RemoveImap(hash);
-                        Log.Debug("[Map] Unloading imap: " + imap.Hash);
-                    }
+                    RemoveImap(hash);
+                    Log.Debug("[Map] Unloading imap: " + imap.Hash);
                 }
-
-                Log.Debug("[Map] All imaps was removed.");
-                Log.Debug("[Map] Starting deferring imap loading.");
-
-                Thread.StartThread(LowSpecModeUpdate);
             }
+
+            Log.Debug("[Map] All imaps was removed.");
+            Log.Debug("[Map] Starting deferring imap loading.");
+
+            Thread.StartThread(LowSpecModeUpdate);
         }
 
-        [ClientCommand("map.reload_custom_imaps")]
+        [ClientCommand("map.reload_custom_imaps", "owner", 4)]
         private async void ReloadCustomImapsCommand()
         {
-            if (await Permission.HasPermission("owner"))
-            {
-                UnloadCustomImaps();
-                await BaseScript.Delay(0);
-                LoadCustomImaps();
-            }
+            UnloadCustomImaps();
+            await BaseScript.Delay(0);
+            LoadCustomImaps();
         }
 
-        [ClientCommand("map.load_imaps")]
-        private async void LoadImapsCommand()
+        [ClientCommand("map.load_imaps", "owner", 4)]
+        private void LoadImapsCommand()
         {
-            if (await Permission.HasPermission("owner"))
+            foreach (var imap in Imaps)
             {
-                foreach (var imap in Imaps)
-                {
-                    var hash = uint.Parse(imap.Hash, NumberStyles.AllowHexSpecifier);
+                var hash = uint.Parse(imap.Hash, NumberStyles.AllowHexSpecifier);
 
-                    if (!IsImapActive(hash))
-                        RequestImap(hash);
-                }
+                if (!IsImapActive(hash))
+                    RequestImap(hash);
             }
         }
 
-        [ClientCommand("map.load_custom_imaps")]
+        [ClientCommand("map.load_custom_imaps", "owner", 4)]
         private async void LoadCustomImapsCommand()
         {
-            if (await Permission.HasPermission("owner"))
+            foreach (var imap in Imaps)
             {
-                foreach (var imap in Imaps)
-                {
-                    var hash = uint.Parse(imap.Hash, NumberStyles.AllowHexSpecifier);
+                var hash = uint.Parse(imap.Hash, NumberStyles.AllowHexSpecifier);
 
-                    if (!IsImapActive(hash))
-                        RequestImap(hash);
-                }
+                if (!IsImapActive(hash))
+                    RequestImap(hash);
             }
         }
 
-        [ClientCommand("map.remove_imaps")]
-        private async void RemoveImapsCommand()
+        [ClientCommand("map.remove_imaps", "owner", 4)]
+        private void RemoveImapsCommand()
         {
-            if (await Permission.HasPermission("owner"))
-                UnloadImaps();
+            UnloadImaps();
         }
 
-        [ClientCommand("map.remove_custom_imaps")]
+        [ClientCommand("map.remove_custom_imaps", "owner", 4)]
         private async void RemoveCustomImapsCommand()
         {
-            if (await Permission.HasPermission("owner"))
-                UnloadCustomImaps();
+            UnloadCustomImaps();
         }
 
-        [ClientCommand("map.scan_proximity")]
-        private async void ScanProximityCommand(float range)
+        [ClientCommand("map.scan_proximity", "owner", 4)]
+        private void ScanProximityCommand(float range)
         {
-            if (await Permission.HasPermission("owner"))
+            var pos = GetEntityCoords(PlayerPedId(), true, true);
+
+            ScannedImaps.Clear();
+
+            foreach (var imap in Imaps)
             {
-                var pos = GetEntityCoords(PlayerPedId(), true, true);
-
-                ScannedImaps.Clear();
-
-                foreach (var imap in Imaps)
+                if (GetDistanceBetweenCoords(pos.X, pos.Y, pos.Z, imap.X, imap.Y, imap.Z, true) <= range)
                 {
-                    if (GetDistanceBetweenCoords(pos.X, pos.Y, pos.Z, imap.X, imap.Y, imap.Z, true) <= range)
-                    {
-                        Log.Debug("[Map] Scanning: " + imap.Hash);
-                        ScannedImaps.Add(imap);
-                    }
+                    Log.Debug("[Map] Scanning: " + imap.Hash);
+                    ScannedImaps.Add(imap);
                 }
-
-                Log.Debug("[Map] Scanned imap count: " + ScannedImaps.Count);
             }
+
+            Log.Debug("[Map] Scanned imap count: " + ScannedImaps.Count);
         }
 
         #endregion

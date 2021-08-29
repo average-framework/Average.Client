@@ -17,7 +17,7 @@ namespace Average.Client.Managers
             _language = Configuration.ParseToDictionary($"languages/{Current}.json");
         }
 
-        bool KeyExist(string key) => _language.ContainsKey(key);
+        private bool KeyExist(string key) => _language.ContainsKey(key);
 
         public string Get(string key) => KeyExist(key) ? _language[key] : string.Empty;
     }

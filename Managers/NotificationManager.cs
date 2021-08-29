@@ -1,27 +1,20 @@
 ﻿using Average.Client.Notifications;
 using CitizenFX.Core;
 using SDK.Client.Interfaces;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using static CitizenFX.Core.Native.API;
+using SDK.Client;
 
 namespace Average.Client.Managers
 {
     public class NotificationManager : InternalPlugin, INotificationManager
     {
-        private List<INotification> _queue = new List<INotification>();
+        private readonly List<INotification> _queue = new List<INotification>();
 
         private const int UpdateStateInterval = 100;
 
         public override void OnInitialized()
         {
-            #region Command
-
-            RegisterCommand("notification.test", new Action<int, List<object>, string>(TestNotificationCommand), false);
-
-            #endregion
-
             #region Event
 
             EventManager.RegisterInternalNUICallbackEvent("window_ready", WindowReady);
@@ -139,16 +132,10 @@ namespace Average.Client.Managers
 
         #region Command
 
-        private async void TestNotificationCommand(int source, List<object> args, string raw)
+        [ClientCommand("notification.test", "owner", 4)]
+        private void TestNotificationCommand(string title, string content, int duration)
         {
-            if (await Permission.HasPermission("owner"))
-            {
-                var title = args[0].ToString();
-                var content = args[1].ToString();
-                var duration = int.Parse(args[2].ToString());
-
-                Schedule(title, content, duration);
-            }
+            Schedule(title, content, duration);
         }
 
         #endregion

@@ -39,7 +39,7 @@ namespace Average.Client.Managers
             Save.AddInQueue(this);
         }
 
-        #region Threads
+        #region Thread
 
         private async Task PedScaleUpdate()
         {
@@ -51,7 +51,7 @@ namespace Average.Client.Managers
 
         #endregion
 
-        #region Methods
+        #region Method
 
         public async Task IsReady()
         {
@@ -63,7 +63,7 @@ namespace Average.Client.Managers
             var receive = false;
             var result = false;
 
-            Main.rpc.Event("Character.Exist").On<bool>((exist) =>
+            Rpc.Event("Character.Exist").On<bool>((exist) =>
             {
                 result = exist;
                 receive = true;
@@ -78,8 +78,7 @@ namespace Average.Client.Managers
             Current = null;
 
             Log.Debug("Getting character..");
-
-            Main.rpc.Event("Character.Load").On<CharacterData>(data =>
+            Rpc.Event("Character.Load").On<CharacterData>(data =>
             {
                 Current = data;
                 Log.Debug("Getted character: " + (data == null ? "No character" : data.RockstarId));
@@ -98,7 +97,7 @@ namespace Average.Client.Managers
 
             Log.Debug("Getting character..");
 
-            Main.rpc.Event("Character.Load").On<CharacterData>(data =>
+            Rpc.Event("Character.Load").On<CharacterData>(data =>
             {
                 Current = data;
                 Current.Core.Health = health;
@@ -376,8 +375,8 @@ namespace Average.Client.Managers
 
         #region Event
 
-        [EventHandler("Character.SetPed")]
-        private async void OnSetPedEvent(uint model, int variante) => await SetPed(model, variante);
+        [ClientEvent("Character.SetPed")]
+        private async void OnSetPedEvent(int player, uint model, int variante) => await SetPed(model, variante);
 
         #endregion
     }

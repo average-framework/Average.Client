@@ -10,32 +10,33 @@ using SDK.Client.Diagnostics;
 using static CitizenFX.Core.Native.API;
 using static SDK.Client.GameAPI;
 using Newtonsoft.Json.Linq;
+using SDK.Client;
 
 namespace Average.Client.Managers
 {
     public class ObjectManager : InternalPlugin, IObjectManager
     {
-        private bool enableDithering;
-        private float ditheringDistance;
-        private float lodMaxDistance;
-        private int ditheringUpdateInterval;
-        private int renderUpdateInterval;
+        private bool _enableDithering;
+        private float _ditheringDistance;
+        private float _lodMaxDistance;
+        private int _ditheringUpdateInterval;
+        private int _renderUpdateInterval;
 
-        private List<ObjectModel> _registeredProps = new List<ObjectModel>();
+        private readonly List<ObjectModel> _registeredProps = new List<ObjectModel>();
 
         public override void OnInitialized()
         {
             #region Configuration
 
-            JObject baseConfig = SDK.Client.Configuration.ParseToObject("config.json");
+            JObject baseConfig = Configuration.ParseToObject("config.json");
 
-            enableDithering = (bool)baseConfig["Streaming"]["EnableDithering"];
-            ditheringDistance = (float)baseConfig["Streaming"]["DitheringDistance"];
-            lodMaxDistance = (float)baseConfig["Streaming"]["LodMaxDistance"];
-            ditheringUpdateInterval = (int)baseConfig["Streaming"]["DitheringUpdateInterval"];
-            renderUpdateInterval = (int)baseConfig["Streaming"]["RenderUpdateInterval"];
+            _enableDithering = (bool)baseConfig["Streaming"]["EnableDithering"];
+            _ditheringDistance = (float)baseConfig["Streaming"]["DitheringDistance"];
+            _lodMaxDistance = (float)baseConfig["Streaming"]["LodMaxDistance"];
+            _ditheringUpdateInterval = (int)baseConfig["Streaming"]["DitheringUpdateInterval"];
+            _renderUpdateInterval = (int)baseConfig["Streaming"]["RenderUpdateInterval"];
 
-            lodMaxDistance += ditheringDistance;
+            _lodMaxDistance += _ditheringDistance;
 
             #endregion
 
@@ -45,47 +46,37 @@ namespace Average.Client.Managers
             Thread.StartThread(Update);
 
             #endregion
-
-            #region Event
-
-            Main.eventHandlers["onResourceStop"] += new Action<string>(OnResourceStop);
-
-            #endregion
         }
 
         #region Command
 
-        [Command("object.create")]
-        private async void CreateCommand(int source, List<object> args, string raw)
+        [ClientCommand("object.create", "owner", 4)]
+        private async void CreateObjectCommand()
         {
-            if (await Permission.HasPermission("owner"))
-            {
-                var pos = GetEntityCoords(PlayerPedId(), true, true);
-                CreateRegisteredEntity((uint)GetHashKey("p_waterpump01x"), pos, Vector3.Zero, true);
-            }
+            var pos = GetEntityCoords(PlayerPedId(), true, true);
+            CreateRegisteredEntity((uint)GetHashKey("p_waterpump01x"), pos, Vector3.Zero, true);
         }
 
-        [Command("object.mass_create")]
-        private async void MassCreateCommand(int source, List<object> args, string raw)
+        [ClientCommand("object.mass_create", "owner", 4)]
+        private async void MassCreateCommand(int objCount)
         {
-            if (await Permission.HasPermission("owner"))
-            {
-                var pos = GetEntityCoords(PlayerPedId(), true, true);
+            var pos = GetEntityCoords(PlayerPedId(), true, true);
 
-                for (int i = 0; i < int.Parse(args[0].ToString()); i++)
-                {
-                    pos += new Vector3(2f, 0f, 0f);
-                    CreateRegisteredEntity((uint)GetHashKey("p_waterpump01x"), pos, Vector3.Zero, true);
-                    Log.Warn("[Object] Create object: " + i);
-                }
+            for (int i = 0; i < objCount; i++)
+            {
+                pos += new Vector3(2f, 0f, 0f);
+                CreateRegisteredEntity((uint)GetHashKey("p_waterpump01x"), pos, Vector3.Zero, true);
+                Log.Warn("[Object] Create object: " + i);
             }
         }
 
         #endregion
 
+        #region Thread
+
         private async Task DitheringUpdate()
         {
-            if (enableDithering)
+            if (_enableDithering)
             {
                 for (int i = 0; i < _registeredProps.Count; i++)
                 {
@@ -95,15 +86,15 @@ namespace Average.Client.Managers
 
                     if (DoesEntityExist(prop.Handle))
                     {
-                        if (distance <= lodMaxDistance)
+                        if (distance <= _lodMaxDistance)
                         {
-                            var invertDitheringDistance = lodMaxDistance - ditheringDistance;
+                            var invertDitheringDistance = _lodMaxDistance - _ditheringDistance;
 
-                            if (distance >= invertDitheringDistance && distance <= lodMaxDistance)
+                            if (distance >= invertDitheringDistance && distance <= _lodMaxDistance)
                             {
                                 var newDistance = (distance - invertDitheringDistance);
-                                var invertDistance = ditheringDistance - newDistance;
-                                var percentage = (invertDistance / ditheringDistance) * 255f;
+                                var invertDistance = _ditheringDistance - newDistance;
+                                var percentage = (invertDistance / _ditheringDistance) * 255f;
 
                                 SetEntityAlpha(prop.Handle, (int)percentage, false);
                             }
@@ -120,7 +111,7 @@ namespace Average.Client.Managers
                 Thread.StopThread(DitheringUpdate);
             }
 
-            await BaseScript.Delay(ditheringUpdateInterval);
+            await BaseScript.Delay(_ditheringUpdateInterval);
         }
 
         private async Task Update()
@@ -131,7 +122,7 @@ namespace Average.Client.Managers
                 var pos = GetEntityCoords(PlayerPedId(), true, true);
                 var distance = GetDistanceBetweenCoords(pos.X, pos.Y, pos.Z, prop.Position.X, prop.Position.Y, prop.Position.Z, true);
 
-                if (distance <= lodMaxDistance)
+                if (distance <= _lodMaxDistance)
                 {
                     if (!RegisteredEntityExist(prop.UniqueIndex))
                     {
@@ -161,8 +152,10 @@ namespace Average.Client.Managers
                 }
             }
 
-            await BaseScript.Delay(renderUpdateInterval);
+            await BaseScript.Delay(_renderUpdateInterval);
         }
+
+        #endregion
 
         public ObjectModel GetRegisteredEntity(string uniqueIndex) => _registeredProps.Find(x => x.UniqueIndex == uniqueIndex);
 
@@ -174,7 +167,7 @@ namespace Average.Client.Managers
             FreezeEntityPosition(entity, true);
             SetEntityRotation(entity, rotation.X, rotation.Y, rotation.Z, 1, true);
 
-            if (enableDithering)
+            if (_enableDithering)
                 SetEntityAlpha(entity, 0, false);
 
             if (placeOnGround)
@@ -228,6 +221,7 @@ namespace Average.Client.Managers
 
         #region Event
 
+        [ClientEvent("ResourceStop")]
         private void OnResourceStop(string resourceName)
         {
             if (resourceName == Constant.RESOURCE_NAME)

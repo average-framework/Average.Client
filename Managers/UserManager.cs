@@ -14,10 +14,10 @@ namespace Average.Client.Managers
         {
             #region Rpc
 
-            Log.Warn("Getting user..");
-            Main.rpc.Event("User.GetUser").On<UserData>((user) =>
+            Log.Debug("Getting user..");
+            Rpc.Event("User.GetUser").On<UserData>((user) =>
             {
-                Log.Warn("Getted user");
+                Log.Debug("Getted user.");
                 CurrentUser = user;
             }).Emit();
 

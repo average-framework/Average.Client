@@ -5,6 +5,7 @@ using SDK.Shared.DataModels;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using SDK.Client;
 using static CitizenFX.Core.Native.API;
 
 namespace Average.Client.Managers
@@ -15,12 +16,6 @@ namespace Average.Client.Managers
 
         public override void OnInitialized()
         {
-            #region Event
-
-            Main.eventHandlers["Permission.Set"] += new Action<string, int>(SetPermissionEvent);
-
-            #endregion
-
             #region Rpc
 
             Log.Debug("Getting permissions..");
@@ -30,12 +25,6 @@ namespace Average.Client.Managers
                 
                 Log.Debug("Getted permissions");
             }).Emit();
-
-            #endregion
-            
-            #region Command
-
-            RegisterCommand("permission.set", new Action<int, List<object>, string>(SetPermissionCommand), false);
 
             #endregion
         }
@@ -79,22 +68,17 @@ namespace Average.Client.Managers
 
         #region Command
 
-        private async void SetPermissionCommand(int source, List<object> args, string raw)
+        [ClientCommand("permission.set", "owner", 4)]
+        private void SetPermissionCommand(int targetId, string permName, int permLevel)
         {
-            if (await HasPermission("owner"))
-            {
-                var targetId = int.Parse(args[0].ToString());
-                var permName = args[1].ToString();
-                var permLevel = int.Parse(args[2].ToString());
-                
-                BaseScript.TriggerServerEvent("Permission.Set", GetPlayerServerId(targetId), permName, permLevel);
-            }
+            BaseScript.TriggerServerEvent("Permission.Set", GetPlayerServerId(targetId), permName, permLevel);
         }
 
         #endregion
 
         #region Event
 
+        [ClientEvent("Permission.Set")]
         private void SetPermissionEvent(string permissionName, int permissionLevel)
         {
             User.CurrentUser.Permission.Name = permissionName;

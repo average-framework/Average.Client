@@ -6,7 +6,6 @@ using CitizenFX.Core;
 using SDK.Client.Events;
 using SDK.Client.Interfaces;
 using SDK.Client.Menu;
-using static SDK.Client.GameAPI;
 
 namespace Average.Client.Managers
 {
@@ -39,7 +38,7 @@ namespace Average.Client.Managers
             #endregion
         }
 
-        #region Nui Callback
+        #region Nui
 
         private CallbackDelegate WindowReady(IDictionary<string, object> data, CallbackDelegate result)
         {
@@ -276,7 +275,7 @@ namespace Average.Client.Managers
             MenuClosed?.Invoke(this, new MenuCloseEventArgs(currentMenu));
         }
 
-        #region Nui Methods
+        #region Nui Method
 
         public void UpdateRender(MenuContainer menuContainer, MenuTabContainer menuTabContainer)
         {
@@ -535,7 +534,7 @@ namespace Average.Client.Managers
 
         #endregion
 
-        #region Methods
+        #region Method
 
         public void ClearHistory() => _containerHistories.Clear();
 

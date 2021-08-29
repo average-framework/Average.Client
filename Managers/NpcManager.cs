@@ -4,6 +4,7 @@ using SDK.Shared;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using SDK.Client;
 using static CitizenFX.Core.Native.API;
 using static SDK.Client.GameAPI;
 
@@ -11,16 +12,7 @@ namespace Average.Client.Managers
 {
     public class NpcManager : InternalPlugin, INpcManager
     {
-        private List<int> _npcs = new List<int>();
-
-        public override void OnInitialized()
-        {
-            #region Event
-
-            Main.eventHandlers["onResourceStop"] += new Action<string>(OnResourceStop);
-
-            #endregion
-        }
+        private readonly List<int> _npcs = new List<int>();
 
         public async Task<int> Create(uint model, int variation, Vector3 position, float heading, bool isNetwork = false, bool netMissionEntity = false)
         {
@@ -54,6 +46,7 @@ namespace Average.Client.Managers
 
         #region Event
 
+        [ClientEvent("ResourceStop")]
         private void OnResourceStop(string resource)
         {
             if (resource == Constant.RESOURCE_NAME)

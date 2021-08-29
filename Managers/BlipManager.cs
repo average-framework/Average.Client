@@ -3,6 +3,7 @@ using SDK.Client.Interfaces;
 using SDK.Shared;
 using System;
 using System.Collections.Generic;
+using SDK.Client;
 using static CitizenFX.Core.Native.API;
 using static SDK.Client.GameAPI;
 
@@ -10,16 +11,7 @@ namespace Average.Client.Managers
 {
     public class BlipManager : InternalPlugin, IBlipManager
     {
-        private List<int> _blips = new List<int>();
-
-        public override void OnInitialized()
-        {
-            #region Event
-
-            Main.eventHandlers["onResourceStop"] += new Action<string>(OnResourceStop);
-
-            #endregion
-        }
+        private readonly List<int> _blips = new List<int>();
 
         public int Create(int sprite, string text, float scale, Vector3 position)
         {
@@ -45,6 +37,7 @@ namespace Average.Client.Managers
 
         #region Event
 
+        [ClientEvent("ResourceStop")]
         private void OnResourceStop(string resource)
         {
             if (resource == Constant.RESOURCE_NAME)

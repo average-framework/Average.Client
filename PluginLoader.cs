@@ -13,6 +13,8 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Average.Client.Managers;
 using SDK.Client.Diagnostics;
+using SDK.Client.Rpc;
+using SDK.Shared.Rpc;
 
 namespace Average.Client
 {
@@ -46,10 +48,11 @@ namespace Average.Client
             {
                 var script = (Plugin) Activator.CreateInstance(type);
                 
-                script.SetDependencies(Main.rpc, Main.thread, Main.character, Main.command, Main.evnt, Main.export, Main.permission, Main.save, Main.sync, Main.user, Main.streaming, Main.npc, Main.menu, Main.notification, Main.language, Main.map, Main.blip, pluginInfo);
+                script.SetDependencies(new RpcRequest(new RpcHandler(Main.eventHandlers), new RpcTrigger(), new RpcSerializer()), Main.thread, Main.character, Main.command, Main.evnt, Main.export, Main.permission, Main.save, Main.sync, Main.user, Main.streaming, Main.npc, Main.menu, Main.notification, Main.language, Main.map, Main.blip, Main.storage, pluginInfo);
                 
                 RegisterThreads(script.GetType(), script);
                 RegisterEvents(script.GetType(), script);
+                RegisterNuiCallbacks(script.GetType(), script);
                 RegisterExports(script.GetType(), script);
                 RegisterSyncs(script.GetType(), script);
                 RegisterGetSyncs(script.GetType(), script);
@@ -159,6 +162,21 @@ namespace Average.Client
 
                 if (eventAttr != null)
                     EventManager.RegisterInternalEvent(method, eventAttr, classObj);
+            }
+        }
+        
+        internal void RegisterNuiCallbacks(Type type, object classObj)
+        {
+            // Registering nui callbacks
+            var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance |
+                        BindingFlags.FlattenHierarchy;
+
+            foreach (var method in type.GetMethods(flags))
+            {
+                var eventAttr = method.GetCustomAttribute<UICallbackAttribute>();
+                
+                if (eventAttr != null)
+                    EventManager.RegisterInternalNuiCallbackEvent(method, eventAttr, classObj);
             }
         }
 
@@ -271,7 +289,7 @@ namespace Average.Client
                             try
                             {
                                 var action = (Func<IDictionary<string, object>, CallbackDelegate, CallbackDelegate>) Delegate.CreateDelegate(Expression.GetDelegateType((from parameter in method.GetParameters() select parameter.ParameterType).Concat(new[] {method.ReturnType}).ToArray()), classObj, method);
-                                EventManager.RegisterInternalNUICallbackEvent(attr.Name, action);
+                                EventManager.RegisterInternalNuiCallbackEvent(attr.Name, action);
                                 Log.Debug($"Registering [UICallback] attribute: {attr.Name} on method: {method.Name}");
                             }
                             catch

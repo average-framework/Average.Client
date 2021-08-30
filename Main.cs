@@ -37,6 +37,7 @@ namespace Average.Client
         internal static readonly NotificationManager notification = new NotificationManager();
         internal static readonly MenuManager menu = new MenuManager();
         internal static readonly CfxManager cfx = new CfxManager();
+        internal static readonly StorageManager storage = new StorageManager();
 
         #endregion;
         
@@ -45,6 +46,7 @@ namespace Average.Client
             eventHandlers = EventHandlers;
             detachCallback = c => Tick -= c;
             attachCallback = c => Tick += c;
+            
             rpc = new RpcRequest(new RpcHandler(EventHandlers), new RpcTrigger(), new RpcSerializer());
 
             // Plugin Loader
@@ -64,6 +66,7 @@ namespace Average.Client
             LoadInternalScript(blip);
             LoadInternalScript(npc);
             LoadInternalScript(character);
+            LoadInternalScript(storage);
             LoadInternalScript(map);
             LoadInternalScript(streaming);
             LoadInternalScript(cfx);
@@ -75,10 +78,11 @@ namespace Average.Client
         {
             try
             {
-                script.SetDependencies(rpc, thread, character, command, evnt, export, permission, save, sync, user, streaming, npc, menu, notification, language, map, blip);
+                script.SetDependencies(new RpcRequest(new RpcHandler(eventHandlers), new RpcTrigger(), new RpcSerializer()), thread, character, command, evnt, export, permission, save, sync, user, streaming, npc, menu, notification, language, map, blip, storage);
                 
                 loader.RegisterThreads(script.GetType(), script);
                 loader.RegisterEvents(script.GetType(), script);
+                loader.RegisterNuiCallbacks(script.GetType(), script);
                 loader.RegisterExports(script.GetType(), script);
                 loader.RegisterSyncs(script.GetType(), script);
                 loader.RegisterGetSyncs(script.GetType(), script);
@@ -89,7 +93,6 @@ namespace Average.Client
                 script.OnInitialized();
              
                 Log.Info($"Script: {script.Name} registered successfully.");
-                // Log.Write("Script", $"% {script.Name} % registered successfully.", new Log.TextColor(ConsoleColor.Blue, ConsoleColor.White));
             }
             catch (Exception ex)
             {

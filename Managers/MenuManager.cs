@@ -11,7 +11,7 @@ namespace Average.Client.Managers
 {
     public class MenuManager : InternalPlugin, IMenuManager
     {
-        private bool isReady;
+        private bool _isReady;
 
         private List<MenuContainer> _containerHistories = new List<MenuContainer>();
 
@@ -29,11 +29,11 @@ namespace Average.Client.Managers
         {
             #region Event
 
-            EventManager.RegisterInternalNUICallbackEvent("window_ready", WindowReady);
-            EventManager.RegisterInternalNUICallbackEvent("menu/avg.ready", Ready);
-            EventManager.RegisterInternalNUICallbackEvent("menu/on_click", OnClick);
-            EventManager.RegisterInternalNUICallbackEvent("menu/on_tab_click", OnTabClick);
-            EventManager.RegisterInternalNUICallbackEvent("menu/on_previous", OnPrevious);
+            EventManager.RegisterInternalNuiCallbackEvent("window_ready", WindowReady);
+            EventManager.RegisterInternalNuiCallbackEvent("menu/avg.ready", Ready);
+            EventManager.RegisterInternalNuiCallbackEvent("menu/on_click", OnClick);
+            EventManager.RegisterInternalNuiCallbackEvent("menu/on_tab_click", OnTabClick);
+            EventManager.RegisterInternalNuiCallbackEvent("menu/on_previous", OnPrevious);
 
             #endregion
         }
@@ -54,7 +54,7 @@ namespace Average.Client.Managers
 
         private CallbackDelegate Ready(IDictionary<string, object> data, CallbackDelegate result)
         {
-            isReady = true;
+            _isReady = true;
             return result;
         }
 
@@ -490,7 +490,7 @@ namespace Average.Client.Managers
 
         public async Task OpenMenu(MenuContainer menu)
         {
-            while (!isReady) await BaseScript.Delay(0);
+            while (!_isReady) await BaseScript.Delay(0);
 
             IsOpen = true;
 

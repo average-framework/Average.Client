@@ -9,12 +9,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using SDK.Shared;
 
 namespace Average.Client.Managers
 {
     public class EventManager : InternalPlugin, IEventManager
     {
         private static Dictionary<string, List<Delegate>> _events = new Dictionary<string, List<Delegate>>();
+        private static Dictionary<string, List<Delegate>> _nuiEvents = new Dictionary<string, List<Delegate>>();
 
         public event EventHandler<ResourceStartEventArgs> ResourceStart;
         public event EventHandler<ResourceStopEventArgs> ResourceStop;
@@ -57,12 +59,28 @@ namespace Average.Client.Managers
             BaseScript.TriggerServerEvent("avg.internal.trigger_event", eventName, args);
         }
 
-        public static void RegisterInternalNUICallbackEvent(string eventName, Func<IDictionary<string, object>, CallbackDelegate, CallbackDelegate> callback)
+        public static void RegisterInternalNuiCallbackEvent(string eventName, Func<IDictionary<string, object>, CallbackDelegate, CallbackDelegate> callback)
         {
             API.RegisterNuiCallbackType(eventName);
             Main.eventHandlers[$"__cfx_nui:{eventName}"] += new Action<IDictionary<string, object>, CallbackDelegate>((body, resultCallback) => callback.Invoke(body, resultCallback));
         }
 
+        internal static void RegisterInternalNuiCallbackEvent(MethodInfo method, UICallbackAttribute eventAttr, object classObj)
+        {
+            var methodParams = method.GetParameters();
+            var callback = (Func<IDictionary<string, object>, CallbackDelegate, CallbackDelegate>)Delegate.CreateDelegate(Expression.GetDelegateType((from parameter in method.GetParameters() select parameter.ParameterType).Concat(new[] { method.ReturnType }).ToArray()), classObj, method);
+            
+            if (!_nuiEvents.ContainsKey(eventAttr.Name))
+                _nuiEvents.Add(eventAttr.Name, new List<Delegate> { callback });
+            else
+                _nuiEvents[eventAttr.Name].Add(callback);
+            
+            API.RegisterNuiCallbackType(eventAttr.Name);
+            Main.eventHandlers[$"__cfx_nui:{eventAttr.Name}"] += new Action<IDictionary<string, object>, CallbackDelegate>((body, resultCallback) => callback.Invoke(body, resultCallback));
+            
+            Log.Debug($"Registering [UICallback] attribute: {eventAttr.Name} on method: {method.Name}, args count: {methodParams.Count()}");
+        }
+        
         public void UnregisterInternalEvent(string eventName)
         {
             if (_events.ContainsKey(eventName))
@@ -92,8 +110,7 @@ namespace Average.Client.Managers
         internal static void RegisterInternalEvent(MethodInfo method, ClientEventAttribute eventAttr, object classObj)
         {
             var methodParams = method.GetParameters();
-
-            var action = Action.CreateDelegate(Expression.GetDelegateType((from parameter in method.GetParameters() select parameter.ParameterType).Concat(new[] { method.ReturnType }).ToArray()), classObj, method);
+            var action = Delegate.CreateDelegate(Expression.GetDelegateType((from parameter in method.GetParameters() select parameter.ParameterType).Concat(new[] { method.ReturnType }).ToArray()), classObj, method);
 
             if (!_events.ContainsKey(eventAttr.Event))
                 _events.Add(eventAttr.Event, new List<Delegate> { action });

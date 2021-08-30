@@ -17,8 +17,8 @@ namespace Average.Client.Managers
         {
             #region Event
 
-            EventManager.RegisterInternalNUICallbackEvent("window_ready", WindowReady);
-            EventManager.RegisterInternalNUICallbackEvent("notification/avg.ready", Ready);
+            EventManager.RegisterInternalNuiCallbackEvent("window_ready", WindowReady);
+            EventManager.RegisterInternalNuiCallbackEvent("notification/avg.ready", Ready);
 
             #endregion
 

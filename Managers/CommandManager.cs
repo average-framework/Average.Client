@@ -13,7 +13,7 @@ namespace Average.Client.Managers
     {
         private static List<Tuple<ClientCommandAttribute, ClientCommandAliasAttribute>> _commands = new List<Tuple<ClientCommandAttribute, ClientCommandAliasAttribute>>();
 
-        private static PermissionManager _permissionManager;
+        private static IPermissionManager _permissionManager;
         
         public override void OnInitialized()
         {

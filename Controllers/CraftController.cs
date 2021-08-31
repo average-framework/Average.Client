@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Threading.Tasks;
-using Average.Client.Models;
 using CitizenFX.Core;
+using Newtonsoft.Json.Linq;
 using SDK.Client;
 using SDK.Client.Diagnostics;
 using SDK.Client.Interfaces;
@@ -26,30 +27,40 @@ namespace Average.Client.Controllers
         private bool _lastIsCraftTableNear;
         private bool _isCraftTableNear;
 
-        private const float _cullingRadius = 25f;
-        private const uint _key = (uint) Keys.X;
-        
+        private bool _isMarkerEnabled;
+        private float _markerCullingRadius;
+        private uint _key;
+
+        private JObject _baseConfig;
         private Craft _crafts;
-        
+
         public override void OnInitialized()
         {
             Name = RandomString();
-            
+
+            _baseConfig = Configuration.ParseToObject("configs/craft_controller.json");
             _crafts = Configuration.Parse<Craft>("configs/recipes.json");
+
+            _isMarkerEnabled = (bool) _baseConfig["Marker"]["Enabled"];
+            _markerCullingRadius = (float) _baseConfig["Marker"]["CullingRadius"];
+            _key = uint.Parse((string) _baseConfig["MenuKey"], NumberStyles.AllowHexSpecifier);
             
             Task.Factory.StartNew(async () =>
             {
                 await Character.IsReady();
                 
                 Thread.StartThread(Update);
-                Thread.StartThread(MarkerUpdate);
+                Thread.StartThread(CraftTableUpdate);
+
+                if (_isMarkerEnabled)
+                    Thread.StartThread(MarkerUpdate);
             });
         }
 
         #region Command
 
         [ClientCommand("craft.simulate_open", "owner", 4)]
-        private void OpenCommand(string craftTableName)
+        private void SimulateOpenCommand(string craftTableName)
         {
             var craftTable = GetCraftTable(craftTableName);
 
@@ -69,6 +80,8 @@ namespace Average.Client.Controllers
             _crafts.CraftTables.Add(craftTable);
         }
 
+        #region Thread
+
         private async Task MarkerUpdate()
         {
             if (Character.Current == null) return;
@@ -84,7 +97,7 @@ namespace Average.Client.Controllers
                     
                     if (craftTable.Jobs.Exists(x => x.Name == Character.Current.Job.Name && x.Role == Character.Current.Job.Role.Name) || craftTable.Jobs.Count == 0)
                     {
-                        if (GetDistanceBetweenCoords(pos.X, pos.Y, pos.Z, craftTable.Interact.Position.X, craftTable.Interact.Position.Y, craftTable.Interact.Position.Z, true) <= craftTable.Interact.Radius + _cullingRadius)
+                        if (GetDistanceBetweenCoords(pos.X, pos.Y, pos.Z, craftTable.Interact.Position.X, craftTable.Interact.Position.Y, craftTable.Interact.Position.Z, true) <= craftTable.Interact.Radius + _markerCullingRadius)
                         {
                             Call(0x2A32FAA57B937173, (uint)MarkerType.Halo, craftTable.Interact.Position.X,
                                 craftTable.Interact.Position.Y, craftTable.Interact.Position.Z - 0.98f, 0, 0, 0, 0, 0, 0,
@@ -101,13 +114,19 @@ namespace Average.Client.Controllers
 
         private async Task Update()
         {
+            if (IsControlJustReleased(0, _key))
+            {
+                Open();
+            }
+        }
+        
+        private async Task CraftTableUpdate()
+        {
             if (Character.Current == null) return;
             
             var ped = PlayerPedId();
             var pos = GetEntityCoords(ped, true, true);
-            var nearest = _crafts.CraftTables.Find(x =>
-                GetDistanceBetweenCoords(pos.X, pos.Y, pos.Z, x.Interact.Position.X, x.Interact.Position.Y,
-                    x.Interact.Position.Z, true) <= x.Interact.Radius && x.Jobs.Exists(x => x.Name == Character.Current.Job.Name && x.Role == Character.Current.Job.Role.Name) ? true : x.Jobs.Count == 0);
+            var nearest = _crafts.CraftTables.Find(x => GetDistanceBetweenCoords(pos.X, pos.Y, pos.Z, x.Interact.Position.X, x.Interact.Position.Y, x.Interact.Position.Z, true) <= x.Interact.Radius && x.Jobs.Exists(x => x.Name == Character.Current.Job.Name && x.Role == Character.Current.Job.Role.Name) ? true : x.Jobs.Exists(x => x.Name == "*"));
 
             if (nearest == null)
             {
@@ -116,7 +135,7 @@ namespace Average.Client.Controllers
                     _isCraftTableNear = false;
                 }
 
-                await BaseScript.Delay(1000);
+                await BaseScript.Delay(250);
             }
             else
             {
@@ -147,6 +166,8 @@ namespace Average.Client.Controllers
                 }
             }
         }
+
+        #endregion
 
         public bool IsCraftTableExist(string name) => _crafts.CraftTables.Exists(x => x.Name == name);
         public Craft.CraftTable GetCraftTable(string name) => _crafts.CraftTables.Find(x => x.Name == name);

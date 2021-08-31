@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Average.Client.Controllers;
 using Average.Client.Managers;
 using CitizenFX.Core;
 using Newtonsoft.Json;
@@ -33,6 +34,8 @@ namespace Average.Client
         public MapManager Map { get; set; }
         public BlipManager Blip { get; set; }
         public StorageManager Storage { get; set; }
+        
+        public CraftController Craft { get; set; }
 
         public InternalPlugin()
         {
@@ -41,7 +44,7 @@ namespace Average.Client
         
         public void SetDependencies(RpcRequest rpc, ThreadManager thread,
             CharacterManager character, CommandManager command, EventManager evnt, ExportManager export,
-            PermissionManager permission, SaveManager save, SyncManager sync, UserManager user, ObjectManager streaming, NpcManager npc, MenuManager menu, NotificationManager notification, LanguageManager language, MapManager map, BlipManager blip, StorageManager storage)
+            PermissionManager permission, SaveManager save, SyncManager sync, UserManager user, ObjectManager streaming, NpcManager npc, MenuManager menu, NotificationManager notification, LanguageManager language, MapManager map, BlipManager blip, StorageManager storage, CraftController craft)
         {
             Rpc = rpc;
             Thread = thread;
@@ -61,6 +64,7 @@ namespace Average.Client
             Map = map;
             Blip = blip;
             Storage = storage;
+            Craft = craft;
         }
         
         public static async void SendNUI(object request)

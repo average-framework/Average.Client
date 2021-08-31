@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Average.Client.Controllers;
 using Average.Client.Managers;
 using CitizenFX.Core;
 using SDK.Client.Diagnostics;
@@ -18,7 +19,7 @@ namespace Average.Client
         internal static EventHandlerDictionary eventHandlers;
         internal static RpcRequest rpc;
 
-        #region Internal Scripts
+        #region Internal Manager
 
         internal static readonly CharacterManager character = new CharacterManager();
         internal static readonly CommandManager command = new CommandManager();
@@ -40,6 +41,12 @@ namespace Average.Client
         internal static readonly StorageManager storage = new StorageManager();
 
         #endregion;
+
+        #region Internal Controller
+
+        internal static readonly CraftController craft = new CraftController();
+
+        #endregion
         
         public Main()
         {
@@ -69,6 +76,7 @@ namespace Average.Client
             LoadInternalScript(storage);
             LoadInternalScript(map);
             LoadInternalScript(streaming);
+            LoadInternalScript(craft);
             LoadInternalScript(cfx);
             
             loader.Load();
@@ -78,7 +86,7 @@ namespace Average.Client
         {
             try
             {
-                script.SetDependencies(new RpcRequest(new RpcHandler(eventHandlers), new RpcTrigger(), new RpcSerializer()), thread, character, command, evnt, export, permission, save, sync, user, streaming, npc, menu, notification, language, map, blip, storage);
+                script.SetDependencies(new RpcRequest(new RpcHandler(eventHandlers), new RpcTrigger(), new RpcSerializer()), thread, character, command, evnt, export, permission, save, sync, user, streaming, npc, menu, notification, language, map, blip, storage, craft);
                 
                 loader.RegisterThreads(script.GetType(), script);
                 loader.RegisterEvents(script.GetType(), script);

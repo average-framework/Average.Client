@@ -74,6 +74,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\CraftController.cs" />
     <Compile Include="InternalPlugin.cs" />
     <Compile Include="Managers\BlipManager.cs" />
     <Compile Include="Managers\CfxManager.cs" />

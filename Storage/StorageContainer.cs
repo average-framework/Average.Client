@@ -1,16 +1,16 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel;
 using Average.Client.Managers;
 using SDK.Client.Diagnostics;
+using SDK.Client.Interfaces;
 using SDK.Shared.DataModels;
 using static SDK.Client.GameAPI;
 
 namespace Average.Client.Storage
 {
-    public class StorageContainer
+    public class StorageContainer : IStorageContainer
     {
         public string Name { get; }
-        public double Weight { get; private set; }
+        public double Weight { get; set; }
         public double MaxWeight { get; set; }
         public StorageDataType StorageType { get; }
 

@@ -48,7 +48,7 @@ namespace Average.Client
             {
                 var script = (Plugin) Activator.CreateInstance(type);
                 
-                script.SetDependencies(new RpcRequest(new RpcHandler(Main.eventHandlers), new RpcTrigger(), new RpcSerializer()), Main.thread, Main.character, Main.command, Main.evnt, Main.export, Main.permission, Main.save, Main.sync, Main.user, Main.streaming, Main.npc, Main.menu, Main.notification, Main.language, Main.map, Main.blip, Main.storage, pluginInfo);
+                script.SetDependencies(new RpcRequest(new RpcHandler(Main.eventHandlers), new RpcTrigger(), new RpcSerializer()), Main.thread, Main.character, Main.command, Main.evnt, Main.export, Main.permission, Main.save, Main.sync, Main.user, Main.streaming, Main.npc, Main.menu, Main.notification, Main.language, Main.map, Main.blip, Main.storage, Main.craft, pluginInfo);
                 
                 RegisterThreads(script.GetType(), script);
                 RegisterEvents(script.GetType(), script);

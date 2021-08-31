@@ -32,8 +32,8 @@ namespace Average.Client.Managers
         public StorageData? CurrentInventoryData { get; private set; }
         public StorageData? CurrentChestData { get; private set; }
         
-        private StorageContainer? _inventoryContainer { get; set; }
-        private StorageContainer? _chestContainer { get; set; }
+        public IStorageContainer? InventoryContainer { get; private set; }
+        public IStorageContainer? ChestContainer { get; private set; }
         
         public bool IsOpen { get; set; }
         public bool CanOpen { get; set; }
@@ -50,7 +50,7 @@ namespace Average.Client.Managers
 
             #endregion
 
-            _inventoryContainer = new StorageContainer(this, Character, StorageDataType.PlayerInventory);
+            InventoryContainer = new StorageContainer(this, Character, StorageDataType.PlayerInventory);
 
             Task.Factory.StartNew(async () =>
             {
@@ -68,6 +68,16 @@ namespace Average.Client.Managers
             });
         }
 
+        #region Command
+
+        [ClientCommand("storage.add_item", "admin", 4)]
+        private void AddItemCommand(string itemName, int itemCount)
+        {
+            AddInventoryItem(itemName, itemCount);
+        }
+
+        #endregion
+        
         private void RegisterItems()
         {
             SetContextMenu("money", GetMoneyContextMenu(GetItemInfo("money")));
@@ -75,7 +85,7 @@ namespace Average.Client.Managers
 
         #region Context Menu
 
-        public static StorageContextMenu GetDefaultContextMenu(StorageItemInfo info) => new StorageContextMenu(new StorageContextItem
+        public StorageContextMenu GetDefaultContextMenu(StorageItemInfo info) => new StorageContextMenu(new StorageContextItem
         {
             Name = info.Name,
             EventName = "moveToChest",
@@ -84,7 +94,7 @@ namespace Average.Client.Managers
             Action = (storage, item, ray) =>
             {
                 storage.MoveItemFromInventoryToChest(item.UniqueId, storage.InventoryIntegerInput);
-                _event.EmitServer("Storage.RefreshChest",
+                _event.EmitServer("Storage.Refresh",
                     storage.CurrentChestData.StorageId);
             }
         }, new StorageContextItem
@@ -103,7 +113,7 @@ namespace Average.Client.Managers
                 else
                 {
                     storage.MoveItemFromChestToInventory(item.UniqueId, storage.ChestIntegerInput);
-                    _event.EmitServer("Storage.RefreshChest",
+                    _event.EmitServer("Storage.Refresh",
                         storage.CurrentChestData.StorageId);
                 }
             }
@@ -272,7 +282,7 @@ namespace Average.Client.Managers
                                     if (amount <= Character.Current.Economy.Money)
                                     {
                                         Character.RemoveMoney(amount);
-                                        _inventoryContainer.UpdateRender(CurrentInventoryData);
+                                        InventoryContainer.UpdateRender(CurrentInventoryData);
                                         Event.EmitServer("Storage.GiveMoneyToPlayer", targetServerId, amount);
                                     }
                                     else
@@ -317,7 +327,7 @@ namespace Average.Client.Managers
                                             if (removeOnGive)
                                             {
                                                 RemoveInventoryItemById(giveItem.UniqueId, itemCount);
-                                                _inventoryContainer.UpdateRender(CurrentInventoryData);
+                                                InventoryContainer.UpdateRender(CurrentInventoryData);
                                             }
                                             
                                             Event.EmitServer("Storage.GiveItemToPlayer", targetServerId, JsonConvert.SerializeObject(giveItem), itemCount, false);
@@ -401,21 +411,21 @@ namespace Average.Client.Managers
         
         public void MoveItemFromInventoryToChest(string uniqueId, int count)
         {
-            if (_chestContainer == null || CurrentChestData == null) return;
+            if (ChestContainer == null || CurrentChestData == null) return;
             
-            if (_inventoryContainer.ItemExistById(uniqueId, CurrentInventoryData))
+            if (InventoryContainer.ItemExistById(uniqueId, CurrentInventoryData))
             {
                 var item = GetItemInStorage(CurrentInventoryData, uniqueId);
                 var info = GetItemInfo(item.Name);
 
                 if (count <= item.Count)
                 {
-                    if (_chestContainer.HasFreeSpace(info.Weight * count))
+                    if (ChestContainer.HasFreeSpace(info.Weight * count))
                     {
                         AddChestItem(info.Name, count);
                         RemoveInventoryItemById(item.UniqueId, count);
-                        _inventoryContainer.UpdateRender(CurrentInventoryData);
-                        _chestContainer.UpdateRender(CurrentChestData);
+                        InventoryContainer.UpdateRender(CurrentInventoryData);
+                        ChestContainer.UpdateRender(CurrentChestData);
                     }
                 }
             }
@@ -423,21 +433,21 @@ namespace Average.Client.Managers
         
         public void MoveItemFromChestToInventory(string uniqueId, int count)
         {
-            if (_chestContainer == null || CurrentChestData == null) return;
+            if (ChestContainer == null || CurrentChestData == null) return;
             
-            if (_chestContainer.ItemExistById(uniqueId, CurrentChestData))
+            if (ChestContainer.ItemExistById(uniqueId, CurrentChestData))
             {
                 var item = GetItemInStorage(CurrentChestData, uniqueId);
                 var info = GetItemInfo(item.Name);
 
                 if (count <= item.Count)
                 {
-                    if (_inventoryContainer.HasFreeSpace(info.Weight * count))
+                    if (InventoryContainer.HasFreeSpace(info.Weight * count))
                     {
                         AddInventoryItem(info.Name, count);
                         RemoveChestItem(item.UniqueId, count);
-                        _inventoryContainer.UpdateRender(CurrentInventoryData);
-                        _chestContainer.UpdateRender(CurrentChestData);
+                        InventoryContainer.UpdateRender(CurrentInventoryData);
+                        ChestContainer.UpdateRender(CurrentChestData);
                     }
                 }
             }
@@ -448,7 +458,7 @@ namespace Average.Client.Managers
             if (IsOpen)
             {
                 IsOpen = false;
-                _chestContainer = null;
+                ChestContainer = null;
                 IsAnotherPlayerInventory = false;
                 IsChestCurrentlyUsed = false;
                 CurrentChestData = null;
@@ -490,20 +500,20 @@ namespace Average.Client.Managers
         {
             if (storageId.StartsWith("player_") && !isPlayerInventory)
             {
-                _inventoryContainer.CalculateWeight(CurrentInventoryData);
-                _inventoryContainer.MaxWeight = CurrentInventoryData.MaxWeight;
-                _inventoryContainer.ResetWeight();
-                _inventoryContainer.UpdateRender(CurrentInventoryData);
+                InventoryContainer.CalculateWeight(CurrentInventoryData);
+                InventoryContainer.MaxWeight = CurrentInventoryData.MaxWeight;
+                InventoryContainer.ResetWeight();
+                InventoryContainer.UpdateRender(CurrentInventoryData);
             }
             else if (storageId.StartsWith("player_") && isPlayerInventory)
             {
                 CurrentChestData = await LoadChest(storageId);
 
-                _chestContainer = new StorageContainer(this, Character, StorageDataType.Chest);
-                _chestContainer.CalculateWeight(CurrentChestData);
-                _chestContainer.MaxWeight = CurrentChestData.MaxWeight;
-                _chestContainer.ResetWeight();
-                _chestContainer.UpdateRender(CurrentChestData, characterData);
+                ChestContainer = new StorageContainer(this, Character, StorageDataType.Chest);
+                ChestContainer.CalculateWeight(CurrentChestData);
+                ChestContainer.MaxWeight = CurrentChestData.MaxWeight;
+                ChestContainer.ResetWeight();
+                ChestContainer.UpdateRender(CurrentChestData, characterData);
             }
             else if (storageId.StartsWith("vehicle_") || storageId.StartsWith("chest_"))
             {
@@ -511,17 +521,17 @@ namespace Average.Client.Managers
 
                 if (storageId.StartsWith("vehicle_"))
                 {
-                    _chestContainer = new StorageContainer(this, Character, StorageDataType.VehicleInventory);
+                    ChestContainer = new StorageContainer(this, Character, StorageDataType.VehicleInventory);
                 }
                 else if (storageId.StartsWith("chest_"))
                 {
-                    _chestContainer = new StorageContainer(this, Character, StorageDataType.Chest);
+                    ChestContainer = new StorageContainer(this, Character, StorageDataType.Chest);
                 }
 
-                _chestContainer.CalculateWeight(CurrentChestData);
-                _chestContainer.MaxWeight = CurrentChestData.MaxWeight;
-                _chestContainer.ResetWeight();
-                _chestContainer.UpdateRender(CurrentChestData);
+                ChestContainer.CalculateWeight(CurrentChestData);
+                ChestContainer.MaxWeight = CurrentChestData.MaxWeight;
+                ChestContainer.ResetWeight();
+                ChestContainer.UpdateRender(CurrentChestData);
             }
         }
 
@@ -545,47 +555,47 @@ namespace Average.Client.Managers
         
         public void AddInventoryItem(string name, int count, Dictionary<string, object> data = null)
         {
-            _inventoryContainer.AddItem(name, count, CurrentInventoryData, data);
+            InventoryContainer.AddItem(name, count, CurrentInventoryData, data);
             SaveInventory();
         }
         
         public void RemoveChestItem(string uniqueId, int count)
         {
-            if (_chestContainer != null)
+            if (ChestContainer != null)
             {
-                var chestItem = _chestContainer.GetItemById(uniqueId, CurrentChestData);
+                var chestItem = ChestContainer.GetItemById(uniqueId, CurrentChestData);
 
                 if (chestItem == null)
                 {
-                    var invItem = _inventoryContainer.GetItemById(uniqueId, CurrentInventoryData);
+                    var invItem = InventoryContainer.GetItemById(uniqueId, CurrentInventoryData);
                     if (invItem == null) return;
 
-                    _inventoryContainer.RemoveItemById(uniqueId, count, CurrentInventoryData);
+                    InventoryContainer.RemoveItemById(uniqueId, count, CurrentInventoryData);
                     SaveInventory();
                 }
                 else
                 {
-                    _chestContainer.RemoveItemById(uniqueId, count, CurrentChestData);
+                    ChestContainer.RemoveItemById(uniqueId, count, CurrentChestData);
                     SaveChest();
                 }
             }
             else
             {
-                var invItem = _inventoryContainer.GetItemById(uniqueId, CurrentInventoryData);
+                var invItem = InventoryContainer.GetItemById(uniqueId, CurrentInventoryData);
                 if (invItem == null) return;
 
-                _inventoryContainer.RemoveItemById(uniqueId, count, CurrentInventoryData);
+                InventoryContainer.RemoveItemById(uniqueId, count, CurrentInventoryData);
                 SaveInventory();
             }
         }
         public void RemoveInventoryItemByName(string name, int count)
         {
-            _inventoryContainer.RemoveItemByName(name, count, CurrentInventoryData);
+            InventoryContainer.RemoveItemByName(name, count, CurrentInventoryData);
             SaveInventory();
         }
         public void RemoveInventoryItemById(string uniqueId, int count)
         {
-            _inventoryContainer.RemoveItemById(uniqueId, count, CurrentInventoryData);
+            InventoryContainer.RemoveItemById(uniqueId, count, CurrentInventoryData);
             SaveInventory();
         }
         
@@ -620,7 +630,7 @@ namespace Average.Client.Managers
         
         public void AddChestItem(string name, int count)
         {
-            _chestContainer.AddItem(name, count, CurrentChestData);
+            ChestContainer.AddItem(name, count, CurrentChestData);
             SaveChest();
         }
 
@@ -702,7 +712,7 @@ namespace Average.Client.Managers
             }
 
             // Règle un problème d'affichage (l'item affichais la valeur précédente sans raison)
-            _inventoryContainer.UpdateRender(CurrentInventoryData);
+            InventoryContainer.UpdateRender(CurrentInventoryData);
 
             return result;
         }
@@ -754,7 +764,7 @@ namespace Average.Client.Managers
             }
 
             // Règle un problème d'affichage (l'item affichais la valeur précédente sans raison)
-            _chestContainer.UpdateRender(CurrentChestData);
+            ChestContainer.UpdateRender(CurrentChestData);
 
             return result;
         }
@@ -767,14 +777,14 @@ namespace Average.Client.Managers
         private void OnRemoveItemEvent(string itemName, int itemCount)
         {
             RemoveInventoryItemByName(itemName, itemCount);
-            _inventoryContainer.UpdateRender(CurrentInventoryData);
+            InventoryContainer.UpdateRender(CurrentInventoryData);
         }
         
         [ClientEvent("Storage.RemoveItemById")]
         private void OnRemoveItemByIdEvent(string uniqueId, int itemCount)
         {
             RemoveInventoryItemById(uniqueId, itemCount);
-            _inventoryContainer.UpdateRender(CurrentInventoryData);
+            InventoryContainer.UpdateRender(CurrentInventoryData);
         }
 
         [ClientEvent("Storage.GiveItemToPlayer")]
@@ -787,7 +797,7 @@ namespace Average.Client.Managers
             {
                 item.Count = itemCount;
                 AddInventoryItem(item.Name, item.Count, item.Data);
-                _inventoryContainer.UpdateRender(CurrentInventoryData);
+                InventoryContainer.UpdateRender(CurrentInventoryData);
                 Notification.Schedule("INVENTAIRE", $"Vous avez reçus {item.Count} {GetItemInfo(item.Name).Text}", 3000);
             }
             else
@@ -802,7 +812,7 @@ namespace Average.Client.Managers
             var decAmount = decimal.Parse(amount);
             
             Character.AddMoney(decAmount);
-            _inventoryContainer.UpdateRender(CurrentInventoryData);
+            InventoryContainer.UpdateRender(CurrentInventoryData);
             Notification.Schedule("INVENTAIRE", $"Vous avez reçus ${ConvertDecimalToString(decAmount)}", 3000);
         }
 

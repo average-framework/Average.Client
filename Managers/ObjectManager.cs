@@ -54,17 +54,18 @@ namespace Average.Client.Managers
         private async void CreateObjectCommand()
         {
             var pos = GetEntityCoords(PlayerPedId(), true, true);
+            pos += GetEntityForwardVector((uint) PlayerPedId()) * 2f;
             CreateRegisteredEntity((uint)GetHashKey("p_waterpump01x"), pos, Vector3.Zero, true);
         }
 
         [ClientCommand("object.mass_create", "owner", 4)]
-        private async void MassCreateCommand(int objCount)
+        private void MassCreateCommand(int objCount)
         {
             var pos = GetEntityCoords(PlayerPedId(), true, true);
 
             for (int i = 0; i < objCount; i++)
             {
-                pos += new Vector3(2f, 0f, 0f);
+                pos += GetEntityForwardVector((uint) PlayerPedId()) * 2f;
                 CreateRegisteredEntity((uint)GetHashKey("p_waterpump01x"), pos, Vector3.Zero, true);
                 Log.Warn("[Object] Create object: " + i);
             }

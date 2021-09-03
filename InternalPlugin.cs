@@ -6,6 +6,7 @@ using CitizenFX.Core;
 using Newtonsoft.Json;
 using SDK.Client;
 using SDK.Client.Diagnostics;
+using SDK.Client.Interfaces;
 using SDK.Client.Rpc;
 using SDK.Shared;
 using static CitizenFX.Core.Native.API;
@@ -34,8 +35,9 @@ namespace Average.Client
         public MapManager Map { get; set; }
         public BlipManager Blip { get; set; }
         public StorageManager Storage { get; set; }
-        
         public CraftController Craft { get; set; }
+        public DoorManager Door { get; set; }
+        public PromptManager Prompt { get; set; }
 
         public InternalPlugin()
         {
@@ -44,7 +46,7 @@ namespace Average.Client
         
         public void SetDependencies(RpcRequest rpc, ThreadManager thread,
             CharacterManager character, CommandManager command, EventManager evnt, ExportManager export,
-            PermissionManager permission, SaveManager save, SyncManager sync, UserManager user, ObjectManager streaming, NpcManager npc, MenuManager menu, NotificationManager notification, LanguageManager language, MapManager map, BlipManager blip, StorageManager storage, CraftController craft)
+            PermissionManager permission, SaveManager save, SyncManager sync, UserManager user, ObjectManager streaming, NpcManager npc, MenuManager menu, NotificationManager notification, LanguageManager language, MapManager map, BlipManager blip, StorageManager storage, CraftController craft, DoorManager door, PromptManager prompt)
         {
             Rpc = rpc;
             Thread = thread;
@@ -65,6 +67,8 @@ namespace Average.Client
             Blip = blip;
             Storage = storage;
             Craft = craft;
+            Door = door;
+            Prompt = prompt;
         }
         
         public static async void SendNUI(object request)

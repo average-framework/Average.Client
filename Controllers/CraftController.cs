@@ -156,13 +156,13 @@ namespace Average.Client.Controllers
 
                 if (_lastIsCraftTableNear)
                 {
-                    Event.Emit("Craft.IsCraftTableNear", true, nearest.Name);
-                    Event.Emit("UI.ChangeHudVisibility", true);
+                    Event.Emit("Craft.CustomActionOnNearestCraftTable", nearest.Name);
+                    Event.Emit("UI.SetHudVisibility", true);
                 }
                 else
                 {
-                    Event.Emit("Craft.IsCraftTableNear", false, nearest.Name);
-                    Event.Emit("UI.ChangeHudVisibility", false);
+                    Event.Emit("Craft.CustomActionOnNearestCraftTable", "");
+                    Event.Emit("UI.SetHudVisibility", false);
                 }
             }
         }

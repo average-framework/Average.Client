@@ -12,7 +12,7 @@
     <RootNamespace>Average.Client</RootNamespace>
     <AssemblyName>average.client.net</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-    <LangVersion>8.0</LangVersion>
+    <LangVersion>9</LangVersion>
     <Nullable>enable</Nullable>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -80,6 +80,7 @@
     <Compile Include="Managers\CfxManager.cs" />
     <Compile Include="Managers\CharacterManager.cs" />
     <Compile Include="Managers\CommandManager.cs" />
+    <Compile Include="Managers\DoorManager.cs" />
     <Compile Include="Managers\EventManager.cs" />
     <Compile Include="Managers\ExportManager.cs" />
     <Compile Include="Main.cs" />
@@ -89,6 +90,7 @@
     <Compile Include="Managers\NpcManager.cs" />
     <Compile Include="Managers\ObjectManager.cs" />
     <Compile Include="Managers\PermissionManager.cs" />
+    <Compile Include="Managers\PromptManager.cs" />
     <Compile Include="Managers\SaveManager.cs" />
     <Compile Include="Managers\StorageManager.cs" />
     <Compile Include="Managers\UserManager.cs" />

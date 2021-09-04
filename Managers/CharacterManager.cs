@@ -1,4 +1,5 @@
-﻿using CitizenFX.Core;
+﻿using System;
+using CitizenFX.Core;
 using Newtonsoft.Json;
 using SDK.Client;
 using SDK.Client.Diagnostics;
@@ -7,8 +8,10 @@ using SDK.Client.Utils;
 using SDK.Shared.DataModels;
 using SDK.Shared.Models;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using CitizenFX.Core.Native;
 using SDK.Client.Models;
 using static CitizenFX.Core.Native.API;
 using static SDK.Client.GameAPI;
@@ -206,27 +209,71 @@ namespace Average.Client.Managers
 
         private async Task SetPedClothes()
         {
+            var ped = PlayerPedId();
+            
+            while (!Call<bool>(0xA0BC8FAED8CFEB3C, ped))
+            {
+                await BaseScript.Delay(250);
+            }
+            
+            var blockedClothes = new List<string>();
+            
             foreach (var cloth in Current.Clothes)
             {
                 if (cloth.Value != 0)
                 {
                     var c = Clothes.Find(x => x.Hash == cloth.Value.ToString("X8"));
-                    // SetPedComponentEnabled(PlayerPedId(), cloth.Value, true, c.IsMultiplayer, false);
-                    // await BaseScript.Delay(100);
-                    // UpdatePedVariation();
-
-                    while (!Call<bool>(0xFB4891BD7578CDC1, PlayerPedId(), cloth.Value))
+                    var categoryHash = uint.Parse(cloth.Key, NumberStyles.AllowHexSpecifier);
+                    uint lastCategory = 0;
+                    
+                    while (!Call<bool>(0xFB4891BD7578CDC1, ped, categoryHash))
                     {
-                        SetPedComponentEnabled(PlayerPedId(), cloth.Value, true, c.IsMultiplayer, false);
-                        await BaseScript.Delay(1000);
+                        SetPedComponentEnabled(ped, cloth.Value, true, c.IsMultiplayer, false);
+                        await BaseScript.Delay(250);
                         UpdatePedVariation();
-                        Log.Warn("Re-update cloth applying: " + cloth.Key + ", " + cloth.Value);
+                        
+                        if (lastCategory != categoryHash)
+                        {
+                            lastCategory = categoryHash;
+                        }
+                        else
+                        {
+                            blockedClothes.Add(c.CategoryHash);
+                            break;
+                        }
                     }
-                    // await BaseScript.Delay(100);
                 }
+            }
+
+            if (blockedClothes.Count > 0)
+            {
+                await RespawnPed();
             }
         }
 
+        public async Task RespawnPed()
+        {
+            var model = Character.Current.SexType == 0 ? (uint)GetHashKey("mp_male") : (uint)GetHashKey("mp_female");
+            await LoadModel(model);
+
+            SetPlayerModel(model);
+            SetPedOutfitPreset(PlayerPedId(), 0);
+
+            await BaseScript.Delay(1000);
+
+            SetPedComponentDisabled(PlayerPedId(), 0x3F1F01E5, 0, false);
+            SetPedComponentDisabled(PlayerPedId(), 0xDA0E2C55, 0, false);
+
+            await BaseScript.Delay(1000);
+
+            UpdatePedVariation();
+            SetModelAsNoLongerNeeded(model);
+
+            Call(Hash.CLEAR_PED_TASKS_IMMEDIATELY, PlayerPedId());
+
+            await LoadSkin();
+        }
+        
         public async Task SetPedOutfit(Dictionary<string, uint> newClothes, int delay = 100)
         {
             foreach (var cloth in newClothes)

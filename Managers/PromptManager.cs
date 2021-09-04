@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using SDK.Client;
-using SDK.Client.Diagnostics;
 using SDK.Client.Interfaces;
 using SDK.Client.Prompts;
 using SDK.Shared;
@@ -39,11 +38,17 @@ namespace Average.Client.Managers
                             }
                             break;
                         case HoldPrompt p:
-                            if (Call<bool>(0xC7D70EAEF92EFF48, p.Id))
+                            if (Call<bool>(0xC7D70EAEF92EFF48, p.Id) && !p.IsRunningCompleted)
+                            {
+                                p.IsRunningCompleted = true;
                                 p.OnHoldModeRunningReached(p);
-                            
-                            if (Call<bool>(0xE0F65F0640EF0617, p.Id))
+                            }
+
+                            if (Call<bool>(0xE0F65F0640EF0617, p.Id) && !p.IsCompletedReached)
+                            {
+                                p.IsCompletedReached = true;
                                 p.OnHoldModeCompletedReached(p);
+                            }
                             break;
                     }
                 }

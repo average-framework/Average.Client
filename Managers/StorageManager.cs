@@ -212,7 +212,7 @@ namespace Average.Client.Managers
             }
 
             var storage = new StorageData(storageId, maxWeight, new List<StorageItemData>());
-            Event.EmitServer("Storage.Save", JsonConvert.SerializeObject(storage));
+            Event.EmitServer("Storage.Create", JsonConvert.SerializeObject(storage));
         }
 
         public async Task<StorageData> LoadInventory(string storageId)

@@ -220,15 +220,12 @@ namespace Average.Client.Managers
             var nearestDoor = _doors.Find(x =>
                 GetDistanceBetweenCoords(pos.X, pos.Y, pos.Z, x.Position.X, x.Position.Y, x.Position.Z, true) <= x.Range);
 
-            // await _doorSystem.OnNearOfDoor(nearestDoor);
-
             if (nearestDoor == null)
             {
                 if (_isNear)
                 {
                     _isNear = false;
                     await _doorSystem.OnFarOfDoor();
-                    Log.Error("Is near false");
                 }
             
                 await BaseScript.Delay(250);
@@ -239,22 +236,7 @@ namespace Average.Client.Managers
                 {
                     _isNear = true;
                     await _doorSystem.OnNearOfDoor(nearestDoor);
-                    Log.Error("Is near true: " + nearestDoor.Position);
                 }
-            
-                // await _doorSystem.OnDoorOpen(nearestDoor);
-            
-                // if (IsControlJustReleased(0, (uint)Keys.X))
-                // {
-                //     // DoorOpenAction.Invoke(nearestDoor);
-                //     await _doorSystem.OnDoorOpen(nearestDoor);
-                // }
-                //
-                // if (IsControlJustReleased(0, (uint)Keys.B))
-                // {
-                //     // DoorOpenAction.Invoke(nearestDoor);
-                //     await _doorSystem.OnDoorOpen(nearestDoor);
-                // }
             }
         }
 
@@ -279,7 +261,6 @@ namespace Average.Client.Managers
         [ClientEvent("Door.SetDoorState")]
         private void SetDoorStateEvent(Vector3 position, bool isLocked)
         {
-            Log.Error("Door setted: " + isLocked + ", " + position);
             SetDoorStateLocally(position, isLocked);
         }
 

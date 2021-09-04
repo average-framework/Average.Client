@@ -13,7 +13,7 @@ namespace Average.Client.Managers
     {
         private bool _isReady;
 
-        private List<MenuContainer> _containerHistories = new List<MenuContainer>();
+        private List<MenuContainer> _containerHistories = new();
 
         public MenuContainer MainMenu { get; set; }
         public MenuContainer OldMenu { get; private set; }
@@ -319,7 +319,7 @@ namespace Average.Client.Managers
                             type = "menu_button_container",
                             name = menuItem.Name,
                             text = menuItem.Text,
-                            hasTarget = menuItem.TargetContainer != null ? true : false,
+                            hasTarget = menuItem.TargetContainer != null,
                             visible = menuItem.Visible
                         });
                         break;
@@ -508,7 +508,8 @@ namespace Average.Client.Managers
                 on = "menu.open",
                 plugin = "menu",
                 name = CurrentMenu.Name,
-                title = CurrentMenu.Title
+                title = CurrentMenu.Title,
+                description = CurrentMenu.Description
             });
 
             OnMenuChanged(OldMenu, CurrentMenu);

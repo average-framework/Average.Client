@@ -95,7 +95,7 @@ namespace Average.Client.Managers
 
             Current = null;
 
-            Log.Debug("Getting character..");
+            // Log.Debug("Getting character..");
 
             Rpc.Event("Character.Load").On<CharacterData>(data =>
             {
@@ -156,15 +156,24 @@ namespace Average.Client.Managers
             var coords = GetEntityCoords(ped, true, true);
             var heading = GetEntityHeading(ped);
             Current.Position = new PositionData(coords.X, coords.Y, coords.Z, heading);
+            Event.EmitServer("Character.SavePosition", coords, heading);
         }
 
+        public async Task AutoSavePosition()
+        {
+            await BaseScript.Delay(10000);
+            SavePosition();
+        }
+        
         public async Task SaveData()
         {
+            if (Current == null) return;
+            
             Current.Core.Health = GetEntityHealth(PlayerPedId());
             Event.EmitServer("Character.Save", JsonConvert.SerializeObject(Current));
         }
 
-        public void Create(CharacterData data) => Event.EmitServer("Character.Save", JsonConvert.SerializeObject(data));
+        public void Create(CharacterData data) => Event.EmitServer("Character.Create", JsonConvert.SerializeObject(data));
 
         public void SetPedBody()
         {
@@ -202,10 +211,18 @@ namespace Average.Client.Managers
                 if (cloth.Value != 0)
                 {
                     var c = Clothes.Find(x => x.Hash == cloth.Value.ToString("X8"));
-                    SetPedComponentEnabled(PlayerPedId(), cloth.Value, true, c.IsMultiplayer, false);
-                    await BaseScript.Delay(100);
-                    UpdatePedVariation();
-                    await BaseScript.Delay(100);
+                    // SetPedComponentEnabled(PlayerPedId(), cloth.Value, true, c.IsMultiplayer, false);
+                    // await BaseScript.Delay(100);
+                    // UpdatePedVariation();
+
+                    while (!Call<bool>(0xFB4891BD7578CDC1, PlayerPedId(), cloth.Value))
+                    {
+                        SetPedComponentEnabled(PlayerPedId(), cloth.Value, true, c.IsMultiplayer, false);
+                        await BaseScript.Delay(1000);
+                        UpdatePedVariation();
+                        Log.Warn("Re-update cloth applying: " + cloth.Key + ", " + cloth.Value);
+                    }
+                    // await BaseScript.Delay(100);
                 }
             }
         }
@@ -373,6 +390,16 @@ namespace Average.Client.Managers
 
         #endregion
 
+        #region Command
+
+        [ClientCommand("character.reload")]
+        private async void CharacterReloadCommand()
+        {
+            await Export.CallMethod<Task>("Spawn.RespawnPlayer");
+        }
+
+        #endregion
+        
         #region Event
 
         [ClientEvent("Character.SetPed")]

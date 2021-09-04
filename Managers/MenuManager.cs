@@ -467,15 +467,18 @@ namespace Average.Client.Managers
                 }
             }
 
-            foreach (var item in menuTabContainer.Items)
+            if (menuTabContainer != null)
             {
-                tabs.Add(new
+                foreach (var item in menuTabContainer.Items)
                 {
-                    name = item.Name,
-                    iconpath = item.IconPath,
-                    visible = item.Visible,
-                    isSelected = item.IsSelected
-                });
+                    tabs.Add(new
+                    {
+                        name = item.Name,
+                        iconpath = item.IconPath,
+                        visible = item.Visible,
+                        isSelected = item.IsSelected
+                    });
+                }   
             }
 
             SendNUI(new

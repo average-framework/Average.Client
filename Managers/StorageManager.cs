@@ -85,7 +85,7 @@ namespace Average.Client.Managers
 
         #region Context Menu
 
-        public StorageContextMenu GetDefaultContextMenu(StorageItemInfo info) => new StorageContextMenu(new StorageContextItem
+        public StorageContextMenu GetDefaultContextMenu(StorageItemInfo info) => new(new StorageContextItem
         {
             Name = info.Name,
             EventName = "moveToChest",

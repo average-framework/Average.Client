@@ -21,6 +21,7 @@ namespace Average.Client.Managers
     public class CharacterManager : InternalPlugin, ICharacterManager, ISaveable
     {
         private int textureId = -1;
+        private int blockedClothesState = 0;
         
         private const int RefreshPedScaleInternal = 5000;
 
@@ -130,7 +131,7 @@ namespace Average.Client.Managers
             await SetPedClothes();
             SetPedFaceFeatures();
 
-            await BaseScript.Delay(1000);
+            // await BaseScript.Delay(1000);
 
             SetPedComponentDisabled(PlayerPedId(), 0x3F1F01E5, 0, false);
             SetPedComponentDisabled(PlayerPedId(), 0xDA0E2C55, 0, false);
@@ -215,39 +216,48 @@ namespace Average.Client.Managers
             {
                 await BaseScript.Delay(250);
             }
-            
+
             var blockedClothes = new List<string>();
-            
+
             foreach (var cloth in Current.Clothes)
             {
                 if (cloth.Value != 0)
                 {
                     var c = Clothes.Find(x => x.Hash == cloth.Value.ToString("X8"));
                     var categoryHash = uint.Parse(cloth.Key, NumberStyles.AllowHexSpecifier);
-                    uint lastCategory = 0;
                     
                     while (!Call<bool>(0xFB4891BD7578CDC1, ped, categoryHash))
                     {
-                        SetPedComponentEnabled(ped, cloth.Value, true, c.IsMultiplayer, false);
+                        Call(0xD710A5007C2AC539, ped, categoryHash, 1);
+                        Call(0xDF631E4BCE1B1FC4, ped, categoryHash, 0, 1);
+                        Call(0xCC8CA3E88256E58F, ped, 0, 1, 1, 1, 0);
+                        Call(0xD3A7B003ED343FD9, ped, cloth.Value, false, c.IsMultiplayer, true);
                         await BaseScript.Delay(250);
-                        UpdatePedVariation();
-                        
-                        if (lastCategory != categoryHash)
-                        {
-                            lastCategory = categoryHash;
-                        }
-                        else
-                        {
-                            blockedClothes.Add(c.CategoryHash);
-                            break;
-                        }
+                        Log.Debug("reapply: " + cloth.Key);
+                    }
+
+                    if (!Call<bool>(0xFB4891BD7578CDC1, ped, categoryHash))
+                    {
+                        // cloth is not applied
+                        Log.Warn($"[Character] Unable to loading cloth: {c.CategoryHash}, {c.Hash}");
+                        blockedClothes.Add(c.CategoryHash);
                     }
                 }
             }
-
-            if (blockedClothes.Count > 0)
+            
+            Call(0x704C908E9C405136, ped);
+            Call(0xAAB86462966168CE, ped, 1);
+            Call(0xCC8CA3E88256E58F, PlayerPedId(), 0, 1, 1, 1, 0);
+            
+            if (blockedClothes.Count > 0 && blockedClothesState <= 2)
             {
+                blockedClothesState++;
+                Log.Warn($"[Character] Restart clothes loading.. Attempt [{blockedClothesState}/3]");
                 await RespawnPed();
+            }
+            else
+            {
+                Log.Info("[Character] Clothes successfully loaded.");
             }
         }
 
@@ -276,17 +286,35 @@ namespace Average.Client.Managers
         
         public async Task SetPedOutfit(Dictionary<string, uint> newClothes, int delay = 100)
         {
+            var ped = PlayerPedId();
+            
             foreach (var cloth in newClothes)
             {
                 if (cloth.Value != 0)
                 {
+                    // var c = Clothes.Find(x => x.Hash == cloth.Value.ToString("X8"));
+                    // SetPedComponentEnabled(PlayerPedId(), cloth.Value, true, c.IsMultiplayer, false);
+                    // await BaseScript.Delay(delay);
+                    // UpdatePedVariation();
+                    // await BaseScript.Delay(delay);
                     var c = Clothes.Find(x => x.Hash == cloth.Value.ToString("X8"));
-                    SetPedComponentEnabled(PlayerPedId(), cloth.Value, true, c.IsMultiplayer, false);
-                    await BaseScript.Delay(delay);
-                    UpdatePedVariation();
-                    await BaseScript.Delay(delay);
+                    var categoryHash = uint.Parse(cloth.Key, NumberStyles.AllowHexSpecifier);
+                    
+                    while (!Call<bool>(0xFB4891BD7578CDC1, ped, categoryHash))
+                    {
+                        Call(0xD710A5007C2AC539, ped, categoryHash, 1);
+                        Call(0xDF631E4BCE1B1FC4, ped, categoryHash, 0, 1);
+                        Call(0xCC8CA3E88256E58F, ped, 0, 1, 1, 1, 0);
+                        Call(0xD3A7B003ED343FD9, ped, cloth.Value, false, c.IsMultiplayer, true);
+                        await BaseScript.Delay(250);
+                        Log.Debug("reapply: " + cloth.Key);
+                    }
                 }
             }
+            
+            Call(0x704C908E9C405136, ped);
+            Call(0xAAB86462966168CE, ped, 1);
+            Call(0xCC8CA3E88256E58F, PlayerPedId(), 0, 1, 1, 1, 0);
         }
 
         private void SetPedBodyComponents()

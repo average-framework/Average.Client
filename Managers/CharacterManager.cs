@@ -297,6 +297,7 @@ namespace Average.Client.Managers
                     // await BaseScript.Delay(delay);
                     // UpdatePedVariation();
                     // await BaseScript.Delay(delay);
+                    
                     var c = Clothes.Find(x => x.Hash == cloth.Value.ToString("X8"));
                     var categoryHash = uint.Parse(cloth.Key, NumberStyles.AllowHexSpecifier);
                     

@@ -64,7 +64,6 @@ namespace Average.Client.Managers
                 CanOpen = true;
                 
                 await Show("player_" + Character.Current.RockstarId);
-                Thread.StartThread(KeyboardUpdate);
             });
         }
 
@@ -151,32 +150,6 @@ namespace Average.Client.Managers
             }
         });
         
-        #endregion
-        
-        #region Thread
-
-        private async Task KeyboardUpdate()
-        {
-            if (CanOpen)
-            {
-                if (IsControlJustReleased(0, (uint)Keys.I))
-                {
-                    Open();
-                    await Show("player_" + Character.Current.RockstarId);
-                }
-
-                // if (IsControlJustReleased(0, (uint)Keys.N6))
-                // {
-                //     Open();
-                //     Main.GetScript<CraftContainer>().ShowBuildMenu();
-                // }
-            }
-            else
-            {
-                await BaseScript.Delay(1000);
-            }
-        }
-
         #endregion
 
         public async Task IsReady()

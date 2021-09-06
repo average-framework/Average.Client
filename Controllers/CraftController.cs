@@ -49,7 +49,7 @@ namespace Average.Client.Controllers
             {
                 await Character.IsReady();
                 
-                Thread.StartThread(Update);
+                // Thread.StartThread(Update);
                 Thread.StartThread(CraftTableUpdate);
 
                 if (_isMarkerEnabled)
@@ -112,13 +112,13 @@ namespace Average.Client.Controllers
             }
         }
 
-        private async Task Update()
-        {
-            if (IsControlJustReleased(0, _key))
-            {
-                Open();
-            }
-        }
+        // private async Task Update()
+        // {
+        //     if (IsControlJustReleased(0, _key))
+        //     {
+        //         Open();
+        //     }
+        // }
         
         private async Task CraftTableUpdate()
         {

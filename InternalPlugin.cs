@@ -38,6 +38,7 @@ namespace Average.Client
         public CraftController Craft { get; set; }
         public DoorManager Door { get; set; }
         public PromptManager Prompt { get; set; }
+        public RayMenuManager RayMenu { get; set; }
 
         public InternalPlugin()
         {
@@ -46,7 +47,7 @@ namespace Average.Client
         
         public void SetDependencies(RpcRequest rpc, ThreadManager thread,
             CharacterManager character, CommandManager command, EventManager evnt, ExportManager export,
-            PermissionManager permission, SaveManager save, SyncManager sync, UserManager user, ObjectManager streaming, NpcManager npc, MenuManager menu, NotificationManager notification, LanguageManager language, MapManager map, BlipManager blip, StorageManager storage, CraftController craft, DoorManager door, PromptManager prompt)
+            PermissionManager permission, SaveManager save, SyncManager sync, UserManager user, ObjectManager streaming, NpcManager npc, MenuManager menu, NotificationManager notification, LanguageManager language, MapManager map, BlipManager blip, StorageManager storage, CraftController craft, DoorManager door, PromptManager prompt, RayMenuManager rayMenu)
         {
             Rpc = rpc;
             Thread = thread;
@@ -69,6 +70,7 @@ namespace Average.Client
             Craft = craft;
             Door = door;
             Prompt = prompt;
+            RayMenu = rayMenu;
         }
         
         public static async void SendNUI(object request)

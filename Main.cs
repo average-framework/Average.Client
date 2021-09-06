@@ -37,6 +37,7 @@ namespace Average.Client
         internal static readonly ObjectManager streaming = new ObjectManager();
         internal static readonly NotificationManager notification = new NotificationManager();
         internal static readonly MenuManager menu = new MenuManager();
+        internal static readonly RayMenuManager rayMenu = new RayMenuManager();
         internal static readonly CfxManager cfx = new CfxManager();
         internal static readonly StorageManager storage = new StorageManager();
         internal static readonly DoorManager door = new DoorManager();
@@ -66,6 +67,7 @@ namespace Average.Client
             LoadInternalScript(export);
             LoadInternalScript(thread);
             LoadInternalScript(sync);
+            LoadInternalScript(rayMenu);
             LoadInternalScript(permission);
             LoadInternalScript(command);
             LoadInternalScript(save);
@@ -90,7 +92,7 @@ namespace Average.Client
         {
             try
             {
-                script.SetDependencies(new RpcRequest(new RpcHandler(eventHandlers), new RpcTrigger(), new RpcSerializer()), thread, character, command, evnt, export, permission, save, sync, user, streaming, npc, menu, notification, language, map, blip, storage, craft, door, prompt);
+                script.SetDependencies(new RpcRequest(new RpcHandler(eventHandlers), new RpcTrigger(), new RpcSerializer()), thread, character, command, evnt, export, permission, save, sync, user, streaming, npc, menu, notification, language, map, blip, storage, craft, door, prompt, rayMenu);
                 
                 loader.RegisterThreads(script.GetType(), script);
                 loader.RegisterEvents(script.GetType(), script);

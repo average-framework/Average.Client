@@ -92,6 +92,7 @@
     <Compile Include="Managers\ObjectManager.cs" />
     <Compile Include="Managers\PermissionManager.cs" />
     <Compile Include="Managers\PromptManager.cs" />
+    <Compile Include="Managers\RayMenuManager.cs" />
     <Compile Include="Managers\SaveManager.cs" />
     <Compile Include="Managers\StorageManager.cs" />
     <Compile Include="Managers\UserManager.cs" />

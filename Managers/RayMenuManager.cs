@@ -298,7 +298,8 @@ namespace Average.Client.Managers
             {
                 eventName = "avg.internal.load",
                 plugin = "raymenu",
-                fileName = "index.html"
+                fileName = "index.html",
+                zIndex = 80000
             });
             return result;
         }

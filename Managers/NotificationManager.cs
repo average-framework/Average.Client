@@ -41,7 +41,8 @@ namespace Average.Client.Managers
             {
                 eventName = "avg.internal.load",
                 plugin = "notification",
-                fileName = "index.html"
+                fileName = "index.html",
+                zIndex = 70000
             });
             return result;
         }

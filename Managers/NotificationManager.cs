@@ -9,7 +9,9 @@ namespace Average.Client.Managers
 {
     public class NotificationManager : InternalPlugin, INotificationManager
     {
-        private readonly List<INotification> _queue = new List<INotification>();
+        private bool _isReady;
+        
+        private readonly List<INotification> _queue = new();
 
         private const int UpdateStateInterval = 100;
 
@@ -46,13 +48,7 @@ namespace Average.Client.Managers
 
         private CallbackDelegate Ready(IDictionary<string, object> data, CallbackDelegate result)
         {
-            SendNUI(new
-            {
-                eventName = "avg.internal",
-                on = "notification.open",
-                plugin = "notification"
-            });
-
+            _isReady = true;
             return result;
         }
 
@@ -93,6 +89,15 @@ namespace Average.Client.Managers
 
         private async Task UpdateState()
         {
+            if (_queue.Count > 0)
+            {
+                Open();
+            }
+            else
+            {
+                Hide();
+            }
+            
             for (int i = 0; i < _queue.Count; i++)
             {
                 var notification = _queue[i];
@@ -111,6 +116,20 @@ namespace Average.Client.Managers
 
         #endregion
 
+        private void Open() => SendNUI(new
+        {
+            eventName = "avg.internal",
+            on = "notification.open",
+            plugin = "notification"
+        });
+        
+        private void Hide() => SendNUI(new
+        {
+            eventName = "avg.internal",
+            on = "notification.hide",
+            plugin = "notification"
+        });
+        
         private void Delete(INotification notification)
         {
             SendNUI(new

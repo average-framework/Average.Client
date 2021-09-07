@@ -82,9 +82,11 @@
     <Compile Include="Managers\CharacterManager.cs" />
     <Compile Include="Managers\CommandManager.cs" />
     <Compile Include="Managers\DoorManager.cs" />
+    <Compile Include="Managers\EnterpriseManager.cs" />
     <Compile Include="Managers\EventManager.cs" />
     <Compile Include="Managers\ExportManager.cs" />
     <Compile Include="Main.cs" />
+    <Compile Include="Managers\JobManager.cs" />
     <Compile Include="Managers\LanguageManager.cs" />
     <Compile Include="Managers\MapManager.cs" />
     <Compile Include="Managers\NotificationManager.cs" />

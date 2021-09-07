@@ -255,7 +255,6 @@ namespace Average.Client.Managers
                     if (CanCloseMenu)
                     {
                         CloseMenu();
-                        ClearHistory();
                         Unfocus();
                     }
                 }

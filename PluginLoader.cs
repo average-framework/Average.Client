@@ -23,8 +23,8 @@ namespace Average.Client
         private bool _isReady;
 
         private List<PluginInfo> _pluginsInfo;
-        private List<InternalPlugin> _internalPlugins = new List<InternalPlugin>();
-        private List<Plugin> _plugins = new List<Plugin>();
+        private readonly List<InternalPlugin> _internalPlugins = new();
+        private List<Plugin> _plugins = new();
 
         public async Task IsReady()
         {
@@ -48,7 +48,7 @@ namespace Average.Client
             {
                 var script = (Plugin) Activator.CreateInstance(type);
                 
-                script.SetDependencies(new RpcRequest(new RpcHandler(Main.eventHandlers), new RpcTrigger(), new RpcSerializer()), Main.thread, Main.character, Main.command, Main.evnt, Main.export, Main.permission, Main.save, Main.sync, Main.user, Main.streaming, Main.npc, Main.menu, Main.notification, Main.language, Main.map, Main.blip, Main.storage, Main.craft, Main.door, Main.prompt, Main.rayMenu, pluginInfo);
+                script.SetDependencies(new RpcRequest(new RpcHandler(Main.eventHandlers), new RpcTrigger(), new RpcSerializer()), Main.thread, Main.character, Main.command, Main.evnt, Main.export, Main.permission, Main.save, Main.sync, Main.user, Main.streaming, Main.npc, Main.menu, Main.notification, Main.language, Main.map, Main.blip, Main.storage, Main.craft, Main.door, Main.prompt, Main.rayMenu, Main.job, Main.enterprise, pluginInfo);
                 
                 RegisterThreads(script.GetType(), script);
                 RegisterEvents(script.GetType(), script);
@@ -63,7 +63,7 @@ namespace Average.Client
                 script.LoadConfiguration();
                 script.OnInitialized();
              
-                Log.Info($"Script: {script.Name} registered successfully.");
+                Log.Info($"Script: ^3{pluginInfo.Name}^7 -> ^3{script.Name}.cs^7 registered successfully.");
                 // Log.Write("Script", $"% {script.Name} % registered successfully.", new Log.TextColor(ConsoleColor.Blue, ConsoleColor.White));
             }
             catch (Exception ex)

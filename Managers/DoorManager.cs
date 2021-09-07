@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using SDK.Client;
-using SDK.Client.Diagnostics;
 using SDK.Client.Interfaces;
 using SDK.Client.Models;
 using SDK.Client.Prompts;
@@ -26,7 +25,7 @@ namespace Average.Client.Managers
             private StandardPrompt openDoorPrompt;
             private StandardPrompt breakDoorPrompt;
 
-            private InternalPlugin _script;
+            private readonly InternalPlugin _script;
             
             public DefaultDoorOverride(IPlugin plugin)
             {

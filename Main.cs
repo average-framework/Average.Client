@@ -21,27 +21,29 @@ namespace Average.Client
 
         #region Internal Manager
 
-        internal static readonly CharacterManager character = new CharacterManager();
-        internal static readonly CommandManager command = new CommandManager();
-        internal static readonly EventManager evnt = new EventManager();
-        internal static readonly ExportManager export = new ExportManager();
-        internal static readonly PermissionManager permission = new PermissionManager();
-        internal static readonly SaveManager save = new SaveManager();
-        internal static readonly SyncManager sync = new SyncManager();
-        internal static readonly ThreadManager thread = new ThreadManager();
-        internal static readonly UserManager user = new UserManager();
-        internal static readonly BlipManager blip = new BlipManager();
-        internal static readonly NpcManager npc = new NpcManager();
-        internal static readonly LanguageManager language = new LanguageManager();
-        internal static readonly MapManager map = new MapManager();
-        internal static readonly ObjectManager streaming = new ObjectManager();
-        internal static readonly NotificationManager notification = new NotificationManager();
-        internal static readonly MenuManager menu = new MenuManager();
-        internal static readonly RayMenuManager rayMenu = new RayMenuManager();
-        internal static readonly CfxManager cfx = new CfxManager();
-        internal static readonly StorageManager storage = new StorageManager();
-        internal static readonly DoorManager door = new DoorManager();
-        internal static readonly PromptManager prompt = new PromptManager();
+        internal static readonly CharacterManager character = new();
+        internal static readonly CommandManager command = new();
+        internal static readonly EventManager evnt = new();
+        internal static readonly ExportManager export = new();
+        internal static readonly PermissionManager permission = new();
+        internal static readonly SaveManager save = new();
+        internal static readonly SyncManager sync = new();
+        internal static readonly ThreadManager thread = new();
+        internal static readonly UserManager user = new();
+        internal static readonly BlipManager blip = new();
+        internal static readonly NpcManager npc = new();
+        internal static readonly LanguageManager language = new();
+        internal static readonly MapManager map = new();
+        internal static readonly ObjectManager streaming = new();
+        internal static readonly NotificationManager notification = new();
+        internal static readonly MenuManager menu = new();
+        internal static readonly RayMenuManager rayMenu = new();
+        internal static readonly CfxManager cfx = new();
+        internal static readonly StorageManager storage = new();
+        internal static readonly DoorManager door = new();
+        internal static readonly PromptManager prompt = new();
+        internal static readonly JobManager job = new();
+        internal static readonly EnterpriseManager enterprise = new();
 
         #endregion;
 
@@ -78,13 +80,15 @@ namespace Average.Client
             LoadInternalScript(npc);
             LoadInternalScript(prompt);
             LoadInternalScript(character);
+            LoadInternalScript(job);
+            LoadInternalScript(enterprise);
             LoadInternalScript(storage);
             LoadInternalScript(map);
             LoadInternalScript(streaming);
             LoadInternalScript(craft);
             LoadInternalScript(door);
             LoadInternalScript(cfx);
-            
+
             loader.Load();
         }
         
@@ -92,7 +96,7 @@ namespace Average.Client
         {
             try
             {
-                script.SetDependencies(new RpcRequest(new RpcHandler(eventHandlers), new RpcTrigger(), new RpcSerializer()), thread, character, command, evnt, export, permission, save, sync, user, streaming, npc, menu, notification, language, map, blip, storage, craft, door, prompt, rayMenu);
+                script.SetDependencies(new RpcRequest(new RpcHandler(eventHandlers), new RpcTrigger(), new RpcSerializer()), thread, character, command, evnt, export, permission, save, sync, user, streaming, npc, menu, notification, language, map, blip, storage, craft, door, prompt, rayMenu, job, enterprise);
                 
                 loader.RegisterThreads(script.GetType(), script);
                 loader.RegisterEvents(script.GetType(), script);

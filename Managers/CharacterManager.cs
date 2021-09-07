@@ -21,7 +21,7 @@ namespace Average.Client.Managers
     public class CharacterManager : InternalPlugin, ICharacterManager, ISaveable
     {
         private int textureId = -1;
-        private int blockedClothesState = 0;
+        private int blockedClothesState;
         
         private const int RefreshPedScaleInternal = 5000;
 

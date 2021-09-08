@@ -111,7 +111,7 @@ namespace Average.Client.Managers
                 {
                     _isNear = true;
                     
-                    _promptPrompt = new HoldPrompt(0, "Gérer l'entreprise", 1000, (uint) Control.Revive, 3f, 2f, () =>
+                    _promptPrompt = new HoldPrompt(0, "Gérer l'entreprise", 1000, (uint) Control.Revive, () =>
                     {
                         return Character.Current.Job.Name == enterprise.JobName &&
                                enterprise.Roles.Exists(x => x.Name == Character.Current.Job.Role.Name);

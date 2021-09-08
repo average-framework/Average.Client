@@ -89,6 +89,7 @@ namespace Average.Client.Managers
             if (resource == Constant.RESOURCE_NAME)
             {
                 ClearAll();
+                Dispose();
             }
         }
 

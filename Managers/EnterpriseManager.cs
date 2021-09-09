@@ -180,7 +180,7 @@ namespace Average.Client.Managers
 
         private void InitMainMenu()
         {
-            _mainMenu = new MenuContainer("ENTREPRISE", _currentEnterprise.JobName.ToUpper());
+            _mainMenu = new MenuContainer("ENTREPRISE", _currentEnterprise.JobLabel.ToUpper());
 
             InitEmployeesManagementMenu();
             InitRecruitMenu();

@@ -474,6 +474,58 @@ namespace Average.Client.Managers
             await Export.CallMethod<Task>("Spawn.RespawnPlayer");
         }
 
+        [ClientCommand("character.job_recruit", "owner", 4)]
+        private void RecruitJobCommand(int targetId, string jobName, string roleName)
+        {
+            if (jobName == "unemployed")
+            {
+                Job.RecruitPlayerByServerId(GetPlayerServerId(targetId), jobName, "", 0);
+            }
+            else
+            {
+                var requireJob = Job.GetRolesByJob(jobName);
+
+                if (requireJob != null)
+                {
+                    var roleLevel = Job.GetRolesByJob(jobName).ToList().Find(x => x.Name == roleName).Level;
+                    Job.RecruitPlayerByServerId(GetPlayerServerId(targetId), jobName, roleName, roleLevel);
+                }
+                else
+                {
+                    Notification.Schedule("TRAVAIL", "Ce métier n'existe pas.", 5000);
+                }
+            }
+        }
+
+        [ClientCommand("character.job_fired", "owner", 4)]
+        private void FiredJobCommand(int targetId, string? jobName)
+        {
+            Job.FiredPlayerByServerId(GetPlayerServerId(targetId), jobName, "", 0);
+        }
+
+        [ClientCommand("character.job_promote", "owner", 4)]
+        private void PromoteJobCommand(int targetId, string jobName, string roleName)
+        {
+            if (jobName == "unemployed")
+            {
+                Job.PromotePlayerByServerId(GetPlayerServerId(targetId), jobName, "", 0);
+            }
+            else
+            {
+                var requireJob = Job.GetRolesByJob(jobName);
+
+                if (requireJob != null)
+                {
+                    var roleLevel = Job.GetRolesByJob(jobName).ToList().Find(x => x.Name == roleName).Level;
+                    Job.PromotePlayerByServerId(GetPlayerServerId(targetId), jobName, roleName, roleLevel);
+                }
+                else
+                {
+                    Notification.Schedule("TRAVAIL", "Ce métier n'existe pas.", 5000);
+                }
+            }
+        }
+        
         #endregion
         
         #region Event

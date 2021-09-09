@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using SDK.Client;
+using SDK.Client.Diagnostics;
 using SDK.Client.Interfaces;
 using SDK.Client.Models;
 
@@ -90,9 +91,11 @@ namespace Average.Client.Managers
 
         #region Event
 
-        [ClientEvent("Job.RecruitPlayerToJobByRockstarId")]
+        [ClientEvent("Job.RecruitPlayerByRockstarId")]
         private void RecruitPlayerByRockstarIdEvent(string rockstarId, string jobName, string roleName, int roleLevel)
         {
+            Log.Error("Receive event: Job.RecruitPlayerByRockstarId");
+            
             var lastJobName = Character.Current.Job.Name;
             var lastJobRole = new JobRole(Character.Current.Job.Role.Name, Character.Current.Job.Role.Level);
             var newJobRole = new JobRole(roleName, roleLevel);
@@ -132,7 +135,7 @@ namespace Average.Client.Managers
             Notification.Schedule("TRAVAIL", $"Vous êtes désormais {jobLabel} avec le grade {roleLabel}.", 5000);
         }
 
-        [ClientEvent("Job.FiredPlayerToJobByRockstarId")]
+        [ClientEvent("Job.FiredPlayerByRockstarId")]
         private void FiredPlayerByRockstarIdEvent(string rockstarId, string jobName, string roleName, int roleLevel)
         {
             var lastJobName = Character.Current.Job.Name;
@@ -148,7 +151,7 @@ namespace Average.Client.Managers
             Notification.Schedule("TRAVAIL", $"Vous avez été licencié(e).", 5000);
         }
 
-        [ClientEvent("Job.PromotePlayerToJobByRockstarId")]
+        [ClientEvent("Job.PromotePlayerByRockstarId")]
         private void PromotePlayerByRockstarIdEvent(string rockstarId, string jobName, string roleName, int roleLevel)
         {
             var lastJobName = Character.Current.Job.Name;

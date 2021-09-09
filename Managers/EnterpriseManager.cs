@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using CitizenFX.Core;
-using SDK.Client.Diagnostics;
 using SDK.Client.Interfaces;
 using SDK.Client.Menu;
 using SDK.Client.Models;
@@ -200,12 +199,12 @@ namespace Average.Client.Managers
 
         private async void InitTreasuryManagementMenu()
         {
-            _treasuryMenu = new MenuContainer(_currentEnterprise.JobName.ToUpper(),"TRESORIE");
+            _treasuryMenu = new MenuContainer(_currentEnterprise.JobLabel.ToUpper(),"TRESORIE");
 
             var enterprise = await LoadEnterprise(_currentEnterprise.JobName);
             var amountValue = new object();
             var entAmount = decimal.Parse(enterprise.TreasuryAmount);
-            var treasuryItem = new MenuButtonItem($"Solde Trésorie: {ConvertDecimalToString(entAmount)}");
+            var treasuryItem = new MenuLabelItem($"Solde Trésorie {ConvertDecimalToString(entAmount)}");
 
             _treasuryMenu.AddItem(treasuryItem);
             _treasuryMenu.AddItem(new MenuTextboxItem("Montant", "", "$0", "", 1, 10, item => { amountValue = item; }));
@@ -301,7 +300,7 @@ namespace Average.Client.Managers
 
         private async void InitEmployeesManagementMenu()
         {
-            _employeesManagementMenu = new MenuContainer(_currentEnterprise.JobName.ToUpper(), "GESTION DES EMPLOYES");
+            _employeesManagementMenu = new MenuContainer(_currentEnterprise.JobLabel.ToUpper(), "GESTION DES EMPLOYES");
 
             await LoadCharacters();
 
@@ -309,7 +308,7 @@ namespace Average.Client.Managers
             {
                 _employeesManagementMenu.AddItem(new MenuButtonItem($"{c.Firstname} {c.Lastname}", async item =>
                 {
-                    _employeeMenu = new MenuContainer(_currentEnterprise.JobName.ToUpper(), c.Firstname.ToUpper() + " " + c.Lastname.ToUpper());
+                    _employeeMenu = new MenuContainer(_currentEnterprise.JobLabel.ToUpper(), c.Firstname.ToUpper() + " " + c.Lastname.ToUpper());
 
                     _employeeMenu.AddItem(new MenuButtonItem($"Grade: {_currentEnterprise.Roles.Find(x => x.Name == c.Job.Role.Name).Label}"));
 
@@ -391,7 +390,7 @@ namespace Average.Client.Managers
 
         private async void InitRecruitMenu()
         {
-            _recruitMenu = new MenuContainer(_currentEnterprise.JobName.ToUpper(), "RECRUTER");
+            _recruitMenu = new MenuContainer(_currentEnterprise.JobLabel.ToUpper(), "RECRUTER");
 
             await LoadCharacters();
 
@@ -402,7 +401,7 @@ namespace Average.Client.Managers
 
                 _recruitMenu.AddItem(new MenuButtonItem($"{trimmedFirstName}. {trimmedLastName}.", async item =>
                 {
-                    _recruitEmployeeMenu = new MenuContainer(_currentEnterprise.JobName.ToUpper(), c.Firstname.ToUpper() + " " + c.Lastname.ToUpper());
+                    _recruitEmployeeMenu = new MenuContainer(_currentEnterprise.JobLabel.ToUpper(), c.Firstname.ToUpper() + " " + c.Lastname.ToUpper());
 
                     var cJob = _enterprises.Values.ToList().Find(x => x.JobName == c.Job.Name);
 

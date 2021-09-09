@@ -94,8 +94,6 @@ namespace Average.Client.Managers
         [ClientEvent("Job.RecruitPlayerByRockstarId")]
         private void RecruitPlayerByRockstarIdEvent(string rockstarId, string jobName, string roleName, int roleLevel)
         {
-            Log.Error("Receive event: Job.RecruitPlayerByRockstarId");
-            
             var lastJobName = Character.Current.Job.Name;
             var lastJobRole = new JobRole(Character.Current.Job.Role.Name, Character.Current.Job.Role.Level);
             var newJobRole = new JobRole(roleName, roleLevel);

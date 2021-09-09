@@ -44,8 +44,6 @@ namespace Average.Client.Managers
             {
                 for (int i = 0; i < _blips.Count; i++)
                     Delete(_blips[i]);
-
-                GC.SuppressFinalize(this);
             }
         }
 

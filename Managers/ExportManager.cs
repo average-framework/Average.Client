@@ -11,7 +11,7 @@ namespace Average.Client.Managers
 {
     public class ExportManager : InternalPlugin, IExportManager
     {
-        private static Dictionary<string, Delegate> _exports = new Dictionary<string, Delegate>();
+        private static Dictionary<string, Delegate> _exports = new();
 
         public void CallMethod(string exportName, params object[] args)
         {

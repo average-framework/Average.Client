@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using CitizenFX.Core;
+using SDK.Client.Diagnostics;
 using SDK.Client.Interfaces;
 using SDK.Client.Menu;
 using SDK.Client.Models;
@@ -467,9 +468,8 @@ namespace Average.Client.Managers
             if (!_enterprises.ContainsKey(job.Name)) return false;
 
             var enterprise = _enterprises[job.Name];
-            if (enterprise == null) return false;
 
-            var role = enterprise.Roles.Find(x => x.Level == job.Role.Level);
+            var role = enterprise?.Roles.Find(x => x.Level == job.Role.Level);
             if (role == null) return false;
 
             var haveAllNeededPermission = true;

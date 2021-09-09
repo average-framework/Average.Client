@@ -15,8 +15,8 @@ namespace Average.Client.Managers
 {
     public class EventManager : InternalPlugin, IEventManager
     {
-        private static Dictionary<string, List<Delegate>> _events = new Dictionary<string, List<Delegate>>();
-        private static Dictionary<string, List<Delegate>> _nuiEvents = new Dictionary<string, List<Delegate>>();
+        private static Dictionary<string, List<Delegate>> _events = new();
+        private static Dictionary<string, List<Delegate>> _nuiEvents = new();
 
         public event EventHandler<ResourceStartEventArgs> ResourceStart;
         public event EventHandler<ResourceStopEventArgs> ResourceStop;
@@ -44,12 +44,12 @@ namespace Average.Client.Managers
         {
             if (_events.ContainsKey(eventName))
             {
-                Log.Debug($"Calling event: {eventName}.");
+                // Log.Debug($"Calling event: {eventName}.");
                 _events[eventName].ForEach(x => x.DynamicInvoke(args));
             }
             else
             {
-                Log.Debug($"Calling external event: {eventName}.");
+                // Log.Debug($"Calling external event: {eventName}.");
                 BaseScript.TriggerEvent(eventName, args);
             }
         }

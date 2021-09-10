@@ -459,6 +459,7 @@ namespace Average.Client.Managers
                             type = "menu_bar",
                             name = menuItem.Name,
                             text = menuItem.Text,
+                            description = menuItem.Description,
                             step = menuItem.Step,
                             value = menuItem.Value,
                             visible = menuItem.Visible

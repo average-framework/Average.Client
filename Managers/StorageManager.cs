@@ -510,7 +510,7 @@ namespace Average.Client.Managers
 
         #region Inventory
 
-        public void SaveInventory()
+        public void SaveInventory(bool updateInDb = false)
         {
             var itemsData = new List<StorageItemData>();
 
@@ -523,13 +523,13 @@ namespace Average.Client.Managers
 
             var storage = new StorageData(CurrentInventoryData.StorageId, CurrentInventoryData.MaxWeight, itemsData);
 
-            Event.EmitServer("Storage.Save", JsonConvert.SerializeObject(storage));
+            Event.EmitServer("Storage.Save", JsonConvert.SerializeObject(storage), updateInDb);
         }
         
-        public void AddInventoryItem(string name, int count, Dictionary<string, object> data = null)
+        public void AddInventoryItem(string name, int count, Dictionary<string, object> data = null, bool updateInDb = false)
         {
             InventoryContainer.AddItem(name, count, CurrentInventoryData, data);
-            SaveInventory();
+            SaveInventory(updateInDb);
         }
         
         public void RemoveChestItem(string uniqueId, int count)
@@ -589,7 +589,7 @@ namespace Average.Client.Managers
 
         #region Chest
 
-        public void SaveChest()
+        public void SaveChest(bool updateInDb = false)
         {
             var itemsData = new List<StorageItemData>();
 
@@ -598,13 +598,13 @@ namespace Average.Client.Managers
 
             var storage = new StorageData(CurrentChestData.StorageId, CurrentChestData.MaxWeight, itemsData);
 
-            Event.EmitServer("Storage.Save", JsonConvert.SerializeObject(storage));
+            Event.EmitServer("Storage.Save", JsonConvert.SerializeObject(storage), updateInDb);
         }
         
-        public void AddChestItem(string name, int count)
+        public void AddChestItem(string name, int count, bool updateInDb = false)
         {
             ChestContainer.AddItem(name, count, CurrentChestData);
-            SaveChest();
+            SaveChest(updateInDb);
         }
 
         #endregion

@@ -197,7 +197,7 @@ namespace Average.Client.Managers
                         }
 
                         menuItem.Action.Invoke(menuItem.Index, menuItem.Values);
-                        result(menuItem.Values.ToList().ElementAt(menuItem.Index).Key);
+                        result(menuItem.ShowValue ? menuItem.Values.ToList().ElementAt(menuItem.Index).Value : menuItem.Values.ToList().ElementAt(menuItem.Index).Key);
                     }
                     break;
                 case MenuTextboxItem menuItem:
@@ -377,7 +377,7 @@ namespace Average.Client.Managers
                             type = "menu_list",
                             name = menuItem.Name,
                             text = menuItem.Text,
-                            itemName = menuItem.Values.ToList().ElementAt(menuItem.Index).Key,
+                            itemName = menuItem.ShowValue ? menuItem.Values.ToList().ElementAt(menuItem.Index).Value : menuItem.Values.ToList().ElementAt(menuItem.Index).Key,
                             visible = menuItem.Visible
                         });
                         break;

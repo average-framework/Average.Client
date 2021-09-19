@@ -78,6 +78,20 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bootstrapper.cs" />
+    <Compile Include="Framework\Events\ClientMapGameTypeStartEventArgs.cs" />
+    <Compile Include="Framework\Events\ClientMapGameTypeStopEventArgs.cs" />
+    <Compile Include="Framework\Events\ClientMapStartEventArgs.cs" />
+    <Compile Include="Framework\Events\ClientMapStopEventArgs.cs" />
+    <Compile Include="Framework\Events\ClientResourceStartEventArgs.cs" />
+    <Compile Include="Framework\Events\ClientResourceStopEventArgs.cs" />
+    <Compile Include="Framework\Events\GameEventTriggeredEventArgs.cs" />
+    <Compile Include="Framework\Events\MenuChangeEventArgs.cs" />
+    <Compile Include="Framework\Events\MenuCloseEventArgs.cs" />
+    <Compile Include="Framework\Events\PlayerActivatedEventArgs.cs" />
+    <Compile Include="Framework\Events\ResourceStartEventArgs.cs" />
+    <Compile Include="Framework\Events\ResourceStartingEventArgs.cs" />
+    <Compile Include="Framework\Events\ResourceStopEventArgs.cs" />
+    <Compile Include="Framework\Events\SessionInitializedEventArgs.cs" />
     <Compile Include="Framework\Attributes\ClientCommandAliasAttribute.cs" />
     <Compile Include="Framework\Attributes\ClientCommandAttribute.cs" />
     <Compile Include="Framework\Attributes\ClientEventAttribute.cs" />
@@ -86,8 +100,16 @@
     <Compile Include="Framework\Diagnostics\Logger.cs" />
     <Compile Include="Framework\Diagnostics\LogInfo.cs" />
     <Compile Include="Framework\Diagnostics\LogLevel.cs" />
+    <Compile Include="Framework\Extensions\FloatExtensions.cs" />
+    <Compile Include="Framework\Extensions\ObjectExtensions.cs" />
+    <Compile Include="Framework\Extensions\Vector3Extensions.cs" />
+    <Compile Include="Framework\GameAPI.cs" />
+    <Compile Include="Framework\Helpers\ConversionHelpers.cs" />
+    <Compile Include="Framework\Helpers\MathHelpers.cs" />
     <Compile Include="Framework\Interfaces\IHandler.cs" />
     <Compile Include="Framework\Interfaces\IService.cs" />
+    <Compile Include="Framework\Rpc\RpcRequest.cs" />
+    <Compile Include="Framework\Rpc\RpcTrigger.cs" />
     <Compile Include="Framework\Services\TestService.cs" />
     <Compile Include="IoC\Container.cs" />
     <Compile Include="IoC\ContainerItem.cs" />
@@ -99,10 +121,13 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Framework\Events\" />
-    <Folder Include="Framework\Extensions\" />
-    <Folder Include="Framework\Helpers\" />
     <Folder Include="Framework\Managers\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Average.Shared\Average.Shared.csproj">
+      <Project>{3F43345A-6A6E-4BE0-8889-26346ADD06A3}</Project>
+      <Name>Average.Shared</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

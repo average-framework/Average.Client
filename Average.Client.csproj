@@ -78,6 +78,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bootstrapper.cs" />
+    <Compile Include="Framework\Attributes\ClientCommandAliasAttribute.cs" />
+    <Compile Include="Framework\Attributes\ClientCommandAttribute.cs" />
+    <Compile Include="Framework\Attributes\ClientEventAttribute.cs" />
+    <Compile Include="Framework\Attributes\NetworkGetSyncAttribute.cs" />
+    <Compile Include="Framework\Attributes\UICallbackAttribute.cs" />
+    <Compile Include="Framework\Diagnostics\Logger.cs" />
+    <Compile Include="Framework\Diagnostics\LogInfo.cs" />
+    <Compile Include="Framework\Diagnostics\LogLevel.cs" />
     <Compile Include="Framework\Interfaces\IHandler.cs" />
     <Compile Include="Framework\Interfaces\IService.cs" />
     <Compile Include="Framework\Services\TestService.cs" />
@@ -91,8 +99,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Framework\Attributes\" />
-    <Folder Include="Framework\Diagnostics\" />
     <Folder Include="Framework\Events\" />
     <Folder Include="Framework\Extensions\" />
     <Folder Include="Framework\Helpers\" />

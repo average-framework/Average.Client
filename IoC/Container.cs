@@ -51,28 +51,41 @@ namespace Average.Client.IoC
 
                     var ctors = typeof(T).GetConstructors(flags);
 
-                    // Get the first service constructor, need to cancel registeration if the type have more than one constructor
-                    var ctorParams = ctors[0].GetParameters().ToList();
-                    var newArgs = new List<object>();
-
-                    foreach (var param in ctorParams)
+                    if(ctors.Length == 1)
                     {
-                        var requiredItem = _registeredTypes.Find(x => x.Type == param.ParameterType);
+                        // Get the first service constructor, need to cancel registeration if the type have more than one constructor
+                        var ctorParams = ctors[0].GetParameters().ToList();
+                        var newArgs = new List<object>();
 
-                        if (requiredItem == null)
+                        foreach (var param in ctorParams)
                         {
-                            Debug.WriteLine($"Unable to register service: [{typeof(T)}] with key [{serviceKey}] because the parameter of type {param.ParameterType} is not registered or instancied.");
-                            return;
+                            var requiredItem = _registeredTypes.Find(x => x.Type == param.ParameterType);
+
+                            if (requiredItem == null)
+                            {
+                                Debug.WriteLine($"Unable to register service: [{typeof(T)}] with key: [{serviceKey}] because the parameter of type {param.ParameterType} is not registered or instancied.");
+                                return;
+                            }
+
+                            newArgs.Add(requiredItem.Instance);
                         }
 
-                        newArgs.Add(requiredItem.Instance);
-                    }
-
-                    switch (reuse)
-                    {
-                        case Reuse.Singleton:
-                            if (instance == null)
-                            {
+                        switch (reuse)
+                        {
+                            case Reuse.Singleton:
+                                if (instance == null)
+                                {
+                                    if (ctorParams.Count() > 0)
+                                    {
+                                        instance = (T)Activator.CreateInstance(typeof(T), newArgs.ToArray());
+                                    }
+                                    else
+                                    {
+                                        instance = (T)Activator.CreateInstance(typeof(T));
+                                    }
+                                }
+                                break;
+                            case Reuse.Transient:
                                 if (ctorParams.Count() > 0)
                                 {
                                     instance = (T)Activator.CreateInstance(typeof(T), newArgs.ToArray());
@@ -81,21 +94,15 @@ namespace Average.Client.IoC
                                 {
                                     instance = (T)Activator.CreateInstance(typeof(T));
                                 }
-                            }
-                            break;
-                        case Reuse.Transient:
-                            if (ctorParams.Count() > 0)
-                            {
-                                instance = (T)Activator.CreateInstance(typeof(T), newArgs.ToArray());
-                            }
-                            else
-                            {
-                                instance = (T)Activator.CreateInstance(typeof(T));
-                            }
-                            break;
-                    }
+                                break;
+                        }
 
-                    _registeredTypes.Add(new ContainerItem(typeof(T), reuse, serviceKey, instance));
+                        _registeredTypes.Add(new ContainerItem(typeof(T), reuse, serviceKey, instance));
+                    }
+                    else
+                    {
+                        Debug.WriteLine($"Unable to register service: [{typeof(T)}] with key: [{serviceKey}] because the class can only have one constructor");
+                    }
                 }
                 else
                 {
@@ -112,28 +119,41 @@ namespace Average.Client.IoC
 
                     var ctors = typeof(T).GetConstructors(flags);
 
-                    // Get the first service constructor, need to cancel registeration if the type have more than one constructor
-                    var ctorParams = ctors[0].GetParameters().ToList();
-                    var newArgs = new List<object>();
-
-                    foreach (var param in ctorParams)
+                    if(ctors.Length == 1)
                     {
-                        var requiredItem = _registeredTypes.Find(x => x.Type == param.ParameterType);
+                        // Get the first service constructor, need to cancel registeration if the type have more than one constructor
+                        var ctorParams = ctors[0].GetParameters().ToList();
+                        var newArgs = new List<object>();
 
-                        if (requiredItem == null)
+                        foreach (var param in ctorParams)
                         {
-                            Debug.WriteLine($"Unable to register service: [{typeof(T)}] with key [{serviceKey}] because the parameter of type {param.ParameterType} is not registered or instancied.");
-                            return;
+                            var requiredItem = _registeredTypes.Find(x => x.Type == param.ParameterType);
+
+                            if (requiredItem == null)
+                            {
+                                Debug.WriteLine($"Unable to register service: [{typeof(T)}] with key [{serviceKey}] because the parameter of type {param.ParameterType} is not registered or instancied.");
+                                return;
+                            }
+
+                            newArgs.Add(requiredItem.Instance);
                         }
 
-                        newArgs.Add(requiredItem.Instance);
-                    }
-
-                    switch (reuse)
-                    {
-                        case Reuse.Singleton:
-                            if (instance == null)
-                            {
+                        switch (reuse)
+                        {
+                            case Reuse.Singleton:
+                                if (instance == null)
+                                {
+                                    if (ctorParams.Count() > 0)
+                                    {
+                                        instance = (T)Activator.CreateInstance(typeof(T), newArgs.ToArray());
+                                    }
+                                    else
+                                    {
+                                        instance = (T)Activator.CreateInstance(typeof(T));
+                                    }
+                                }
+                                break;
+                            case Reuse.Transient:
                                 if (ctorParams.Count() > 0)
                                 {
                                     instance = (T)Activator.CreateInstance(typeof(T), newArgs.ToArray());
@@ -142,21 +162,15 @@ namespace Average.Client.IoC
                                 {
                                     instance = (T)Activator.CreateInstance(typeof(T));
                                 }
-                            }
-                            break;
-                        case Reuse.Transient:
-                            if (ctorParams.Count() > 0)
-                            {
-                                instance = (T)Activator.CreateInstance(typeof(T), newArgs.ToArray());
-                            }
-                            else
-                            {
-                                instance = (T)Activator.CreateInstance(typeof(T));
-                            }
-                            break;
-                    }
+                                break;
+                        }
 
-                    _registeredTypes.Add(new ContainerItem(typeof(T), reuse, serviceKey, instance));
+                        _registeredTypes.Add(new ContainerItem(typeof(T), reuse, serviceKey, instance));
+                    }
+                    else
+                    {
+                        Debug.WriteLine($"Unable to register service: [{typeof(T)}] with key: [{serviceKey}] because the class can only have one constructor");
+                    }
                 }
                 else
                 {

@@ -1,5 +1,5 @@
-﻿using Average.Client.Framework.Services;
-using Average.Client.IoC;
+﻿using Average.Client.Framework.IoC;
+using Average.Client.Framework.Services;
 using CitizenFX.Core;
 
 namespace Average.Client

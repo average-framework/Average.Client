@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Average.Client.IoC
+namespace Average.Client.Framework.IoC
 {
     internal class ContainerItem
     {

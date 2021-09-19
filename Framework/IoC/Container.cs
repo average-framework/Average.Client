@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace Average.Client.IoC
+namespace Average.Client.Framework.IoC
 {
     internal class Container
     {
@@ -51,7 +51,7 @@ namespace Average.Client.IoC
 
                     var ctors = typeof(T).GetConstructors(flags);
 
-                    if(ctors.Length == 1)
+                    if (ctors.Length == 1)
                     {
                         // Get the first service constructor, need to cancel registeration if the type have more than one constructor
                         var ctorParams = ctors[0].GetParameters().ToList();
@@ -119,7 +119,7 @@ namespace Average.Client.IoC
 
                     var ctors = typeof(T).GetConstructors(flags);
 
-                    if(ctors.Length == 1)
+                    if (ctors.Length == 1)
                     {
                         // Get the first service constructor, need to cancel registeration if the type have more than one constructor
                         var ctorParams = ctors[0].GetParameters().ToList();
@@ -196,7 +196,7 @@ namespace Average.Client.IoC
                     Debug.WriteLine($"Unable to resolve service: [{serviceKey}].");
                 }
 
-                return default(T);
+                return default;
             }
             else
             {
@@ -212,7 +212,7 @@ namespace Average.Client.IoC
                     Debug.WriteLine($"Unable to resolve service: [{typeof(T)}]");
                 }
 
-                return default(T);
+                return default;
             }
         }
     }

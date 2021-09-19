@@ -1,4 +1,4 @@
-﻿using Average.Client.IoC;
+﻿using Average.Client.Framework.IoC;
 using CitizenFX.Core;
 using System;
 using System.Threading.Tasks;

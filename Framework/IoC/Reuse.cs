@@ -1,4 +1,4 @@
-﻿namespace Average.Client.IoC
+﻿namespace Average.Client.Framework.IoC
 {
     internal enum Reuse
     {

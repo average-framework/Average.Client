@@ -42,6 +42,9 @@ namespace Average.Client
 
             // Reflections
             _container.Resolve<EventManager>().Reflect();
+
+            // Called on resource start for initialize the client on server side
+            _container.Resolve<ClientHandler>().OnClientInitialized();
         }
     }
 }

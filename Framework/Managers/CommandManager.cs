@@ -36,7 +36,7 @@ namespace Average.Client.Framework.Managers
             API.RegisterCommand(commandName, new Action<int, List<object>, string>(async (source, args, raw) =>
             {
                 // Need to add an rpc check, if the command have no valid argument, we need to get a command result from the server
-                _eventManager.EmitServer("client-command:execute", args.ToArray());
+                _eventManager.EmitServer("command:execute", args.ToArray());
             }), false);
         }
 

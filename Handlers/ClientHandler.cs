@@ -1,5 +1,4 @@
 ﻿using Average.Client.Framework.Diagnostics;
-using Average.Client.Framework.Events;
 using Average.Client.Framework.Interfaces;
 using Average.Client.Framework.Managers;
 
@@ -12,19 +11,12 @@ namespace Average.Client.Handlers
         public ClientHandler(EventManager eventManager)
         {
             _eventManager = eventManager;
-
-            _eventManager.ResourceStart += OnResourceStart;
         }
 
-        private void OnResourceStart(object sender, ResourceStartEventArgs e)
+        internal void OnClientInitialized()
         {
-            if (e.Resource == "avg")
-            {
-                // Initialize client
-                Logger.Debug("Average started");
-
-                _eventManager.EmitServer("client:game_initialized");
-            }
+            // Initialize client
+            _eventManager.EmitServer("client:initialized");
         }
     }
 }

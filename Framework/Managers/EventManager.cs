@@ -3,7 +3,6 @@ using Average.Client.Framework.Events;
 using Average.Client.Framework.IoC;
 using Average.Shared.Attributes;
 using CitizenFX.Core;
-using CitizenFX.Core.Native;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -216,7 +215,7 @@ namespace Average.Client.Framework.Managers
         private void OnPopulationPedCreating(float x, float y, float z, uint model, dynamic overrideCalls)
         {
             PopulationPedCreating?.Invoke(this, new PopulationPedCreatingEventArgs(new Vector3(x, y, z), model, overrideCalls));
-            Emit("cfx:population_ped_creating", new PopulationPedCreatingEventArgs(new Vector3(x, y, z), model, overrideCalls));
+            Emit("client:population_ped_creating", new PopulationPedCreatingEventArgs(new Vector3(x, y, z), model, overrideCalls));
         }
 
         #endregion

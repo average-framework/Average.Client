@@ -11,6 +11,27 @@ namespace Average.Client.Framework.IoC
         private const BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy;
         private readonly List<ContainerItem> _registeredTypes = new List<ContainerItem>();
 
+        public Container()
+        {
+            RegisterInstance(this);
+        }
+
+        internal bool IsRegistered(Type type, string serviceKey = "")
+        {
+            if (string.IsNullOrEmpty(serviceKey))
+            {
+                var item = _registeredTypes.Find(x => x.Type == type);
+
+                return item != null;
+            }
+            else
+            {
+                var item = _registeredTypes.Find(x => x.ServiceKey == serviceKey);
+
+                return item != null;
+            }
+        }
+
         internal void RegisterInstance(object instance, Reuse reuse = Reuse.Singleton, string serviceKey = "")
         {
             if (string.IsNullOrEmpty(serviceKey))
@@ -101,7 +122,7 @@ namespace Average.Client.Framework.IoC
                     }
                     else
                     {
-                        Debug.WriteLine($"Unable to register service: [{typeof(T)}] with key: [{serviceKey}] because the class can only have one constructor");
+                        Debug.WriteLine($"Unable to register service: [{typeof(T)}] with key: [{serviceKey}] because the class can only have one constructor.");
                     }
                 }
                 else
@@ -169,7 +190,7 @@ namespace Average.Client.Framework.IoC
                     }
                     else
                     {
-                        Debug.WriteLine($"Unable to register service: [{typeof(T)}] with key: [{serviceKey}] because the class can only have one constructor");
+                        Debug.WriteLine($"Unable to register service: [{typeof(T)}] with key: [{serviceKey}] because the class can only have one constructor.");
                     }
                 }
                 else
@@ -209,7 +230,42 @@ namespace Average.Client.Framework.IoC
                 }
                 else
                 {
-                    Debug.WriteLine($"Unable to resolve service: [{typeof(T)}]");
+                    Debug.WriteLine($"Unable to resolve service: [{typeof(T)}].");
+                }
+
+                return default;
+            }
+        }
+
+        internal object Resolve(Type type, string serviceKey = "")
+        {
+            if (!string.IsNullOrEmpty(serviceKey))
+            {
+                var item = _registeredTypes.Find(x => x.ServiceKey == serviceKey);
+
+                if (item != null)
+                {
+                    return item.Instance;
+                }
+                else
+                {
+                    Debug.WriteLine($"Unable to resolve service: [{serviceKey}].");
+                }
+
+                return default;
+            }
+            else
+            {
+                var items = _registeredTypes.Where(x => x.Type == type);
+
+                if (items.Count() > 0)
+                {
+                    var item = items.First();
+                    return item.Instance;
+                }
+                else
+                {
+                    Debug.WriteLine($"Unable to resolve service: [{type}].");
                 }
 
                 return default;

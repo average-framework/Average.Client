@@ -12,7 +12,7 @@
     <RootNamespace>Average.Client</RootNamespace>
     <AssemblyName>average.client.net</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-    <LangVersion>9</LangVersion>
+    <LangVersion>10</LangVersion>
     <Nullable>enable</Nullable>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -91,10 +91,8 @@
     <Compile Include="Framework\Events\ResourceStartEventArgs.cs" />
     <Compile Include="Framework\Events\ResourceStartingEventArgs.cs" />
     <Compile Include="Framework\Events\ResourceStopEventArgs.cs" />
+    <Compile Include="Framework\Events\PopulationPedCreatingEventArgs.cs" />
     <Compile Include="Framework\Events\SessionInitializedEventArgs.cs" />
-    <Compile Include="Framework\Attributes\ClientCommandAliasAttribute.cs" />
-    <Compile Include="Framework\Attributes\ClientCommandAttribute.cs" />
-    <Compile Include="Framework\Attributes\ClientEventAttribute.cs" />
     <Compile Include="Framework\Attributes\NetworkGetSyncAttribute.cs" />
     <Compile Include="Framework\Attributes\UICallbackAttribute.cs" />
     <Compile Include="Framework\Diagnostics\Logger.cs" />
@@ -104,16 +102,19 @@
     <Compile Include="Framework\Extensions\ObjectExtensions.cs" />
     <Compile Include="Framework\Extensions\Vector3Extensions.cs" />
     <Compile Include="Framework\GameAPI.cs" />
+    <Compile Include="Framework\Handlers\CommandHandler.cs" />
     <Compile Include="Framework\Helpers\ConversionHelpers.cs" />
     <Compile Include="Framework\Helpers\MathHelpers.cs" />
     <Compile Include="Framework\Interfaces\IHandler.cs" />
     <Compile Include="Framework\Interfaces\IService.cs" />
+    <Compile Include="Framework\Managers\CommandManager.cs" />
+    <Compile Include="Framework\Managers\EventManager.cs" />
     <Compile Include="Framework\Rpc\RpcRequest.cs" />
     <Compile Include="Framework\Rpc\RpcTrigger.cs" />
-    <Compile Include="Framework\Services\TestService.cs" />
     <Compile Include="Framework\IoC\Container.cs" />
     <Compile Include="Framework\IoC\ContainerItem.cs" />
     <Compile Include="Framework\IoC\Reuse.cs" />
+    <Compile Include="Handlers\ClientHandler.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -121,7 +122,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Framework\Managers\" />
+    <Folder Include="Framework\Services\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Average.Shared\Average.Shared.csproj">

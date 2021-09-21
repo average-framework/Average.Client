@@ -1,5 +1,7 @@
-﻿using Average.Client.Framework.IoC;
-using Average.Client.Framework.Services;
+﻿using Average.Client.Framework.Handlers;
+using Average.Client.Framework.IoC;
+using Average.Client.Framework.Managers;
+using Average.Client.Handlers;
 using CitizenFX.Core;
 
 namespace Average.Client
@@ -10,15 +12,11 @@ namespace Average.Client
         private readonly Container _container;
         private readonly EventHandlerDictionary _eventHandlers;
 
-        //internal static JObject BaseConfig = null;
-
         public Bootstrapper(Main main, Container container, EventHandlerDictionary eventHandlers)
         {
             _main = main;
             _container = container;
             _eventHandlers = eventHandlers;
-
-            //BaseConfig = FileUtility.ReadFileFromRootDir("config.json").ToJObject();
 
             Register();
         }
@@ -31,15 +29,19 @@ namespace Average.Client
             _container.RegisterInstance(_main._detachCallback, serviceKey: "detachCallback");
 
             // Managers
+            _container.Register<EventManager>();
+            _container.Register<CommandManager>();
 
             // Repositories
 
             // Services
-            _container.Register<TestService>();
 
             // Handlers
+            _container.Register<CommandHandler>();
+            _container.Register<ClientHandler>();
 
             // Reflections
+            _container.Resolve<EventManager>().Reflect();
         }
     }
 }

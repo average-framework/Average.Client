@@ -1,5 +1,7 @@
 ﻿using Average.Client.Framework.Diagnostics;
+using Average.Client.Framework.Rpc;
 using CitizenFX.Core.Native;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -10,26 +12,39 @@ namespace Average.Client.Framework.Managers
     internal class CommandManager
     {
         private readonly EventManager _eventManager;
+        private readonly RpcRequest _rpc;
         private readonly List<Tuple<string, string[]>> _commands = new List<Tuple<string, string[]>>();
 
-        public CommandManager(EventManager eventManager)
+        public CommandManager(EventManager eventManager, RpcRequest rpc)
         {
             _eventManager = eventManager;
+            _rpc = rpc;
 
             Logger.Debug("CommandManager Initialized successfully");
         }
 
         internal void Reflect(string json)
         {
-            var commands = JArray.Parse(json).Cast<JObject>().ToList();
+            Logger.Debug("Try to reflect");
 
-            Logger.Debug("Reflect commands: " + commands.Count());
-
-            foreach (var command in commands)
+            try
             {
-                var commandName = (string)command["Command"];
-                var alias = ((JArray)JArray.Parse(command["Alias"].ToString())).Cast<string>();
-                RegisterInternalCommand(commandName, alias.ToArray());
+                var commands = JsonConvert.DeserializeObject<List<JObject>>(json);
+
+                Logger.Debug("Reflect commands: " + commands.Count());
+
+                foreach (var command in commands)
+                {
+                    Logger.Debug("command: " + command);
+
+                    var commandName = (string)command["Command"];
+                    var alias = JArray.Parse(command["Alias"].ToString()).Cast<string>();
+                    RegisterInternalCommand(commandName, alias.ToArray());
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Error on reflect: " + ex.Message + "\n" + ex.StackTrace); ;
             }
         }
 
@@ -38,7 +53,14 @@ namespace Average.Client.Framework.Managers
             API.RegisterCommand(commandName, new Action<int, List<object>, string>(async (source, args, raw) =>
             {
                 // Need to add an rpc check, if the command have no valid argument, we need to get a command result from the server
-                _eventManager.EmitServer("client:execute_command", commandName, args.ToArray());
+
+                _rpc.Event("client:execute_command").On<bool, string>((success, errorMessage) => 
+                {
+                    if (!success)
+                    {
+                        Logger.Error(errorMessage);
+                    }
+                }).Emit(commandName, args);
             }), false);
         }
 

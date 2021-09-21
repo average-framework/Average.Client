@@ -18,7 +18,16 @@ namespace Average.Client.Framework.Handlers
         private void OnRegisterCommands(string json)
         {
             Logger.Debug("command json: " + json);
-            _commandManager.Reflect(json);
+            Logger.Debug("command is null ? " + (_commandManager == null));
+
+            try
+            {
+                _commandManager.Reflect(json);
+            }
+            catch
+            {
+                Logger.Error("reflect");
+            }
         }
     }
 }

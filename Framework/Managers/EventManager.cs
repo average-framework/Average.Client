@@ -120,33 +120,9 @@ namespace Average.Client.Framework.Managers
 
         public void Emit(string eventName, params object[] args)
         {
-            try
+            if (_events.ContainsKey(eventName))
             {
-                if (_events.ContainsKey(eventName))
-                {
-                    _events[eventName].ForEach(x => x.DynamicInvoke(args));
-
-                    for(int i = 0; i < _events.Count; i++)
-                    {
-                        var e = _events.ElementAt(i);
-                        Logger.Warn("Emit event: " + e.Key + ", " + e.Value.Count);
-
-                        for(int o = 0; o < e.Value.Count; o++)
-                        {
-                            var del = e.Value.ElementAt(o);
-                            Logger.Warn("Emit delegate: " + del.Method.Name + ", " + del.Method.GetParameters().Count());
-
-                            foreach(var param in del.Method.GetParameters())
-                            {
-                                Logger.Warn("param: " + param.Name + ", " + param.ParameterType);
-                            }
-                        }
-                    }
-                }
-            }
-            catch
-            {
-                Logger.Error("Unable to call event: " + eventName + ", " + string.Join(", ", args.GetType()));
+                _events[eventName].ForEach(x => x.DynamicInvoke(args));
             }
         }
 

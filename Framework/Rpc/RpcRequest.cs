@@ -1,5 +1,7 @@
-﻿using Average.Client.Framework.Extensions;
+﻿using Average.Client.Framework.Diagnostics;
+using Average.Client.Framework.Extensions;
 using Average.Shared.Rpc;
+using CitizenFX.Core;
 using System;
 using System.Linq;
 using static CitizenFX.Core.Native.API;
@@ -13,12 +15,12 @@ namespace Average.Client.Framework.Rpc
         private RpcTrigger _trigger;
         private RpcSerializer _serializer;
 
-        public RpcRequest(RpcHandler handler, RpcTrigger trigger, RpcSerializer serializer)
+        public RpcRequest(EventHandlerDictionary eventHandlers)
         {
             _message = new RpcMessage();
-            _handler = handler;
-            _trigger = trigger;
-            _serializer = serializer;
+            _handler = new RpcHandler(eventHandlers);
+            _trigger = new RpcTrigger();
+            _serializer = new RpcSerializer();
         }
 
         public RpcRequest Event(string eventName)

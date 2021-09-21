@@ -1,9 +1,34 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Average.Client.Framework.Extensions
 {
     public static class ObjectExtentions
     {
-        public static T Convert<T>(this object source) => JsonConvert.DeserializeObject<T>(source.ToString());
+        internal static T Convert<T>(this object source)
+        {
+            if (source.GetType() == typeof(JArray))
+            {
+                return ((JArray)source).ToObject<T>();
+            }
+
+            try
+            {
+                return JsonConvert.DeserializeObject<T>(source.ToString());
+            }
+            catch
+            {
+                try
+                {
+                    return (T)System.Convert.ChangeType(source, typeof(T));
+                }
+                catch
+                {
+
+                }
+            }
+
+            return default;
+        }
     }
 }

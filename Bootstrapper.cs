@@ -1,6 +1,7 @@
 ﻿using Average.Client.Framework.Handlers;
 using Average.Client.Framework.IoC;
 using Average.Client.Framework.Managers;
+using Average.Client.Framework.Rpc;
 using Average.Client.Handlers;
 using CitizenFX.Core;
 
@@ -27,6 +28,8 @@ namespace Average.Client
             _container.RegisterInstance(_eventHandlers);
             _container.RegisterInstance(_main._attachCallback, serviceKey: "attachCallback");
             _container.RegisterInstance(_main._detachCallback, serviceKey: "detachCallback");
+
+            _container.Register<RpcRequest>(reuse: Reuse.Transient);
 
             // Managers
             _container.Register<EventManager>();

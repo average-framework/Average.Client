@@ -1,4 +1,6 @@
 ﻿using Average.Client.Framework.IoC;
+using Average.Client.Framework.Rpc;
+using Average.Shared.Rpc;
 using CitizenFX.Core;
 using System;
 using System.Threading.Tasks;
@@ -7,8 +9,6 @@ namespace Average.Client
 {
     internal class Main : BaseScript
     {
-        //internal readonly RpcRequest _rpc;
-
         internal readonly Action<Func<Task>> _attachCallback;
         internal readonly Action<Func<Task>> _detachCallback;
 
@@ -19,8 +19,6 @@ namespace Average.Client
         {
             _attachCallback = c => Tick += c;
             _detachCallback = c => Tick -= c;
-
-            //_rpc = new RpcRequest(new RpcHandler(EventHandlers), new RpcTrigger(Players), new RpcSerializer());
 
             _container = new Container();
             _boostrap = new Bootstrapper(this, _container, EventHandlers);

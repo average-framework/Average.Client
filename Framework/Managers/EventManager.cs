@@ -1,7 +1,7 @@
-﻿using Average.Client.Framework.Diagnostics;
+﻿using Average.Client.Framework.Attributes;
+using Average.Client.Framework.Diagnostics;
 using Average.Client.Framework.Events;
 using Average.Client.Framework.IoC;
-using Average.Shared.Attributes;
 using CitizenFX.Core;
 using System;
 using System.Collections.Generic;
@@ -40,7 +40,7 @@ namespace Average.Client.Framework.Managers
 
             _eventHandlers["server-event:triggered"] += new Action<string, List<object>>(OnTriggerEvent);
 
-            Logger.Debug("ClientEventManager Initialized successfully");
+            Logger.Debug("EventManager Initialized successfully");
         }
 
         public event EventHandler<ResourceStartEventArgs> ResourceStart;
@@ -85,7 +85,7 @@ namespace Average.Client.Framework.Managers
             }
         }
 
-        public void RegisterEvent(string eventName, Delegate action)
+        private void RegisterEvent(string eventName, Delegate action)
         {
             if (!_events.ContainsKey(eventName))
             {
@@ -99,19 +99,19 @@ namespace Average.Client.Framework.Managers
             Logger.Debug($"Registering [ClientEvent]: {eventName} on method: {action.Method.Name}.");
         }
 
-        public void UnregisterEvent(string eventName)
-        {
-            if (_events.ContainsKey(eventName))
-            {
-                _events.Remove(eventName);
+        //private void UnregisterEvent(string eventName)
+        //{
+        //    if (_events.ContainsKey(eventName))
+        //    {
+        //        _events.Remove(eventName);
 
-                Logger.Debug($"Removing [ClientEvent]: {eventName}");
-            }
-            else
-            {
-                Logger.Debug($"Unable to remove [ClientEvent]: {eventName}");
-            }
-        }
+        //        Logger.Debug($"Removing [ClientEvent]: {eventName}");
+        //    }
+        //    else
+        //    {
+        //        Logger.Debug($"Unable to remove [ClientEvent]: {eventName}");
+        //    }
+        //}
 
         internal void RegisterInternalEvent(ClientEventAttribute eventAttr, object classObj, MethodInfo method)
         {
@@ -120,9 +120,33 @@ namespace Average.Client.Framework.Managers
 
         public void Emit(string eventName, params object[] args)
         {
-            if (_events.ContainsKey(eventName))
+            try
             {
-                _events[eventName].ForEach(x => x.DynamicInvoke(args));
+                if (_events.ContainsKey(eventName))
+                {
+                    _events[eventName].ForEach(x => x.DynamicInvoke(args));
+
+                    for(int i = 0; i < _events.Count; i++)
+                    {
+                        var e = _events.ElementAt(i);
+                        Logger.Warn("Emit event: " + e.Key + ", " + e.Value.Count);
+
+                        for(int o = 0; o < e.Value.Count; o++)
+                        {
+                            var del = e.Value.ElementAt(o);
+                            Logger.Warn("Emit delegate: " + del.Method.Name + ", " + del.Method.GetParameters().Count());
+
+                            foreach(var param in del.Method.GetParameters())
+                            {
+                                Logger.Warn("param: " + param.Name + ", " + param.ParameterType);
+                            }
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                Logger.Error("Unable to call event: " + eventName + ", " + string.Join(", ", args.GetType()));
             }
         }
 
@@ -133,7 +157,7 @@ namespace Average.Client.Framework.Managers
 
         private void OnTriggerEvent(string eventName, List<object> args)
         {
-            Logger.Debug("Receive event from server: " + eventName + ", " + args.Count);
+            Logger.Debug("Receive event from server: " + eventName + ", " + string.Join(", ", args));
 
             Emit(eventName, args.ToArray());
         }

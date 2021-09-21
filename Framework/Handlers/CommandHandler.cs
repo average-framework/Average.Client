@@ -1,6 +1,7 @@
-﻿using Average.Client.Framework.Interfaces;
+﻿using Average.Client.Framework.Attributes;
+using Average.Client.Framework.Diagnostics;
+using Average.Client.Framework.Interfaces;
 using Average.Client.Framework.Managers;
-using Average.Shared.Attributes;
 
 namespace Average.Client.Framework.Handlers
 {
@@ -16,6 +17,7 @@ namespace Average.Client.Framework.Handlers
         [ClientEvent("command:register_commands")]
         private void OnRegisterCommands(string json)
         {
+            Logger.Debug("command json: " + json);
             _commandManager.Reflect(json);
         }
     }

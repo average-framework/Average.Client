@@ -15,11 +15,13 @@ namespace Average.Client.Framework.Managers
         public CommandManager(EventManager eventManager)
         {
             _eventManager = eventManager;
+
+            Logger.Debug("CommandManager Initialized successfully");
         }
 
         internal void Reflect(string json)
         {
-            var commands = JArray.Parse(json).Cast<dynamic>().ToList();
+            var commands = JArray.Parse(json).Cast<JObject>().ToList();
 
             Logger.Debug("Reflect commands: " + commands.Count());
 
@@ -36,7 +38,7 @@ namespace Average.Client.Framework.Managers
             API.RegisterCommand(commandName, new Action<int, List<object>, string>(async (source, args, raw) =>
             {
                 // Need to add an rpc check, if the command have no valid argument, we need to get a command result from the server
-                _eventManager.EmitServer("command:execute", args.ToArray());
+                _eventManager.EmitServer("client:execute_command", commandName, args.ToArray());
             }), false);
         }
 

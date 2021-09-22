@@ -62,12 +62,15 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="average.shared.net, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\AverageFrameworkServer\resources\avg\libs\average.shared.net.dll</HintPath>
+    </Reference>
     <Reference Include="CitizenFX.Client.Core">
       <HintPath>..\..\Averagge Framework TestServer\resources\avg\libs\CitizenFX.Client.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>D:\WIN 11\GitHub\RdR_Code\libs\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\AverageFrameworkServer\resources\avg\libs\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -124,12 +127,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Framework\Services\" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Average.Shared\Average.Shared.csproj">
-      <Project>{3F43345A-6A6E-4BE0-8889-26346ADD06A3}</Project>
-      <Name>Average.Shared</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

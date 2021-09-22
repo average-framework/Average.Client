@@ -1,8 +1,8 @@
 ﻿using Average.Client.Framework.Diagnostics;
 using Average.Client.Framework.Rpc;
+using Average.Shared.Models;
 using CitizenFX.Core.Native;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,26 +25,11 @@ namespace Average.Client.Framework.Managers
 
         internal void Reflect(string json)
         {
-            Logger.Debug("Try to reflect");
+            var commands = JsonConvert.DeserializeObject<List<CommandModel>>(json);
 
-            try
+            foreach (var command in commands)
             {
-                var commands = JsonConvert.DeserializeObject<List<JObject>>(json);
-
-                Logger.Debug("Reflect commands: " + commands.Count());
-
-                foreach (var command in commands)
-                {
-                    Logger.Debug("command: " + command);
-
-                    var commandName = (string)command["Command"];
-                    var alias = JArray.Parse(command["Alias"].ToString()).Cast<string>();
-                    RegisterInternalCommand(commandName, alias.ToArray());
-                }
-            }
-            catch (Exception ex)
-            {
-                Logger.Error("Error on reflect: " + ex.Message + "\n" + ex.StackTrace); ;
+                RegisterInternalCommand(command.Name, command.Alias);
             }
         }
 
@@ -54,7 +39,7 @@ namespace Average.Client.Framework.Managers
             {
                 // Need to add an rpc check, if the command have no valid argument, we need to get a command result from the server
 
-                _rpc.Event("client:execute_command").On<bool, string>((success, errorMessage) => 
+                _rpc.Event("client:execute_command").On<bool, string>((success, errorMessage) =>
                 {
                     if (!success)
                     {

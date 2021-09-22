@@ -1,5 +1,4 @@
-﻿using Average.Client.Framework.Diagnostics;
-using Average.Client.Framework.Extensions;
+﻿using Average.Client.Framework.Extensions;
 using Average.Shared.Rpc;
 using CitizenFX.Core;
 using System;
@@ -59,7 +58,7 @@ namespace Average.Client.Framework.Rpc
             c = response =>
             {
                 _message = _serializer.Deserialize<RpcMessage>(response);
-                var arg1 = _message.Args[0].Convert<T1>();
+                var arg1 = _message.Args[0].Deserialize<T1>();
                 action(arg1);
 
                 _handler.Detach(_message.Event, c);
@@ -76,8 +75,8 @@ namespace Average.Client.Framework.Rpc
             c = response =>
             {
                 _message = _serializer.Deserialize<RpcMessage>(response);
-                var arg1 = _message.Args[0].Convert<T1>();
-                var arg2 = _message.Args[1].Convert<T2>();
+                var arg1 = _message.Args[0].Deserialize<T1>();
+                var arg2 = _message.Args[1].Deserialize<T2>();
                 action(arg1, arg2);
 
                 _handler.Detach(_message.Event, c);
@@ -94,9 +93,9 @@ namespace Average.Client.Framework.Rpc
             c = response =>
             {
                 _message = _serializer.Deserialize<RpcMessage>(response);
-                var arg1 = _message.Args[0].Convert<T1>();
-                var arg2 = _message.Args[1].Convert<T2>();
-                var arg3 = _message.Args[2].Convert<T3>();
+                var arg1 = _message.Args[0].Deserialize<T1>();
+                var arg2 = _message.Args[1].Deserialize<T2>();
+                var arg3 = _message.Args[2].Deserialize<T3>();
                 action(arg1, arg2, arg3);
 
                 _handler.Detach(_message.Event, c);
@@ -113,10 +112,10 @@ namespace Average.Client.Framework.Rpc
             c = response =>
             {
                 _message = _serializer.Deserialize<RpcMessage>(response);
-                var arg1 = _message.Args[0].Convert<T1>();
-                var arg2 = _message.Args[1].Convert<T2>();
-                var arg3 = _message.Args[2].Convert<T3>();
-                var arg4 = _message.Args[3].Convert<T4>();
+                var arg1 = _message.Args[0].Deserialize<T1>();
+                var arg2 = _message.Args[1].Deserialize<T2>();
+                var arg3 = _message.Args[2].Deserialize<T3>();
+                var arg4 = _message.Args[3].Deserialize<T4>();
                 action(arg1, arg2, arg3, arg4);
 
                 _handler.Detach(_message.Event, c);
@@ -133,11 +132,11 @@ namespace Average.Client.Framework.Rpc
             c = response =>
             {
                 _message = _serializer.Deserialize<RpcMessage>(response);
-                var arg1 = _message.Args[0].Convert<T1>();
-                var arg2 = _message.Args[1].Convert<T2>();
-                var arg3 = _message.Args[2].Convert<T3>();
-                var arg4 = _message.Args[3].Convert<T4>();
-                var arg5 = _message.Args[4].Convert<T5>();
+                var arg1 = _message.Args[0].Deserialize<T1>();
+                var arg2 = _message.Args[1].Deserialize<T2>();
+                var arg3 = _message.Args[2].Deserialize<T3>();
+                var arg4 = _message.Args[3].Deserialize<T4>();
+                var arg5 = _message.Args[4].Deserialize<T5>();
                 action(arg1, arg2, arg3, arg4, arg5);
 
                 _handler.Detach(_message.Event, c);
@@ -154,12 +153,12 @@ namespace Average.Client.Framework.Rpc
             c = response =>
             {
                 _message = _serializer.Deserialize<RpcMessage>(response);
-                var arg1 = _message.Args[0].Convert<T1>();
-                var arg2 = _message.Args[1].Convert<T2>();
-                var arg3 = _message.Args[2].Convert<T3>();
-                var arg4 = _message.Args[3].Convert<T4>();
-                var arg5 = _message.Args[4].Convert<T5>();
-                var arg6 = _message.Args[5].Convert<T6>();
+                var arg1 = _message.Args[0].Deserialize<T1>();
+                var arg2 = _message.Args[1].Deserialize<T2>();
+                var arg3 = _message.Args[2].Deserialize<T3>();
+                var arg4 = _message.Args[3].Deserialize<T4>();
+                var arg5 = _message.Args[4].Deserialize<T5>();
+                var arg6 = _message.Args[5].Deserialize<T6>();
                 action(arg1, arg2, arg3, arg4, arg5, arg6);
 
                 _handler.Detach(_message.Event, c);
@@ -176,13 +175,13 @@ namespace Average.Client.Framework.Rpc
             c = response =>
             {
                 _message = _serializer.Deserialize<RpcMessage>(response);
-                var arg1 = _message.Args[0].Convert<T1>();
-                var arg2 = _message.Args[1].Convert<T2>();
-                var arg3 = _message.Args[2].Convert<T3>();
-                var arg4 = _message.Args[3].Convert<T4>();
-                var arg5 = _message.Args[4].Convert<T5>();
-                var arg6 = _message.Args[5].Convert<T6>();
-                var arg7 = _message.Args[6].Convert<T7>();
+                var arg1 = _message.Args[0].Deserialize<T1>();
+                var arg2 = _message.Args[1].Deserialize<T2>();
+                var arg3 = _message.Args[2].Deserialize<T3>();
+                var arg4 = _message.Args[3].Deserialize<T4>();
+                var arg5 = _message.Args[4].Deserialize<T5>();
+                var arg6 = _message.Args[5].Deserialize<T6>();
+                var arg7 = _message.Args[6].Deserialize<T7>();
                 action(arg1, arg2, arg3, arg4, arg5, arg6, arg7);
 
                 _handler.Detach(_message.Event, c);
@@ -199,14 +198,14 @@ namespace Average.Client.Framework.Rpc
             c = response =>
             {
                 _message = _serializer.Deserialize<RpcMessage>(response);
-                var arg1 = _message.Args[0].Convert<T1>();
-                var arg2 = _message.Args[1].Convert<T2>();
-                var arg3 = _message.Args[2].Convert<T3>();
-                var arg4 = _message.Args[3].Convert<T4>();
-                var arg5 = _message.Args[4].Convert<T5>();
-                var arg6 = _message.Args[5].Convert<T6>();
-                var arg7 = _message.Args[6].Convert<T7>();
-                var arg8 = _message.Args[7].Convert<T8>();
+                var arg1 = _message.Args[0].Deserialize<T1>();
+                var arg2 = _message.Args[1].Deserialize<T2>();
+                var arg3 = _message.Args[2].Deserialize<T3>();
+                var arg4 = _message.Args[3].Deserialize<T4>();
+                var arg5 = _message.Args[4].Deserialize<T5>();
+                var arg6 = _message.Args[5].Deserialize<T6>();
+                var arg7 = _message.Args[6].Deserialize<T7>();
+                var arg8 = _message.Args[7].Deserialize<T8>();
                 action(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);
 
                 _handler.Detach(_message.Event, c);
@@ -223,15 +222,15 @@ namespace Average.Client.Framework.Rpc
             c = response =>
             {
                 _message = _serializer.Deserialize<RpcMessage>(response);
-                var arg1 = _message.Args[0].Convert<T1>();
-                var arg2 = _message.Args[1].Convert<T2>();
-                var arg3 = _message.Args[2].Convert<T3>();
-                var arg4 = _message.Args[3].Convert<T4>();
-                var arg5 = _message.Args[4].Convert<T5>();
-                var arg6 = _message.Args[5].Convert<T6>();
-                var arg7 = _message.Args[6].Convert<T7>();
-                var arg8 = _message.Args[7].Convert<T8>();
-                var arg9 = _message.Args[8].Convert<T9>();
+                var arg1 = _message.Args[0].Deserialize<T1>();
+                var arg2 = _message.Args[1].Deserialize<T2>();
+                var arg3 = _message.Args[2].Deserialize<T3>();
+                var arg4 = _message.Args[3].Deserialize<T4>();
+                var arg5 = _message.Args[4].Deserialize<T5>();
+                var arg6 = _message.Args[5].Deserialize<T6>();
+                var arg7 = _message.Args[6].Deserialize<T7>();
+                var arg8 = _message.Args[7].Deserialize<T8>();
+                var arg9 = _message.Args[8].Deserialize<T9>();
                 action(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9);
 
                 _handler.Detach(_message.Event, c);
@@ -248,16 +247,16 @@ namespace Average.Client.Framework.Rpc
             c = response =>
             {
                 _message = _serializer.Deserialize<RpcMessage>(response);
-                var arg1 = _message.Args[0].Convert<T1>();
-                var arg2 = _message.Args[1].Convert<T2>();
-                var arg3 = _message.Args[2].Convert<T3>();
-                var arg4 = _message.Args[3].Convert<T4>();
-                var arg5 = _message.Args[4].Convert<T5>();
-                var arg6 = _message.Args[5].Convert<T6>();
-                var arg7 = _message.Args[6].Convert<T7>();
-                var arg8 = _message.Args[7].Convert<T8>();
-                var arg9 = _message.Args[8].Convert<T9>();
-                var arg10 = _message.Args[9].Convert<T10>();
+                var arg1 = _message.Args[0].Deserialize<T1>();
+                var arg2 = _message.Args[1].Deserialize<T2>();
+                var arg3 = _message.Args[2].Deserialize<T3>();
+                var arg4 = _message.Args[3].Deserialize<T4>();
+                var arg5 = _message.Args[4].Deserialize<T5>();
+                var arg6 = _message.Args[5].Deserialize<T6>();
+                var arg7 = _message.Args[6].Deserialize<T7>();
+                var arg8 = _message.Args[7].Deserialize<T8>();
+                var arg9 = _message.Args[8].Deserialize<T9>();
+                var arg10 = _message.Args[9].Deserialize<T10>();
                 action(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10);
 
                 _handler.Detach(_message.Event, c);
@@ -274,17 +273,17 @@ namespace Average.Client.Framework.Rpc
             c = response =>
             {
                 _message = _serializer.Deserialize<RpcMessage>(response);
-                var arg1 = _message.Args[0].Convert<T1>();
-                var arg2 = _message.Args[1].Convert<T2>();
-                var arg3 = _message.Args[2].Convert<T3>();
-                var arg4 = _message.Args[3].Convert<T4>();
-                var arg5 = _message.Args[4].Convert<T5>();
-                var arg6 = _message.Args[5].Convert<T6>();
-                var arg7 = _message.Args[6].Convert<T7>();
-                var arg8 = _message.Args[7].Convert<T8>();
-                var arg9 = _message.Args[8].Convert<T9>();
-                var arg10 = _message.Args[9].Convert<T10>();
-                var arg11 = _message.Args[10].Convert<T11>();
+                var arg1 = _message.Args[0].Deserialize<T1>();
+                var arg2 = _message.Args[1].Deserialize<T2>();
+                var arg3 = _message.Args[2].Deserialize<T3>();
+                var arg4 = _message.Args[3].Deserialize<T4>();
+                var arg5 = _message.Args[4].Deserialize<T5>();
+                var arg6 = _message.Args[5].Deserialize<T6>();
+                var arg7 = _message.Args[6].Deserialize<T7>();
+                var arg8 = _message.Args[7].Deserialize<T8>();
+                var arg9 = _message.Args[8].Deserialize<T9>();
+                var arg10 = _message.Args[9].Deserialize<T10>();
+                var arg11 = _message.Args[10].Deserialize<T11>();
                 action(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11);
 
                 _handler.Detach(_message.Event, c);
@@ -301,18 +300,18 @@ namespace Average.Client.Framework.Rpc
             c = response =>
             {
                 _message = _serializer.Deserialize<RpcMessage>(response);
-                var arg1 = _message.Args[0].Convert<T1>();
-                var arg2 = _message.Args[1].Convert<T2>();
-                var arg3 = _message.Args[2].Convert<T3>();
-                var arg4 = _message.Args[3].Convert<T4>();
-                var arg5 = _message.Args[4].Convert<T5>();
-                var arg6 = _message.Args[5].Convert<T6>();
-                var arg7 = _message.Args[6].Convert<T7>();
-                var arg8 = _message.Args[7].Convert<T8>();
-                var arg9 = _message.Args[8].Convert<T9>();
-                var arg10 = _message.Args[9].Convert<T10>();
-                var arg11 = _message.Args[10].Convert<T11>();
-                var arg12 = _message.Args[11].Convert<T12>();
+                var arg1 = _message.Args[0].Deserialize<T1>();
+                var arg2 = _message.Args[1].Deserialize<T2>();
+                var arg3 = _message.Args[2].Deserialize<T3>();
+                var arg4 = _message.Args[3].Deserialize<T4>();
+                var arg5 = _message.Args[4].Deserialize<T5>();
+                var arg6 = _message.Args[5].Deserialize<T6>();
+                var arg7 = _message.Args[6].Deserialize<T7>();
+                var arg8 = _message.Args[7].Deserialize<T8>();
+                var arg9 = _message.Args[8].Deserialize<T9>();
+                var arg10 = _message.Args[9].Deserialize<T10>();
+                var arg11 = _message.Args[10].Deserialize<T11>();
+                var arg12 = _message.Args[11].Deserialize<T12>();
                 action(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12);
 
                 _handler.Detach(_message.Event, c);
@@ -329,19 +328,19 @@ namespace Average.Client.Framework.Rpc
             c = response =>
             {
                 _message = _serializer.Deserialize<RpcMessage>(response);
-                var arg1 = _message.Args[0].Convert<T1>();
-                var arg2 = _message.Args[1].Convert<T2>();
-                var arg3 = _message.Args[2].Convert<T3>();
-                var arg4 = _message.Args[3].Convert<T4>();
-                var arg5 = _message.Args[4].Convert<T5>();
-                var arg6 = _message.Args[5].Convert<T6>();
-                var arg7 = _message.Args[6].Convert<T7>();
-                var arg8 = _message.Args[7].Convert<T8>();
-                var arg9 = _message.Args[8].Convert<T9>();
-                var arg10 = _message.Args[9].Convert<T10>();
-                var arg11 = _message.Args[10].Convert<T11>();
-                var arg12 = _message.Args[11].Convert<T12>();
-                var arg13 = _message.Args[12].Convert<T13>();
+                var arg1 = _message.Args[0].Deserialize<T1>();
+                var arg2 = _message.Args[1].Deserialize<T2>();
+                var arg3 = _message.Args[2].Deserialize<T3>();
+                var arg4 = _message.Args[3].Deserialize<T4>();
+                var arg5 = _message.Args[4].Deserialize<T5>();
+                var arg6 = _message.Args[5].Deserialize<T6>();
+                var arg7 = _message.Args[6].Deserialize<T7>();
+                var arg8 = _message.Args[7].Deserialize<T8>();
+                var arg9 = _message.Args[8].Deserialize<T9>();
+                var arg10 = _message.Args[9].Deserialize<T10>();
+                var arg11 = _message.Args[10].Deserialize<T11>();
+                var arg12 = _message.Args[11].Deserialize<T12>();
+                var arg13 = _message.Args[12].Deserialize<T13>();
                 action(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13);
 
                 _handler.Detach(_message.Event, c);
@@ -358,20 +357,20 @@ namespace Average.Client.Framework.Rpc
             c = response =>
             {
                 _message = _serializer.Deserialize<RpcMessage>(response);
-                var arg1 = _message.Args[0].Convert<T1>();
-                var arg2 = _message.Args[1].Convert<T2>();
-                var arg3 = _message.Args[2].Convert<T3>();
-                var arg4 = _message.Args[3].Convert<T4>();
-                var arg5 = _message.Args[4].Convert<T5>();
-                var arg6 = _message.Args[5].Convert<T6>();
-                var arg7 = _message.Args[6].Convert<T7>();
-                var arg8 = _message.Args[7].Convert<T8>();
-                var arg9 = _message.Args[8].Convert<T9>();
-                var arg10 = _message.Args[9].Convert<T10>();
-                var arg11 = _message.Args[10].Convert<T11>();
-                var arg12 = _message.Args[11].Convert<T12>();
-                var arg13 = _message.Args[12].Convert<T13>();
-                var arg14 = _message.Args[13].Convert<T14>();
+                var arg1 = _message.Args[0].Deserialize<T1>();
+                var arg2 = _message.Args[1].Deserialize<T2>();
+                var arg3 = _message.Args[2].Deserialize<T3>();
+                var arg4 = _message.Args[3].Deserialize<T4>();
+                var arg5 = _message.Args[4].Deserialize<T5>();
+                var arg6 = _message.Args[5].Deserialize<T6>();
+                var arg7 = _message.Args[6].Deserialize<T7>();
+                var arg8 = _message.Args[7].Deserialize<T8>();
+                var arg9 = _message.Args[8].Deserialize<T9>();
+                var arg10 = _message.Args[9].Deserialize<T10>();
+                var arg11 = _message.Args[10].Deserialize<T11>();
+                var arg12 = _message.Args[11].Deserialize<T12>();
+                var arg13 = _message.Args[12].Deserialize<T13>();
+                var arg14 = _message.Args[13].Deserialize<T14>();
                 action(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
 
                 _handler.Detach(_message.Event, c);

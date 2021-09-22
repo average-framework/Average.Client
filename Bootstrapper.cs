@@ -2,6 +2,7 @@
 using Average.Client.Framework.IoC;
 using Average.Client.Framework.Managers;
 using Average.Client.Framework.Rpc;
+using Average.Client.Framework.Services;
 using Average.Client.Handlers;
 using CitizenFX.Core;
 
@@ -35,13 +36,13 @@ namespace Average.Client
             _container.Register<EventManager>();
             _container.Register<CommandManager>();
 
-            // Repositories
-
             // Services
+            _container.Register<CharacterService>();
 
             // Handlers
             _container.Register<CommandHandler>();
             _container.Register<ClientHandler>();
+            _container.Register<CharacterService>();
 
             // Reflections
             _container.Resolve<EventManager>().Reflect();

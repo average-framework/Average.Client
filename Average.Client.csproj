@@ -81,6 +81,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bootstrapper.cs" />
+    <Compile Include="Configuration.cs" />
     <Compile Include="Framework\Attributes\ClientEventAttribute.cs" />
     <Compile Include="Framework\Events\ClientMapGameTypeStartEventArgs.cs" />
     <Compile Include="Framework\Events\ClientMapGameTypeStopEventArgs.cs" />
@@ -106,6 +107,7 @@
     <Compile Include="Framework\Extensions\ObjectExtensions.cs" />
     <Compile Include="Framework\Extensions\Vector3Extensions.cs" />
     <Compile Include="Framework\GameAPI.cs" />
+    <Compile Include="Framework\Handlers\CharacterHandler.cs" />
     <Compile Include="Framework\Handlers\CommandHandler.cs" />
     <Compile Include="Framework\Helpers\ConversionHelpers.cs" />
     <Compile Include="Framework\Helpers\MathHelpers.cs" />
@@ -118,15 +120,15 @@
     <Compile Include="Framework\IoC\Container.cs" />
     <Compile Include="Framework\IoC\ContainerItem.cs" />
     <Compile Include="Framework\IoC\Reuse.cs" />
+    <Compile Include="Framework\Services\CharacterService.cs" />
     <Compile Include="Handlers\ClientHandler.cs" />
     <Compile Include="Main.cs" />
+    <Compile Include="Models\Cloth.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Framework\Services\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

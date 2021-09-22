@@ -5,7 +5,7 @@ namespace Average.Client.Framework.Extensions
 {
     public static class ObjectExtentions
     {
-        internal static T Convert<T>(this object source)
+        internal static T Deserialize<T>(this object source)
         {
             if (source.GetType() == typeof(JArray))
             {

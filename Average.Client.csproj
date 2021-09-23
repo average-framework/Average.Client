@@ -104,11 +104,14 @@
     <Compile Include="Framework\Diagnostics\LogInfo.cs" />
     <Compile Include="Framework\Diagnostics\LogLevel.cs" />
     <Compile Include="Framework\Extensions\FloatExtensions.cs" />
+    <Compile Include="Framework\Extensions\JArrayExtensions.cs" />
     <Compile Include="Framework\Extensions\ObjectExtensions.cs" />
+    <Compile Include="Framework\Extensions\StringExtensions.cs" />
     <Compile Include="Framework\Extensions\Vector3Extensions.cs" />
     <Compile Include="Framework\GameAPI.cs" />
     <Compile Include="Framework\Handlers\CharacterHandler.cs" />
     <Compile Include="Framework\Handlers\CommandHandler.cs" />
+    <Compile Include="Framework\Handlers\UIHandler.cs" />
     <Compile Include="Framework\Helpers\ConversionHelpers.cs" />
     <Compile Include="Framework\Helpers\MathHelpers.cs" />
     <Compile Include="Framework\Interfaces\IHandler.cs" />

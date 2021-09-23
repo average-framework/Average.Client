@@ -42,7 +42,7 @@ namespace Average.Client
             // Handlers
             _container.Register<CommandHandler>();
             _container.Register<ClientHandler>();
-            _container.Register<CharacterService>();
+            _container.Register<UIHandler>();
 
             // Reflections
             _container.Resolve<EventManager>().Reflect();

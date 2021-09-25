@@ -35,14 +35,21 @@ namespace Average.Client
             // Managers
             _container.Register<EventManager>();
             _container.Register<CommandManager>();
+            _container.Register<ThreadManager>();
 
             // Services
+            _container.Register<LanguageService>();
+            _container.Register<UIService>();
+            _container.Register<MenuService>();
             _container.Register<CharacterService>();
+            _container.Register<CharacterCreatorService>();
 
             // Handlers
+            _container.Register<UIHandler>();
             _container.Register<CommandHandler>();
             _container.Register<ClientHandler>();
-            _container.Register<UIHandler>();
+            _container.Register<CharacterHandler>();
+            _container.Register<CharacterCreatorHandler>();
 
             // Reflections
             _container.Resolve<EventManager>().Reflect();

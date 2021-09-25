@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // l'ensemble d'attributs suivant. Changez les valeurs de ces attributs pour modifier les informations
 // associées à un assembly.
 [assembly: AssemblyTitle("Average Framework")]
-[assembly: AssemblyDescription("Average Framework")]
+[assembly: AssemblyDescription("Framework for RedM")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Average")]
-[assembly: AssemblyProduct("Client")]
-[assembly: AssemblyCopyright("Copyright © Average Framework 2021")]
+[assembly: AssemblyProduct("Average Client")]
+[assembly: AssemblyCopyright("Copyright © Average 2021")]
 [assembly: AssemblyTrademark("Average")]
 [assembly: AssemblyCulture("")]
 

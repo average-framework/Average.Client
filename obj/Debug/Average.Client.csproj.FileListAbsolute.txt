@@ -9,3 +9,4 @@ C:\Users\bub.bl\Desktop\Average Framework\Average.Client\obj\Debug\Average.Clien
 C:\Users\bub.bl\Desktop\Average Framework\Average.Client\obj\Debug\Average.Client.csproj.CoreCompileInputs.cache
 C:\Users\bub.bl\Desktop\Average Framework\Average.Client\obj\Debug\average.client.net.dll
 C:\Users\bub.bl\Desktop\AverageFrameworkServer\resources\avg\average.client.net.dll
+C:\Users\bub.bl\Desktop\Average Framework\Average.Client\obj\Debug\Average.Client.csproj.CopyComplete

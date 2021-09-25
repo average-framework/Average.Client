@@ -1,15 +1,15 @@
-﻿//using SDK.Client.Menu;
-//using System;
+﻿using Average.Client.Menu;
+using System;
 
-//namespace Average.Client.Framework.Events
-//{
-//    public class MenuCloseEventArgs : EventArgs
-//    {
-//        public MenuContainer CurrentMenu { get; }
+namespace Average.Client.Framework.Events
+{
+    internal class MenuCloseEventArgs : EventArgs
+    {
+        public MenuContainer CurrentMenu { get; }
 
-//        public MenuCloseEventArgs(MenuContainer currentMenu)
-//        {
-//            CurrentMenu = currentMenu;
-//        }
-//    }
-//}
+        public MenuCloseEventArgs(MenuContainer currentMenu)
+        {
+            CurrentMenu = currentMenu;
+        }
+    }
+}

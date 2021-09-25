@@ -10,7 +10,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Average.Client</RootNamespace>
-    <AssemblyName>average.client.net</AssemblyName>
+    <AssemblyName>Average.Client.net</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <LangVersion>10</LangVersion>
     <Nullable>enable</Nullable>
@@ -83,6 +83,7 @@
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="Framework\Attributes\ClientEventAttribute.cs" />
+    <Compile Include="Framework\Attributes\ThreadAttribute.cs" />
     <Compile Include="Framework\Events\ClientMapGameTypeStartEventArgs.cs" />
     <Compile Include="Framework\Events\ClientMapGameTypeStopEventArgs.cs" />
     <Compile Include="Framework\Events\ClientMapStartEventArgs.cs" />
@@ -109,8 +110,10 @@
     <Compile Include="Framework\Extensions\StringExtensions.cs" />
     <Compile Include="Framework\Extensions\Vector3Extensions.cs" />
     <Compile Include="Framework\GameAPI.cs" />
+    <Compile Include="Framework\Handlers\CharacterCreatorHandler.cs" />
     <Compile Include="Framework\Handlers\CharacterHandler.cs" />
     <Compile Include="Framework\Handlers\CommandHandler.cs" />
+    <Compile Include="Framework\Handlers\MenuHandler.cs" />
     <Compile Include="Framework\Handlers\UIHandler.cs" />
     <Compile Include="Framework\Helpers\ConversionHelpers.cs" />
     <Compile Include="Framework\Helpers\MathHelpers.cs" />
@@ -118,14 +121,40 @@
     <Compile Include="Framework\Interfaces\IService.cs" />
     <Compile Include="Framework\Managers\CommandManager.cs" />
     <Compile Include="Framework\Managers\EventManager.cs" />
+    <Compile Include="Framework\Managers\ThreadManager.cs" />
     <Compile Include="Framework\Rpc\RpcRequest.cs" />
     <Compile Include="Framework\Rpc\RpcTrigger.cs" />
     <Compile Include="Framework\IoC\Container.cs" />
     <Compile Include="Framework\IoC\ContainerItem.cs" />
     <Compile Include="Framework\IoC\Reuse.cs" />
+    <Compile Include="Framework\Services\CharacterCreatorService.cs" />
     <Compile Include="Framework\Services\CharacterService.cs" />
+    <Compile Include="Framework\Services\LanguageService.cs" />
+    <Compile Include="Framework\Services\MenuService.cs" />
+    <Compile Include="Framework\Services\UIService.cs" />
+    <Compile Include="Framework\UIEvents.cs" />
     <Compile Include="Handlers\ClientHandler.cs" />
+    <Compile Include="Interfaces\IMenuItem.cs" />
     <Compile Include="Main.cs" />
+    <Compile Include="Menu\ButtonContainer.cs" />
+    <Compile Include="Menu\ButtonItem.cs" />
+    <Compile Include="Menu\CheckboxInput.cs" />
+    <Compile Include="Menu\CheckboxItem.cs" />
+    <Compile Include="Menu\LabelItem.cs" />
+    <Compile Include="Menu\ListItem.cs" />
+    <Compile Include="Menu\BarItem.cs" />
+    <Compile Include="Menu\MenuContainer.cs" />
+    <Compile Include="Menu\TwoCheckboxItem.cs" />
+    <Compile Include="Menu\Vector3InputItem.cs" />
+    <Compile Include="Menu\RichTextItem.cs" />
+    <Compile Include="Menu\SelectorItem.cs" />
+    <Compile Include="Menu\TabContainer.cs" />
+    <Compile Include="Menu\TabItem.cs" />
+    <Compile Include="Menu\TextAreaItem.cs" />
+    <Compile Include="Menu\TextBoxItem.cs" />
+    <Compile Include="Menu\Vector2Input.cs" />
+    <Compile Include="Menu\Vector2InputItem.cs" />
+    <Compile Include="Menu\Vector3Input.cs" />
     <Compile Include="Models\Cloth.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

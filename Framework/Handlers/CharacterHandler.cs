@@ -3,7 +3,7 @@ using Average.Client.Framework.Diagnostics;
 using Average.Client.Framework.Extensions;
 using Average.Client.Framework.Interfaces;
 using Average.Client.Framework.Services;
-using Average.Server.DataModels;
+using Average.Shared.DataModels;
 using Average.Shared.Enums;
 using System.Collections.Generic;
 using static Average.Client.Framework.GameAPI;
@@ -30,19 +30,17 @@ namespace Average.Client.Framework.Handlers
         }
 
         [ClientEvent("character:set_appearance")]
-        private async void OnSetAppearance(int gender, uint origin, uint head, uint body, uint bodyType, uint waistType, uint legs, float scale, string textureJson, string faceJson, string faceOverlayJson, string clothesJson)
+        private async void OnSetAppearance(string skinJson, string clothesJson)
         {
             var player = PlayerId();
             var ped = GetPlayerPed(player);
 
             Logger.Debug("Set ped appearance: " + ped + ", " + player);
 
-            var texture = textureJson.Deserialize<TextureData>();
-            var face = faceJson.Deserialize<FaceData>();
-            var faceOverlay = faceOverlayJson.Deserialize<FaceOverlayData>();
-            var clothes = clothesJson.Deserialize<ClothesData>();
+            var skin = skinJson.Deserialize<SkinData>();
+            var clothes = clothesJson.Deserialize<OutfitData>();
 
-            await _characterService.SetAppearance(ped, (Gender)gender, origin, head, body, legs, scale, bodyType, waistType, clothes, face, faceOverlay, texture);
+            await _characterService.SetAppearance(ped, skin, clothes);
         }
 
         [ClientEvent("character:remove_all_clothes")]

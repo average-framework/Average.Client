@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using static CitizenFX.Core.Native.API;
 
 namespace Average.Client.Framework.Managers
 {
@@ -18,6 +19,7 @@ namespace Average.Client.Framework.Managers
         private const BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy;
 
         private readonly Dictionary<string, List<Delegate>> _events = new();
+        private readonly Dictionary<string, List<Delegate>> _nuiEvents = new();
 
         public EventManager(Container container, EventHandlerDictionary eventHandlers)
         {
@@ -83,6 +85,54 @@ namespace Average.Client.Framework.Managers
                     }
                 }
             }
+
+            // Register client nui events
+            foreach (var service in types)
+            {
+                if (_container.IsRegistered(service))
+                {
+                    // Continue if the service have the same type of this class
+                    if (service == GetType()) continue;
+
+                    // Get service instance
+                    var _service = _container.Resolve(service);
+                    var methods = service.GetMethods(flags);
+
+                    foreach (var method in methods)
+                    {
+                        var attr = method.GetCustomAttribute<UICallbackAttribute>();
+                        if (attr == null) continue;
+
+                        RegisterInternalNuiCallbackEvent(attr, _service, method);
+                    }
+                }
+            }
+        }
+
+        private void RegisterInternalNuiCallbackEvent(string eventName, Func<IDictionary<string, object>, CallbackDelegate, CallbackDelegate> callback)
+        {
+            RegisterNuiCallbackType(eventName);
+            _eventHandlers[$"__cfx_nui:{eventName}"] += new Action<IDictionary<string, object>, CallbackDelegate>((body, resultCallback) => callback.Invoke(body, resultCallback));
+        }
+
+        private void RegisterInternalNuiCallbackEvent(UICallbackAttribute eventAttr, object classObj, MethodInfo method)
+        {
+            var methodParams = method.GetParameters();
+            var callback = (Func<IDictionary<string, object>, CallbackDelegate, CallbackDelegate>)Delegate.CreateDelegate(Expression.GetDelegateType((from parameter in method.GetParameters() select parameter.ParameterType).Concat(new[] { method.ReturnType }).ToArray()), classObj, method);
+
+            if (!_nuiEvents.ContainsKey(eventAttr.Name))
+            {
+                _nuiEvents.Add(eventAttr.Name, new List<Delegate> { callback });
+            }
+            else
+            {
+                _nuiEvents[eventAttr.Name].Add(callback);
+            }
+
+            RegisterNuiCallbackType(eventAttr.Name);
+            _eventHandlers[$"__cfx_nui:{eventAttr.Name}"] += new Action<IDictionary<string, object>, CallbackDelegate>((body, resultCallback) => callback.Invoke(body, resultCallback));
+
+            Logger.Debug($"Registering [UICallback]: {eventAttr.Name} on method: {method.Name}.");
         }
 
         private void RegisterEvent(string eventName, Delegate action)

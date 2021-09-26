@@ -26,20 +26,16 @@ namespace Average.Client.Framework.Managers
         internal void Reflect(string json)
         {
             var commands = JsonConvert.DeserializeObject<List<CommandModel>>(json);
-
-            foreach (var command in commands)
-            {
-                RegisterInternalCommand(command.Name, command.Alias);
-            }
+            commands.ForEach(x => RegisterInternalCommand(x));
         }
 
         private void RegisterCommand(string commandName)
         {
             API.RegisterCommand(commandName, new Action<int, List<object>, string>(async (source, args, raw) =>
             {
-                // Need to add an rpc check, if the command have no valid argument, we need to get a command result from the server
+                // Need to add an rpc check, if the command have no valid argument or error, we need to get a command result from the server
 
-                _rpc.Event("client:execute_command").On<bool, string>((success, errorMessage) =>
+                _rpc.Event("command:execute").On<bool, string>((success, errorMessage) =>
                 {
                     if (!success)
                     {
@@ -49,13 +45,13 @@ namespace Average.Client.Framework.Managers
             }), false);
         }
 
-        private void RegisterInternalCommand(string commandName, string[] commandAlias)
+        private void RegisterInternalCommand(CommandModel command)
         {
-            RegisterCommand(commandName);
-            commandAlias.ToList().ForEach(x => RegisterCommand(x));
-            _commands.Add(new Tuple<string, string[]>(commandName, commandAlias));
+            RegisterCommand(command.Name);
+            command.Alias.ToList().ForEach(x => RegisterCommand(x));
 
-            Logger.Debug($"Registering [Command]: {commandName} with alias: [{string.Join(", ", commandAlias)}]");
+            _commands.Add(new Tuple<string, string[]>(command.Name, command.Alias));
+            Logger.Debug($"Registering [Command]: {command.Name} with alias: [{string.Join(", ", command.Alias)}]");
         }
 
         internal IEnumerable<string> GetCommands() => _commands.Select(x => x.Item1);

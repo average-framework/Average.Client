@@ -4,7 +4,7 @@ using Average.Client.Framework.Extensions;
 using Average.Client.Framework.Interfaces;
 using Average.Client.Framework.Services;
 using Average.Shared.DataModels;
-using Average.Shared.Enums;
+using CitizenFX.Core;
 using System.Collections.Generic;
 using static Average.Client.Framework.GameAPI;
 using static CitizenFX.Core.Native.API;
@@ -61,12 +61,22 @@ namespace Average.Client.Framework.Handlers
         [ClientEvent("character:spawn_ped")]
         private async void OnRespawnPed(string characterJson)
         {
+            NetworkStartSoloTutorialSession();
             var characterData = characterJson.Deserialize<CharacterData>();
-            Logger.Warn("Start");
             await _characterService.SpawnPed(characterData.Skin.Gender);
-            Logger.Warn("Middle");
-            await _characterService.SetAppearance(PlayerPedId(), characterData);
-            Logger.Warn("End: " + PlayerPedId());
+
+            var ped = PlayerPedId();
+            await _characterService.SetAppearance(ped, characterData);
+
+            RequestCollisionAtCoord(characterData.Position.X, characterData.Position.Y, characterData.Position.Z);
+            SetEntityCoords(ped, characterData.Position.X, characterData.Position.Y, characterData.Position.Z, true, true, true, false);
+
+            var timer = GetGameTimer();
+
+            while (!HasCollisionLoadedAroundEntity(ped) && GetGameTimer() - timer < 5000) await BaseScript.Delay(0);
+
+            SetEntityHeading(ped, characterData.Position.H);
+            NetworkEndTutorialSession();
 
             ShutdownLoadingScreen();
             await FadeIn(1000);

@@ -207,60 +207,60 @@ namespace Average.Client.Framework.Services
 
         private Dictionary<string, uint> characterClothes = new Dictionary<string, uint>()
         {
-            { CharacterClothComponents.Accessories, 0 },
-            { CharacterClothComponents.Badges, 0 },
-            { CharacterClothComponents.Armors, 0 },
-            { CharacterClothComponents.Beltbuckles, 0 },
-            { CharacterClothComponents.Belts, 0 },
-            { CharacterClothComponents.Boots, 0 },
-            { CharacterClothComponents.Bracelts, 0 },
-            { CharacterClothComponents.Chaps, 0 },
-            { CharacterClothComponents.Cloaks, 0 },
-            { CharacterClothComponents.Eyes, 0 },
-            { CharacterClothComponents.Eyewear, 0 },
-            { CharacterClothComponents.Gauntlets, 0 },
-            { CharacterClothComponents.Gloves, 0 },
-            { CharacterClothComponents.Gunbelts, 0 },
-            { CharacterClothComponents.Hairs, 0 },
-            { CharacterClothComponents.Hats, 0 },
-            { CharacterClothComponents.Heads, 0 },
-            { CharacterClothComponents.LegAttachements, 0 },
-            { CharacterClothComponents.Legs, 0 },
-            { CharacterClothComponents.Loadouts, 0 },
-            { CharacterClothComponents.Neckties, 0 },
-            { CharacterClothComponents.Neckwear, 0 },
-            { CharacterClothComponents.Pants, 0 },
-            { CharacterClothComponents.Ponchos, 0 },
-            { CharacterClothComponents.RingsLeftHand, 0 },
-            { CharacterClothComponents.RingsRightHand, 0 },
-            { CharacterClothComponents.Satchels, 0 },
-            { CharacterClothComponents.Shirts, 0 },
-            { CharacterClothComponents.Skirts, 0 },
-            { CharacterClothComponents.Spats, 0 },
-            { CharacterClothComponents.Spurs, 0 },
-            { CharacterClothComponents.Suspenders, 0 },
-            { CharacterClothComponents.Teeth, 0 },
-            { CharacterClothComponents.Torsos, 0 },
-            { CharacterClothComponents.Vests, 0 },
+            { OutfitComponents.Accessories, 0 },
+            { OutfitComponents.Badges, 0 },
+            { OutfitComponents.Armors, 0 },
+            { OutfitComponents.Beltbuckles, 0 },
+            { OutfitComponents.Belts, 0 },
+            { OutfitComponents.Boots, 0 },
+            { OutfitComponents.Bracelts, 0 },
+            { OutfitComponents.Chaps, 0 },
+            { OutfitComponents.Cloaks, 0 },
+            { OutfitComponents.Eyes, 0 },
+            { OutfitComponents.Eyewear, 0 },
+            { OutfitComponents.Gauntlets, 0 },
+            { OutfitComponents.Gloves, 0 },
+            { OutfitComponents.Gunbelts, 0 },
+            { OutfitComponents.Hairs, 0 },
+            { OutfitComponents.Hats, 0 },
+            { OutfitComponents.Heads, 0 },
+            { OutfitComponents.LegAttachements, 0 },
+            { OutfitComponents.Legs, 0 },
+            { OutfitComponents.Loadouts, 0 },
+            { OutfitComponents.Neckties, 0 },
+            { OutfitComponents.Neckwear, 0 },
+            { OutfitComponents.Pants, 0 },
+            { OutfitComponents.Ponchos, 0 },
+            { OutfitComponents.RingsLeftHand, 0 },
+            { OutfitComponents.RingsRightHand, 0 },
+            { OutfitComponents.Satchels, 0 },
+            { OutfitComponents.Shirts, 0 },
+            { OutfitComponents.Skirts, 0 },
+            { OutfitComponents.Spats, 0 },
+            { OutfitComponents.Spurs, 0 },
+            { OutfitComponents.Suspenders, 0 },
+            { OutfitComponents.Teeth, 0 },
+            { OutfitComponents.Torsos, 0 },
+            { OutfitComponents.Vests, 0 },
             // New
-            { CharacterClothComponents.Coats, 0 },
-            { CharacterClothComponents.CoatsClosed, 0 },
-            { CharacterClothComponents.Masks, 0 },
-            { CharacterClothComponents.MasksLarge, 0 },
-            { CharacterClothComponents.HolsterCrossdraw, 0 },
-            { CharacterClothComponents.HolstersLeft, 0 },
-            { CharacterClothComponents.HolstersRight, 0 },
-            { CharacterClothComponents.Sheaths, 0 },
-            { CharacterClothComponents.Aprons, 0 },
-            { CharacterClothComponents.BeardChops, 0 },
-            { CharacterClothComponents.Mustache, 0 },
-            { CharacterClothComponents.MustacheMP, 0 },
-            { CharacterClothComponents.Goatees, 0 },
-            { CharacterClothComponents.FemaleUnknow01, 0 },
-            { CharacterClothComponents.TalismanBelt, 0 },
-            { CharacterClothComponents.TalismanHolster, 0 },
-            { CharacterClothComponents.TalismanSatchel, 0 },
-            { CharacterClothComponents.TalismanWrist, 0 },
+            { OutfitComponents.Coats, 0 },
+            { OutfitComponents.CoatsClosed, 0 },
+            { OutfitComponents.Masks, 0 },
+            { OutfitComponents.MasksLarge, 0 },
+            { OutfitComponents.HolsterCrossdraw, 0 },
+            { OutfitComponents.HolstersLeft, 0 },
+            { OutfitComponents.HolstersRight, 0 },
+            { OutfitComponents.Sheaths, 0 },
+            { OutfitComponents.Aprons, 0 },
+            { OutfitComponents.BeardChops, 0 },
+            { OutfitComponents.Mustache, 0 },
+            { OutfitComponents.MustacheMP, 0 },
+            { OutfitComponents.Goatees, 0 },
+            { OutfitComponents.HairAccessories, 0 },
+            { OutfitComponents.TalismanBelt, 0 },
+            { OutfitComponents.TalismanHolster, 0 },
+            { OutfitComponents.TalismanSatchel, 0 },
+            { OutfitComponents.TalismanWrist, 0 },
         };
 
         private Dictionary<string, OverlayData> characterOverlays = new Dictionary<string, OverlayData>
@@ -508,59 +508,59 @@ namespace Average.Client.Framework.Services
                 },
                 Outfit = new OutfitData
                 {
-                    Accessory = characterClothes[CharacterClothComponents.Accessories],
-                    Apron = characterClothes[CharacterClothComponents.Aprons],
-                    Armor = characterClothes[CharacterClothComponents.Armors],
-                    Badge = characterClothes[CharacterClothComponents.Badges],
-                    BeardChop = characterClothes[CharacterClothComponents.BeardChops],
-                    Belt = characterClothes[CharacterClothComponents.Belts],
-                    Beltbuckle = characterClothes[CharacterClothComponents.Beltbuckles],
-                    Boot = characterClothes[CharacterClothComponents.Boots],
-                    Bracelt = characterClothes[CharacterClothComponents.Bracelts],
-                    Chap = characterClothes[CharacterClothComponents.Chaps],
-                    Cloak = characterClothes[CharacterClothComponents.Cloaks],
-                    Coat = characterClothes[CharacterClothComponents.Coats],
-                    CoatClosed = characterClothes[CharacterClothComponents.CoatsClosed],
-                    Eye = characterClothes[CharacterClothComponents.Eyes],
-                    Eyewear = characterClothes[CharacterClothComponents.Eyewear],
-                    FemaleUnknow01 = characterClothes[CharacterClothComponents.FemaleUnknow01],
-                    Gauntlet = characterClothes[CharacterClothComponents.Gauntlets],
-                    Glove = characterClothes[CharacterClothComponents.Gloves],
-                    Goatee = characterClothes[CharacterClothComponents.Goatees],
-                    Gunbelt = characterClothes[CharacterClothComponents.Gunbelts],
-                    Hair = characterClothes[CharacterClothComponents.Hairs],
-                    Hat = characterClothes[CharacterClothComponents.Hats],
-                    Head = characterClothes[CharacterClothComponents.Heads],
-                    HolsterCrossdraw = characterClothes[CharacterClothComponents.HolsterCrossdraw],
-                    HolsterLeft = characterClothes[CharacterClothComponents.HolstersLeft],
-                    HolsterRight = characterClothes[CharacterClothComponents.HolstersRight],
-                    Leg = characterClothes[CharacterClothComponents.Legs],
-                    LegAttachement = characterClothes[CharacterClothComponents.LegAttachements],
-                    Loadout = characterClothes[CharacterClothComponents.Loadouts],
-                    Mask = characterClothes[CharacterClothComponents.Masks],
-                    MaskLarge = characterClothes[CharacterClothComponents.MasksLarge],
-                    Mustache = characterClothes[CharacterClothComponents.Mustache],
-                    MustacheMP = characterClothes[CharacterClothComponents.MustacheMP],
-                    Necktie = characterClothes[CharacterClothComponents.Neckties],
-                    Neckwear = characterClothes[CharacterClothComponents.Neckwear],
-                    Pant = characterClothes[CharacterClothComponents.Pants],
-                    Poncho = characterClothes[CharacterClothComponents.Ponchos],
-                    RingLeftHand = characterClothes[CharacterClothComponents.RingsLeftHand],
-                    RingRightHand = characterClothes[CharacterClothComponents.RingsRightHand],
-                    Satchel = characterClothes[CharacterClothComponents.Satchels],
-                    Sheath = characterClothes[CharacterClothComponents.Sheaths],
-                    Shirt = characterClothes[CharacterClothComponents.Shirts],
-                    Skirt = characterClothes[CharacterClothComponents.Skirts],
-                    Spat = characterClothes[CharacterClothComponents.Spats],
-                    Spur = characterClothes[CharacterClothComponents.Spurs],
-                    Suspender = characterClothes[CharacterClothComponents.Suspenders],
-                    TalismanBelt = characterClothes[CharacterClothComponents.TalismanBelt],
-                    TalismanHolster = characterClothes[CharacterClothComponents.TalismanHolster],
-                    TalismanSatchel = characterClothes[CharacterClothComponents.TalismanSatchel],
-                    TalismanWrist = characterClothes[CharacterClothComponents.TalismanWrist],
-                    Teeth = characterClothes[CharacterClothComponents.Teeth],
-                    Torso = characterClothes[CharacterClothComponents.Torsos],
-                    Vest = characterClothes[CharacterClothComponents.Vests],
+                    Accessory = characterClothes[OutfitComponents.Accessories],
+                    Apron = characterClothes[OutfitComponents.Aprons],
+                    Armor = characterClothes[OutfitComponents.Armors],
+                    Badge = characterClothes[OutfitComponents.Badges],
+                    BeardChop = characterClothes[OutfitComponents.BeardChops],
+                    Belt = characterClothes[OutfitComponents.Belts],
+                    Beltbuckle = characterClothes[OutfitComponents.Beltbuckles],
+                    Boot = characterClothes[OutfitComponents.Boots],
+                    Bracelt = characterClothes[OutfitComponents.Bracelts],
+                    Chap = characterClothes[OutfitComponents.Chaps],
+                    Cloak = characterClothes[OutfitComponents.Cloaks],
+                    Coat = characterClothes[OutfitComponents.Coats],
+                    CoatClosed = characterClothes[OutfitComponents.CoatsClosed],
+                    Eye = characterClothes[OutfitComponents.Eyes],
+                    Eyewear = characterClothes[OutfitComponents.Eyewear],
+                    FemaleUnknow01 = characterClothes[OutfitComponents.HairAccessories],
+                    Gauntlet = characterClothes[OutfitComponents.Gauntlets],
+                    Glove = characterClothes[OutfitComponents.Gloves],
+                    Goatee = characterClothes[OutfitComponents.Goatees],
+                    Gunbelt = characterClothes[OutfitComponents.Gunbelts],
+                    Hair = characterClothes[OutfitComponents.Hairs],
+                    Hat = characterClothes[OutfitComponents.Hats],
+                    Head = characterClothes[OutfitComponents.Heads],
+                    HolsterCrossdraw = characterClothes[OutfitComponents.HolsterCrossdraw],
+                    HolsterLeft = characterClothes[OutfitComponents.HolstersLeft],
+                    HolsterRight = characterClothes[OutfitComponents.HolstersRight],
+                    Leg = characterClothes[OutfitComponents.Legs],
+                    LegAttachement = characterClothes[OutfitComponents.LegAttachements],
+                    Loadout = characterClothes[OutfitComponents.Loadouts],
+                    Mask = characterClothes[OutfitComponents.Masks],
+                    MaskLarge = characterClothes[OutfitComponents.MasksLarge],
+                    Mustache = characterClothes[OutfitComponents.Mustache],
+                    MustacheMP = characterClothes[OutfitComponents.MustacheMP],
+                    Necktie = characterClothes[OutfitComponents.Neckties],
+                    Neckwear = characterClothes[OutfitComponents.Neckwear],
+                    Pant = characterClothes[OutfitComponents.Pants],
+                    Poncho = characterClothes[OutfitComponents.Ponchos],
+                    RingLeftHand = characterClothes[OutfitComponents.RingsLeftHand],
+                    RingRightHand = characterClothes[OutfitComponents.RingsRightHand],
+                    Satchel = characterClothes[OutfitComponents.Satchels],
+                    Sheath = characterClothes[OutfitComponents.Sheaths],
+                    Shirt = characterClothes[OutfitComponents.Shirts],
+                    Skirt = characterClothes[OutfitComponents.Skirts],
+                    Spat = characterClothes[OutfitComponents.Spats],
+                    Spur = characterClothes[OutfitComponents.Spurs],
+                    Suspender = characterClothes[OutfitComponents.Suspenders],
+                    TalismanBelt = characterClothes[OutfitComponents.TalismanBelt],
+                    TalismanHolster = characterClothes[OutfitComponents.TalismanHolster],
+                    TalismanSatchel = characterClothes[OutfitComponents.TalismanSatchel],
+                    TalismanWrist = characterClothes[OutfitComponents.TalismanWrist],
+                    Teeth = characterClothes[OutfitComponents.Teeth],
+                    Torso = characterClothes[OutfitComponents.Torsos],
+                    Vest = characterClothes[OutfitComponents.Vests],
                 },
                 Economy = new EconomyData
                 {
@@ -753,9 +753,9 @@ namespace Average.Client.Framework.Services
             legsItem.MaxValue = origin.Legs.Count - 1;
             legsItem.Value = 0;
 
-            UpdatePedBodyComponent(origin.Heads, headsItem, _languageService.Get(CharacterClothComponents.Heads));
-            UpdatePedBodyComponent(origin.Bodies, bodyItem, _languageService.Get(CharacterClothComponents.Torsos));
-            UpdatePedBodyComponent(origin.Legs, legsItem, _languageService.Get(CharacterClothComponents.Legs));
+            UpdatePedBodyComponent(origin.Heads, headsItem, _languageService.Get(OutfitComponents.Heads));
+            UpdatePedBodyComponent(origin.Bodies, bodyItem, _languageService.Get(OutfitComponents.Torsos));
+            UpdatePedBodyComponent(origin.Legs, legsItem, _languageService.Get(OutfitComponents.Legs));
 
             RandomizeFace();
 
@@ -766,54 +766,54 @@ namespace Average.Client.Framework.Services
         private async void InitDefaultPedComponents()
         {
             // Define max cloth value by gender
-            skirtsItem.MaxValue = GetClothByCategory(CharacterClothComponents.Loadouts).Count - 1;
-            hairItem.MaxValue = GetClothByCategory(CharacterClothComponents.Hairs).Count - 1;
-            eyesItem.MaxValue = GetClothByCategory(CharacterClothComponents.Eyes).Count - 1;
-            teethItem.MaxValue = GetClothByCategory(CharacterClothComponents.Teeth).Count - 1;
-            braceletsItem.MaxValue = GetClothByCategory(CharacterClothComponents.Bracelts).Count - 1;
-            ringsLeftHandItem.MaxValue = GetClothByCategory(CharacterClothComponents.RingsLeftHand).Count - 1;
-            ringsRightHandItem.MaxValue = GetClothByCategory(CharacterClothComponents.RingsRightHand).Count - 1;
-            hatsItem.MaxValue = GetClothByCategory(CharacterClothComponents.Hats).Count - 1;
-            shirtsItem.MaxValue = GetClothByCategory(CharacterClothComponents.Shirts).Count - 1;
-            vestItem.MaxValue = GetClothByCategory(CharacterClothComponents.Vests).Count - 1;
-            pantsItem.MaxValue = GetClothByCategory(CharacterClothComponents.Pants).Count - 1;
-            neckwearItem.MaxValue = GetClothByCategory(CharacterClothComponents.Neckwear).Count - 1;
-            bootsItem.MaxValue = GetClothByCategory(CharacterClothComponents.Boots).Count - 1;
-            accessoriesItem.MaxValue = GetClothByCategory(CharacterClothComponents.Accessories).Count - 1;
-            spursItem.MaxValue = GetClothByCategory(CharacterClothComponents.Spurs).Count - 1;
-            chapsItem.MaxValue = GetClothByCategory(CharacterClothComponents.Chaps).Count - 1;
-            cloakItem.MaxValue = GetClothByCategory(CharacterClothComponents.Cloaks).Count - 1;
-            masksItem.MaxValue = GetClothByCategory(CharacterClothComponents.Masks).Count - 1;
-            spatsItem.MaxValue = GetClothByCategory(CharacterClothComponents.Spats).Count - 1;
-            gauntletsItem.MaxValue = GetClothByCategory(CharacterClothComponents.Gauntlets).Count - 1;
-            necktiesItem.MaxValue = GetClothByCategory(CharacterClothComponents.Neckties).Count - 1;
-            suspendersItem.MaxValue = GetClothByCategory(CharacterClothComponents.Suspenders).Count - 1;
-            gunbeltItem.MaxValue = GetClothByCategory(CharacterClothComponents.Gunbelts).Count - 1;
-            beltItem.MaxValue = GetClothByCategory(CharacterClothComponents.Belts).Count - 1;
-            buckleItem.MaxValue = GetClothByCategory(CharacterClothComponents.Beltbuckles).Count - 1;
-            coatsItem.MaxValue = GetClothByCategory(CharacterClothComponents.Coats).Count - 1;
-            ponchosItem.MaxValue = GetClothByCategory(CharacterClothComponents.Ponchos).Count - 1;
-            glovesItem.MaxValue = GetClothByCategory(CharacterClothComponents.Gloves).Count - 1;
-            satchelsItem.MaxValue = GetClothByCategory(CharacterClothComponents.Satchels).Count - 1;
-            legAttachmentsItem.MaxValue = GetClothByCategory(CharacterClothComponents.LegAttachements).Count - 1;
-            holstersCrossdrawItem.MaxValue = GetClothByCategory(CharacterClothComponents.HolsterCrossdraw).Count - 1;
-            holstersLeftItem.MaxValue = GetClothByCategory(CharacterClothComponents.HolstersLeft).Count - 1;
-            holstersRightItem.MaxValue = GetClothByCategory(CharacterClothComponents.HolstersRight).Count - 1;
-            eyewearItem.MaxValue = GetClothByCategory(CharacterClothComponents.Eyewear).Count - 1;
-            masksLargeItem.MaxValue = GetClothByCategory(CharacterClothComponents.MasksLarge).Count - 1;
-            coatsClosedItem.MaxValue = GetClothByCategory(CharacterClothComponents.CoatsClosed).Count - 1;
-            loadoutsItem.MaxValue = GetClothByCategory(CharacterClothComponents.Loadouts).Count - 1;
-            sheathsItem.MaxValue = GetClothByCategory(CharacterClothComponents.Sheaths).Count - 1;
-            apronsItem.MaxValue = GetClothByCategory(CharacterClothComponents.Aprons).Count - 1;
-            beardChopsItem.MaxValue = GetClothByCategory(CharacterClothComponents.BeardChops).Count - 1;
-            mustacheItem.MaxValue = GetClothByCategory(CharacterClothComponents.Mustache).Count - 1;
-            mustacheMpItem.MaxValue = GetClothByCategory(CharacterClothComponents.MustacheMP).Count - 1;
-            goateesItem.MaxValue = GetClothByCategory(CharacterClothComponents.Goatees).Count - 1;
-            femaleUnknow01Item.MaxValue = GetClothByCategory(CharacterClothComponents.FemaleUnknow01).Count - 1;
-            talismanBeltItem.MaxValue = GetClothByCategory(CharacterClothComponents.TalismanBelt).Count - 1;
-            talismanHolsterItem.MaxValue = GetClothByCategory(CharacterClothComponents.TalismanHolster).Count - 1;
-            talismanSatchelItem.MaxValue = GetClothByCategory(CharacterClothComponents.TalismanSatchel).Count - 1;
-            talismanWristItem.MaxValue = GetClothByCategory(CharacterClothComponents.TalismanWrist).Count - 1;
+            skirtsItem.MaxValue = GetOutfitComponentsByCategory(OutfitComponents.Loadouts).Count - 1;
+            hairItem.MaxValue = GetOutfitComponentsByCategory(OutfitComponents.Hairs).Count - 1;
+            eyesItem.MaxValue = GetOutfitComponentsByCategory(OutfitComponents.Eyes).Count - 1;
+            teethItem.MaxValue = GetOutfitComponentsByCategory(OutfitComponents.Teeth).Count - 1;
+            braceletsItem.MaxValue = GetOutfitComponentsByCategory(OutfitComponents.Bracelts).Count - 1;
+            ringsLeftHandItem.MaxValue = GetOutfitComponentsByCategory(OutfitComponents.RingsLeftHand).Count - 1;
+            ringsRightHandItem.MaxValue = GetOutfitComponentsByCategory(OutfitComponents.RingsRightHand).Count - 1;
+            hatsItem.MaxValue = GetOutfitComponentsByCategory(OutfitComponents.Hats).Count - 1;
+            shirtsItem.MaxValue = GetOutfitComponentsByCategory(OutfitComponents.Shirts).Count - 1;
+            vestItem.MaxValue = GetOutfitComponentsByCategory(OutfitComponents.Vests).Count - 1;
+            pantsItem.MaxValue = GetOutfitComponentsByCategory(OutfitComponents.Pants).Count - 1;
+            neckwearItem.MaxValue = GetOutfitComponentsByCategory(OutfitComponents.Neckwear).Count - 1;
+            bootsItem.MaxValue = GetOutfitComponentsByCategory(OutfitComponents.Boots).Count - 1;
+            accessoriesItem.MaxValue = GetOutfitComponentsByCategory(OutfitComponents.Accessories).Count - 1;
+            spursItem.MaxValue = GetOutfitComponentsByCategory(OutfitComponents.Spurs).Count - 1;
+            chapsItem.MaxValue = GetOutfitComponentsByCategory(OutfitComponents.Chaps).Count - 1;
+            cloakItem.MaxValue = GetOutfitComponentsByCategory(OutfitComponents.Cloaks).Count - 1;
+            masksItem.MaxValue = GetOutfitComponentsByCategory(OutfitComponents.Masks).Count - 1;
+            spatsItem.MaxValue = GetOutfitComponentsByCategory(OutfitComponents.Spats).Count - 1;
+            gauntletsItem.MaxValue = GetOutfitComponentsByCategory(OutfitComponents.Gauntlets).Count - 1;
+            necktiesItem.MaxValue = GetOutfitComponentsByCategory(OutfitComponents.Neckties).Count - 1;
+            suspendersItem.MaxValue = GetOutfitComponentsByCategory(OutfitComponents.Suspenders).Count - 1;
+            gunbeltItem.MaxValue = GetOutfitComponentsByCategory(OutfitComponents.Gunbelts).Count - 1;
+            beltItem.MaxValue = GetOutfitComponentsByCategory(OutfitComponents.Belts).Count - 1;
+            buckleItem.MaxValue = GetOutfitComponentsByCategory(OutfitComponents.Beltbuckles).Count - 1;
+            coatsItem.MaxValue = GetOutfitComponentsByCategory(OutfitComponents.Coats).Count - 1;
+            ponchosItem.MaxValue = GetOutfitComponentsByCategory(OutfitComponents.Ponchos).Count - 1;
+            glovesItem.MaxValue = GetOutfitComponentsByCategory(OutfitComponents.Gloves).Count - 1;
+            satchelsItem.MaxValue = GetOutfitComponentsByCategory(OutfitComponents.Satchels).Count - 1;
+            legAttachmentsItem.MaxValue = GetOutfitComponentsByCategory(OutfitComponents.LegAttachements).Count - 1;
+            holstersCrossdrawItem.MaxValue = GetOutfitComponentsByCategory(OutfitComponents.HolsterCrossdraw).Count - 1;
+            holstersLeftItem.MaxValue = GetOutfitComponentsByCategory(OutfitComponents.HolstersLeft).Count - 1;
+            holstersRightItem.MaxValue = GetOutfitComponentsByCategory(OutfitComponents.HolstersRight).Count - 1;
+            eyewearItem.MaxValue = GetOutfitComponentsByCategory(OutfitComponents.Eyewear).Count - 1;
+            masksLargeItem.MaxValue = GetOutfitComponentsByCategory(OutfitComponents.MasksLarge).Count - 1;
+            coatsClosedItem.MaxValue = GetOutfitComponentsByCategory(OutfitComponents.CoatsClosed).Count - 1;
+            loadoutsItem.MaxValue = GetOutfitComponentsByCategory(OutfitComponents.Loadouts).Count - 1;
+            sheathsItem.MaxValue = GetOutfitComponentsByCategory(OutfitComponents.Sheaths).Count - 1;
+            apronsItem.MaxValue = GetOutfitComponentsByCategory(OutfitComponents.Aprons).Count - 1;
+            beardChopsItem.MaxValue = GetOutfitComponentsByCategory(OutfitComponents.BeardChops).Count - 1;
+            mustacheItem.MaxValue = GetOutfitComponentsByCategory(OutfitComponents.Mustache).Count - 1;
+            mustacheMpItem.MaxValue = GetOutfitComponentsByCategory(OutfitComponents.MustacheMP).Count - 1;
+            goateesItem.MaxValue = GetOutfitComponentsByCategory(OutfitComponents.Goatees).Count - 1;
+            femaleUnknow01Item.MaxValue = GetOutfitComponentsByCategory(OutfitComponents.HairAccessories).Count - 1;
+            talismanBeltItem.MaxValue = GetOutfitComponentsByCategory(OutfitComponents.TalismanBelt).Count - 1;
+            talismanHolsterItem.MaxValue = GetOutfitComponentsByCategory(OutfitComponents.TalismanHolster).Count - 1;
+            talismanSatchelItem.MaxValue = GetOutfitComponentsByCategory(OutfitComponents.TalismanSatchel).Count - 1;
+            talismanWristItem.MaxValue = GetOutfitComponentsByCategory(OutfitComponents.TalismanWrist).Count - 1;
 
             if (gender == Gender.Male)
             {
@@ -821,13 +821,13 @@ namespace Average.Client.Framework.Services
 
                 if (beardType == 0)
                 {
-                    beardChopsItem.Value = new Random(Environment.TickCount + 1).Next(0, GetClothByCategory(CharacterClothComponents.BeardChops).Count - 1);
-                    goateesItem.Value = new Random(Environment.TickCount + 2).Next(0, GetClothByCategory(CharacterClothComponents.Goatees).Count - 1);
-                    mustacheItem.Value = new Random(Environment.TickCount + 3).Next(0, GetClothByCategory(CharacterClothComponents.Mustache).Count - 1);
+                    beardChopsItem.Value = new Random(Environment.TickCount + 1).Next(0, GetOutfitComponentsByCategory(OutfitComponents.BeardChops).Count - 1);
+                    goateesItem.Value = new Random(Environment.TickCount + 2).Next(0, GetOutfitComponentsByCategory(OutfitComponents.Goatees).Count - 1);
+                    mustacheItem.Value = new Random(Environment.TickCount + 3).Next(0, GetOutfitComponentsByCategory(OutfitComponents.Mustache).Count - 1);
                 }
                 else
                 {
-                    mustacheMpItem.Value = new Random(Environment.TickCount + 4).Next(0, GetClothByCategory(CharacterClothComponents.MustacheMP).Count - 1);
+                    mustacheMpItem.Value = new Random(Environment.TickCount + 4).Next(0, GetOutfitComponentsByCategory(OutfitComponents.MustacheMP).Count - 1);
                 }
 
                 // Male
@@ -880,23 +880,23 @@ namespace Average.Client.Framework.Services
             if (masksLargeItem.MaxValue > -1) masksLargeItem.Visible = true;
             else masksLargeItem.Visible = false;
 
-            hairItem.Value = new Random(Environment.TickCount + 5).Next(0, GetClothByCategory(CharacterClothComponents.Hairs).Count - 1);
-            eyesItem.Value = new Random(Environment.TickCount + 6).Next(0, GetClothByCategory(CharacterClothComponents.Eyes).Count - 1);
-            teethItem.Value = new Random(Environment.TickCount + 7).Next(0, GetClothByCategory(CharacterClothComponents.Teeth).Count - 1);
+            hairItem.Value = new Random(Environment.TickCount + 5).Next(-1, GetOutfitComponentsByCategory(OutfitComponents.Hairs).Count - 1);
+            eyesItem.Value = new Random(Environment.TickCount + 6).Next(-1, GetOutfitComponentsByCategory(OutfitComponents.Eyes).Count - 1);
+            teethItem.Value = new Random(Environment.TickCount + 7).Next(-1, GetOutfitComponentsByCategory(OutfitComponents.Teeth).Count - 1);
 
             if (gender == Gender.Male)
             {
-                await SetPedComponent(CharacterClothComponents.BeardChops, beardChopsItem);
-                await SetPedComponent(CharacterClothComponents.Mustache, mustacheItem);
-                await SetPedComponent(CharacterClothComponents.MustacheMP, mustacheMpItem);
-                await SetPedComponent(CharacterClothComponents.Goatees, goateesItem);
+                await SetPedComponent(OutfitComponents.BeardChops, beardChopsItem);
+                await SetPedComponent(OutfitComponents.Mustache, mustacheItem);
+                await SetPedComponent(OutfitComponents.MustacheMP, mustacheMpItem);
+                await SetPedComponent(OutfitComponents.Goatees, goateesItem);
             }
 
-            await SetPedComponent(CharacterClothComponents.Hairs, hairItem);
-            await SetPedComponent(CharacterClothComponents.Eyes, eyesItem);
-            await SetPedComponent(CharacterClothComponents.Teeth, teethItem);
+            await SetPedComponent(OutfitComponents.Hairs, hairItem);
+            await SetPedComponent(OutfitComponents.Eyes, eyesItem);
+            await SetPedComponent(OutfitComponents.Teeth, teethItem);
 
-            RemovePedComponent(CharacterClothComponents.Pants);
+            RemovePedComponent(OutfitComponents.Pants);
 
             bodyTypesItem.Value = new Random(Environment.TickCount + 8).Next(0, _characterService.bodyTypes.Count - 1);
             waistTypesItem.Value = new Random(Environment.TickCount + 9).Next(0, _characterService.waistTypes.Count - 1);
@@ -904,52 +904,52 @@ namespace Average.Client.Framework.Services
             SetPedBodyComponent(_characterService.bodyTypes, bodyTypesItem.Value);
             SetPedBodyComponent(_characterService.waistTypes, waistTypesItem.Value);
 
-            await SetPedComponent(CharacterClothComponents.Hats, hatsItem);
-            await SetPedComponent(CharacterClothComponents.Eyewear, eyewearItem);
-            await SetPedComponent(CharacterClothComponents.Neckwear, neckwearItem);
-            await SetPedComponent(CharacterClothComponents.Neckties, necktiesItem);
-            await SetPedComponent(CharacterClothComponents.Shirts, shirtsItem);
-            await SetPedComponent(CharacterClothComponents.Suspenders, suspendersItem);
-            await SetPedComponent(CharacterClothComponents.Vests, vestItem);
-            await SetPedComponent(CharacterClothComponents.Coats, coatsItem);
-            await SetPedComponent(CharacterClothComponents.CoatsClosed, coatsClosedItem);
-            await SetPedComponent(CharacterClothComponents.Ponchos, ponchosItem);
-            await SetPedComponent(CharacterClothComponents.Cloaks, cloakItem);
-            await SetPedComponent(CharacterClothComponents.Gloves, glovesItem);
-            await SetPedComponent(CharacterClothComponents.RingsRightHand, ringsRightHandItem);
-            await SetPedComponent(CharacterClothComponents.RingsLeftHand, ringsLeftHandItem);
-            await SetPedComponent(CharacterClothComponents.Bracelts, braceletsItem);
-            await SetPedComponent(CharacterClothComponents.Gunbelts, gunbeltItem);
-            await SetPedComponent(CharacterClothComponents.Belts, beltItem);
-            await SetPedComponent(CharacterClothComponents.Beltbuckles, buckleItem);
-            await SetPedComponent(CharacterClothComponents.HolsterCrossdraw, holstersCrossdrawItem);
-            await SetPedComponent(CharacterClothComponents.HolstersLeft, holstersLeftItem);
-            await SetPedComponent(CharacterClothComponents.HolstersRight, holstersRightItem);
-            await SetPedComponent(CharacterClothComponents.Pants, pantsItem);
+            await SetPedComponent(OutfitComponents.Hats, hatsItem);
+            await SetPedComponent(OutfitComponents.Eyewear, eyewearItem);
+            await SetPedComponent(OutfitComponents.Neckwear, neckwearItem);
+            await SetPedComponent(OutfitComponents.Neckties, necktiesItem);
+            await SetPedComponent(OutfitComponents.Shirts, shirtsItem);
+            await SetPedComponent(OutfitComponents.Suspenders, suspendersItem);
+            await SetPedComponent(OutfitComponents.Vests, vestItem);
+            await SetPedComponent(OutfitComponents.Coats, coatsItem);
+            await SetPedComponent(OutfitComponents.CoatsClosed, coatsClosedItem);
+            await SetPedComponent(OutfitComponents.Ponchos, ponchosItem);
+            await SetPedComponent(OutfitComponents.Cloaks, cloakItem);
+            await SetPedComponent(OutfitComponents.Gloves, glovesItem);
+            await SetPedComponent(OutfitComponents.RingsRightHand, ringsRightHandItem);
+            await SetPedComponent(OutfitComponents.RingsLeftHand, ringsLeftHandItem);
+            await SetPedComponent(OutfitComponents.Bracelts, braceletsItem);
+            await SetPedComponent(OutfitComponents.Gunbelts, gunbeltItem);
+            await SetPedComponent(OutfitComponents.Belts, beltItem);
+            await SetPedComponent(OutfitComponents.Beltbuckles, buckleItem);
+            await SetPedComponent(OutfitComponents.HolsterCrossdraw, holstersCrossdrawItem);
+            await SetPedComponent(OutfitComponents.HolstersLeft, holstersLeftItem);
+            await SetPedComponent(OutfitComponents.HolstersRight, holstersRightItem);
+            await SetPedComponent(OutfitComponents.Pants, pantsItem);
 
             if (gender == Gender.Female)
             {
-                await SetPedComponent(CharacterClothComponents.Skirts, skirtsItem);
-                await SetPedComponent(CharacterClothComponents.FemaleUnknow01, femaleUnknow01Item);
+                await SetPedComponent(OutfitComponents.Skirts, skirtsItem);
+                await SetPedComponent(OutfitComponents.HairAccessories, femaleUnknow01Item);
             }
 
-            await SetPedComponent(CharacterClothComponents.Boots, bootsItem);
-            await SetPedComponent(CharacterClothComponents.Chaps, chapsItem);
-            await SetPedComponent(CharacterClothComponents.Spurs, spursItem);
-            await SetPedComponent(CharacterClothComponents.Spats, spatsItem);
-            await SetPedComponent(CharacterClothComponents.Satchels, satchelsItem);
-            await SetPedComponent(CharacterClothComponents.Masks, masksItem);
-            await SetPedComponent(CharacterClothComponents.MasksLarge, masksLargeItem);
-            await SetPedComponent(CharacterClothComponents.Loadouts, loadoutsItem);
-            await SetPedComponent(CharacterClothComponents.LegAttachements, legAttachmentsItem);
-            await SetPedComponent(CharacterClothComponents.Gauntlets, gauntletsItem);
-            await SetPedComponent(CharacterClothComponents.Accessories, accessoriesItem);
-            await SetPedComponent(CharacterClothComponents.Sheaths, sheathsItem);
-            await SetPedComponent(CharacterClothComponents.Aprons, apronsItem);
-            await SetPedComponent(CharacterClothComponents.TalismanBelt, talismanBeltItem);
-            await SetPedComponent(CharacterClothComponents.TalismanHolster, talismanHolsterItem);
-            await SetPedComponent(CharacterClothComponents.TalismanSatchel, talismanSatchelItem);
-            await SetPedComponent(CharacterClothComponents.TalismanWrist, talismanWristItem);
+            await SetPedComponent(OutfitComponents.Boots, bootsItem);
+            await SetPedComponent(OutfitComponents.Chaps, chapsItem);
+            await SetPedComponent(OutfitComponents.Spurs, spursItem);
+            await SetPedComponent(OutfitComponents.Spats, spatsItem);
+            await SetPedComponent(OutfitComponents.Satchels, satchelsItem);
+            await SetPedComponent(OutfitComponents.Masks, masksItem);
+            await SetPedComponent(OutfitComponents.MasksLarge, masksLargeItem);
+            await SetPedComponent(OutfitComponents.Loadouts, loadoutsItem);
+            await SetPedComponent(OutfitComponents.LegAttachements, legAttachmentsItem);
+            await SetPedComponent(OutfitComponents.Gauntlets, gauntletsItem);
+            await SetPedComponent(OutfitComponents.Accessories, accessoriesItem);
+            await SetPedComponent(OutfitComponents.Sheaths, sheathsItem);
+            await SetPedComponent(OutfitComponents.Aprons, apronsItem);
+            await SetPedComponent(OutfitComponents.TalismanBelt, talismanBeltItem);
+            await SetPedComponent(OutfitComponents.TalismanHolster, talismanHolsterItem);
+            await SetPedComponent(OutfitComponents.TalismanSatchel, talismanSatchelItem);
+            await SetPedComponent(OutfitComponents.TalismanWrist, talismanWristItem);
 
             UpdatePedVariation(PlayerPedId());
         }
@@ -1066,24 +1066,24 @@ namespace Average.Client.Framework.Services
                 legsItem.MaxValue = origin.Legs.Count - 1;
                 legsItem.Value = 0;
 
-                UpdatePedBodyComponent(origin.Heads, headsItem, _languageService.Get(CharacterClothComponents.Heads));
-                UpdatePedBodyComponent(origin.Bodies, bodyItem, _languageService.Get(CharacterClothComponents.Torsos));
-                UpdatePedBodyComponent(origin.Legs, legsItem, _languageService.Get(CharacterClothComponents.Legs));
+                UpdatePedBodyComponent(origin.Heads, headsItem, _languageService.Get(OutfitComponents.Heads));
+                UpdatePedBodyComponent(origin.Bodies, bodyItem, _languageService.Get(OutfitComponents.Torsos));
+                UpdatePedBodyComponent(origin.Legs, legsItem, _languageService.Get(OutfitComponents.Legs));
             });
 
-            headsItem = new SelectorItem<int>(_languageService.Get(CharacterClothComponents.Heads), 0, origin.Heads.Count - 1, 0, 1, (item) =>
+            headsItem = new SelectorItem<int>(_languageService.Get(OutfitComponents.Heads), 0, origin.Heads.Count - 1, 0, 1, (item) =>
             {
-                UpdatePedBodyComponent(origin.Heads, headsItem, _languageService.Get(CharacterClothComponents.Heads));
+                UpdatePedBodyComponent(origin.Heads, headsItem, _languageService.Get(OutfitComponents.Heads));
             });
 
-            bodyItem = new SelectorItem<int>(_languageService.Get(CharacterClothComponents.Torsos), 0, origin.Bodies.Count - 1, 0, 1, (item) =>
+            bodyItem = new SelectorItem<int>(_languageService.Get(OutfitComponents.Torsos), 0, origin.Bodies.Count - 1, 0, 1, (item) =>
             {
-                UpdatePedBodyComponent(origin.Bodies, bodyItem, _languageService.Get(CharacterClothComponents.Torsos));
+                UpdatePedBodyComponent(origin.Bodies, bodyItem, _languageService.Get(OutfitComponents.Torsos));
             });
 
-            legsItem = new SelectorItem<int>(_languageService.Get(CharacterClothComponents.Legs), 0, origin.Legs.Count - 1, 0, 1, (item) =>
+            legsItem = new SelectorItem<int>(_languageService.Get(OutfitComponents.Legs), 0, origin.Legs.Count - 1, 0, 1, (item) =>
             {
-                UpdatePedBodyComponent(origin.Legs, legsItem, _languageService.Get(CharacterClothComponents.Legs));
+                UpdatePedBodyComponent(origin.Legs, legsItem, _languageService.Get(OutfitComponents.Legs));
             });
 
             infoMenu.AddItem(genderItem);
@@ -1099,45 +1099,79 @@ namespace Average.Client.Framework.Services
             infoMenu.AddItem(new ButtonItem("Créer le personnage", item => CreateCharacter()));
         }
 
-        private List<Cloth> GetClothByCategory(string categoryHash) => _characterService.clothes.Where(x => x.CategoryHash == categoryHash && x.PedType == (int)gender).ToList();
+        private List<Cloth> GetOutfitComponentsByCategory(string categoryHash)
+        {
+            switch (categoryHash)
+            {
+                case OutfitComponents.TalismanBelt:
+                case OutfitComponents.TalismanHolster:
+                case OutfitComponents.TalismanSatchel:
+                case OutfitComponents.TalismanWrist:
+                case OutfitComponents.Aprons:
+                case OutfitComponents.HairAccessories:
+                case OutfitComponents.Gunbelts:
+                case OutfitComponents.Goatees:
+                case OutfitComponents.BeardChops:
+                case OutfitComponents.Mustache:
+                case OutfitComponents.MustacheMP:
+                case OutfitComponents.Belts:
+                case OutfitComponents.Beltbuckles:
+                case OutfitComponents.Badges:
+                case OutfitComponents.Armors:
+                case OutfitComponents.Satchels:
+                case OutfitComponents.Sheaths:
+                case OutfitComponents.Skirts:
+                case OutfitComponents.Spats:
+                case OutfitComponents.Spurs:
+                case OutfitComponents.Suspenders:
+                case OutfitComponents.Hats:
+                case OutfitComponents.Eyes:
+                case OutfitComponents.Eyewear:
+                case OutfitComponents.Neckties:
+                case OutfitComponents.Neckwear:
+                    return _characterService.clothes.Where(x => x.CategoryHash == categoryHash && x.PedType == (int)gender).ToList();
+            }
+
+            return  _characterService.clothes.Where(x => x.CategoryHash == categoryHash && x.IsMultiplayer && x.PedType == (int)gender).ToList();
+        }
 
         private void InitFaceMenu()
         {
             faceMenu = new MenuContainer(_languageService.Get("Client.CharacterCreator.Faces").ToUpper(), "Visage");
 
-            eyesItem = new SelectorItem<int>(_languageService.Get("Client.CharacterCreator.Eyes"), 0, GetClothByCategory(CharacterClothComponents.Eyes).Count - 1, 0, 1, async (item) =>
+            eyesItem = new SelectorItem<int>(_languageService.Get("Client.CharacterCreator.Eyes"), 0, GetOutfitComponentsByCategory(OutfitComponents.Eyes).Count - 1, 0, 1, async (item) =>
             {
-                await SetPedComponent(CharacterClothComponents.Eyes, item);
+                await SetPedComponent(OutfitComponents.Eyes, item);
             });
 
-            hairItem = new SelectorItem<int>(_languageService.Get("Client.CharacterCreator.Hair"), -1, GetClothByCategory(CharacterClothComponents.Hairs).Count - 1, -1, 1, async (item) =>
+            hairItem = new SelectorItem<int>(_languageService.Get("Client.CharacterCreator.Hair"), -1, GetOutfitComponentsByCategory(OutfitComponents.Hairs).Count - 1, -1, 1, async (item) =>
             {
-                await SetPedComponent(CharacterClothComponents.Hairs, item);
+                await SetPedComponent(OutfitComponents.Hairs, item);
             });
 
-            beardChopsItem = new SelectorItem<int>("Favori", -1, GetClothByCategory(CharacterClothComponents.BeardChops).Count - 1, -1, 1, async (item) =>
+            beardChopsItem = new SelectorItem<int>("Favori", -1, GetOutfitComponentsByCategory(OutfitComponents.BeardChops).Count - 1, -1, 1, async (item) =>
             {
-                await SetPedComponent(CharacterClothComponents.BeardChops, item);
+                await SetPedComponent(OutfitComponents.BeardChops, item);
             }, gender == Gender.Male);
 
-            mustacheItem = new SelectorItem<int>("Moustache", -1, GetClothByCategory(CharacterClothComponents.Mustache).Count - 1, -1, 1, async (item) =>
+            mustacheItem = new SelectorItem<int>("Moustache", -1, GetOutfitComponentsByCategory(OutfitComponents.Mustache).Count - 1, -1, 1, async (item) =>
             {
-                await SetPedComponent(CharacterClothComponents.Mustache, item);
+                await SetPedComponent(OutfitComponents.Mustache, item);
             }, gender == Gender.Male);
 
-            mustacheMpItem = new SelectorItem<int>("Barbe", -1, GetClothByCategory(CharacterClothComponents.MustacheMP).Count - 1, -1, 1, async (item) =>
+            mustacheMpItem = new SelectorItem<int>("Barbe", -1, GetOutfitComponentsByCategory(OutfitComponents.MustacheMP).Count - 1, -1, 1, async (item) =>
             {
-                await SetPedComponent(CharacterClothComponents.MustacheMP, item);
+                await SetPedComponent(OutfitComponents.MustacheMP, item);
             }, gender == Gender.Male);
 
-            goateesItem = new SelectorItem<int>("Boucs", -1, GetClothByCategory(CharacterClothComponents.Goatees).Count - 1, -1, 1, async (item) =>
+            goateesItem = new SelectorItem<int>("Boucs", -1, GetOutfitComponentsByCategory(OutfitComponents.Goatees).Count - 1, -1, 1, async (item) =>
             {
-                await SetPedComponent(CharacterClothComponents.Goatees, item);
+                await SetPedComponent(OutfitComponents.Goatees, item);
             }, gender == Gender.Male);
 
-            teethItem = new SelectorItem<int>(_languageService.Get("Client.CharacterCreator.Teeth"), 0, GetClothByCategory(CharacterClothComponents.Teeth).Count - 1, 0, 1, async (item) =>
+            teethItem = new SelectorItem<int>(_languageService.Get("Client.CharacterCreator.Teeth"), 0, GetOutfitComponentsByCategory(OutfitComponents.Teeth).Count - 1, 0, 1, async (item) =>
             {
-                await SetPedComponent(CharacterClothComponents.Teeth, item);
+                await SetPedComponent(OutfitComponents.Teeth, item);
             });
 
             faceMenu.AddItem(eyesItem);
@@ -1715,209 +1749,209 @@ namespace Average.Client.Framework.Services
         {
             clothesMenu = new MenuContainer(_languageService.Get("Client.CharacterCreator.Clothes").ToUpper(), "Vêtements");
 
-            hatsItem = new SelectorItem<int>(_languageService.Get(CharacterClothComponents.Hats), -1, GetClothByCategory(CharacterClothComponents.Hats).Count - 1, -1, 1, async (item) =>
+            hatsItem = new SelectorItem<int>(_languageService.Get(OutfitComponents.Hats), -1, GetOutfitComponentsByCategory(OutfitComponents.Hats).Count - 1, -1, 1, async (item) =>
             {
-                await SetPedComponent(CharacterClothComponents.Hats, item);
+                await SetPedComponent(OutfitComponents.Hats, item);
             });
 
-            eyewearItem = new SelectorItem<int>(_languageService.Get(CharacterClothComponents.Eyewear), -1, GetClothByCategory(CharacterClothComponents.Eyewear).Count - 1, -1, 1, async (item) =>
+            eyewearItem = new SelectorItem<int>(_languageService.Get(OutfitComponents.Eyewear), -1, GetOutfitComponentsByCategory(OutfitComponents.Eyewear).Count - 1, -1, 1, async (item) =>
             {
-                await SetPedComponent(CharacterClothComponents.Eyewear, item);
+                await SetPedComponent(OutfitComponents.Eyewear, item);
             });
 
-            neckwearItem = new SelectorItem<int>(_languageService.Get(CharacterClothComponents.Neckwear), -1, GetClothByCategory(CharacterClothComponents.Neckwear).Count - 1, -1, 1, async (item) =>
+            neckwearItem = new SelectorItem<int>(_languageService.Get(OutfitComponents.Neckwear), -1, GetOutfitComponentsByCategory(OutfitComponents.Neckwear).Count - 1, -1, 1, async (item) =>
             {
-                await SetPedComponent(CharacterClothComponents.Neckwear, item);
+                await SetPedComponent(OutfitComponents.Neckwear, item);
             });
 
-            necktiesItem = new SelectorItem<int>(_languageService.Get(CharacterClothComponents.Neckties), -1, GetClothByCategory(CharacterClothComponents.Neckties).Count - 1, -1, 1, async (item) =>
+            necktiesItem = new SelectorItem<int>(_languageService.Get(OutfitComponents.Neckties), -1, GetOutfitComponentsByCategory(OutfitComponents.Neckties).Count - 1, -1, 1, async (item) =>
             {
-                await SetPedComponent(CharacterClothComponents.Neckties, item);
+                await SetPedComponent(OutfitComponents.Neckties, item);
             });
 
-            shirtsItem = new SelectorItem<int>(_languageService.Get(CharacterClothComponents.Shirts), -1, GetClothByCategory(CharacterClothComponents.Shirts).Count - 1, -1, 1, async (item) =>
+            shirtsItem = new SelectorItem<int>(_languageService.Get(OutfitComponents.Shirts), -1, GetOutfitComponentsByCategory(OutfitComponents.Shirts).Count - 1, -1, 1, async (item) =>
             {
-                await SetPedComponent(CharacterClothComponents.Shirts, item);
+                await SetPedComponent(OutfitComponents.Shirts, item);
             });
 
-            suspendersItem = new SelectorItem<int>(_languageService.Get(CharacterClothComponents.Suspenders), -1, GetClothByCategory(CharacterClothComponents.Suspenders).Count - 1, -1, 1, async (item) =>
+            suspendersItem = new SelectorItem<int>(_languageService.Get(OutfitComponents.Suspenders), -1, GetOutfitComponentsByCategory(OutfitComponents.Suspenders).Count - 1, -1, 1, async (item) =>
             {
-                await SetPedComponent(CharacterClothComponents.Suspenders, item);
+                await SetPedComponent(OutfitComponents.Suspenders, item);
             });
 
-            vestItem = new SelectorItem<int>(_languageService.Get(CharacterClothComponents.Vests), -1, GetClothByCategory(CharacterClothComponents.Vests).Count - 1, -1, 1, async (item) =>
+            vestItem = new SelectorItem<int>(_languageService.Get(OutfitComponents.Vests), -1, GetOutfitComponentsByCategory(OutfitComponents.Vests).Count - 1, -1, 1, async (item) =>
             {
-                await SetPedComponent(CharacterClothComponents.Vests, item);
+                await SetPedComponent(OutfitComponents.Vests, item);
             });
 
-            coatsItem = new SelectorItem<int>(_languageService.Get(CharacterClothComponents.Coats), -1, GetClothByCategory(CharacterClothComponents.Coats).Count - 1, -1, 1, async (item) =>
+            coatsItem = new SelectorItem<int>(_languageService.Get(OutfitComponents.Coats), -1, GetOutfitComponentsByCategory(OutfitComponents.Coats).Count - 1, -1, 1, async (item) =>
             {
-                await SetPedComponent(CharacterClothComponents.Coats, item);
+                await SetPedComponent(OutfitComponents.Coats, item);
             });
 
-            coatsClosedItem = new SelectorItem<int>(_languageService.Get(CharacterClothComponents.CoatsClosed), -1, GetClothByCategory(CharacterClothComponents.CoatsClosed).Count - 1, -1, 1, async (item) =>
+            coatsClosedItem = new SelectorItem<int>(_languageService.Get(OutfitComponents.CoatsClosed), -1, GetOutfitComponentsByCategory(OutfitComponents.CoatsClosed).Count - 1, -1, 1, async (item) =>
             {
-                await SetPedComponent(CharacterClothComponents.CoatsClosed, item);
+                await SetPedComponent(OutfitComponents.CoatsClosed, item);
             });
 
-            ponchosItem = new SelectorItem<int>(_languageService.Get(CharacterClothComponents.Ponchos), -1, GetClothByCategory(CharacterClothComponents.Ponchos).Count - 1, -1, 1, async (item) =>
+            ponchosItem = new SelectorItem<int>(_languageService.Get(OutfitComponents.Ponchos), -1, GetOutfitComponentsByCategory(OutfitComponents.Ponchos).Count - 1, -1, 1, async (item) =>
             {
-                await SetPedComponent(CharacterClothComponents.Ponchos, item);
+                await SetPedComponent(OutfitComponents.Ponchos, item);
             });
 
-            cloakItem = new SelectorItem<int>(_languageService.Get(CharacterClothComponents.Cloaks), -1, GetClothByCategory(CharacterClothComponents.Cloaks).Count - 1, -1, 1, async (item) =>
+            cloakItem = new SelectorItem<int>(_languageService.Get(OutfitComponents.Cloaks), -1, GetOutfitComponentsByCategory(OutfitComponents.Cloaks).Count - 1, -1, 1, async (item) =>
             {
-                await SetPedComponent(CharacterClothComponents.Cloaks, item);
+                await SetPedComponent(OutfitComponents.Cloaks, item);
             });
 
-            glovesItem = new SelectorItem<int>(_languageService.Get(CharacterClothComponents.Gloves), -1, GetClothByCategory(CharacterClothComponents.Gloves).Count - 1, -1, 1, async (item) =>
+            glovesItem = new SelectorItem<int>(_languageService.Get(OutfitComponents.Gloves), -1, GetOutfitComponentsByCategory(OutfitComponents.Gloves).Count - 1, -1, 1, async (item) =>
             {
-                await SetPedComponent(CharacterClothComponents.Gloves, item);
+                await SetPedComponent(OutfitComponents.Gloves, item);
             });
 
-            ringsRightHandItem = new SelectorItem<int>(_languageService.Get(CharacterClothComponents.RingsRightHand), -1, GetClothByCategory(CharacterClothComponents.RingsRightHand).Count - 1, -1, 1, async (item) =>
+            ringsRightHandItem = new SelectorItem<int>(_languageService.Get(OutfitComponents.RingsRightHand), -1, GetOutfitComponentsByCategory(OutfitComponents.RingsRightHand).Count - 1, -1, 1, async (item) =>
             {
-                await SetPedComponent(CharacterClothComponents.RingsRightHand, item);
+                await SetPedComponent(OutfitComponents.RingsRightHand, item);
             });
 
-            ringsLeftHandItem = new SelectorItem<int>(_languageService.Get(CharacterClothComponents.RingsLeftHand), -1, GetClothByCategory(CharacterClothComponents.RingsLeftHand).Count - 1, -1, 1, async (item) =>
+            ringsLeftHandItem = new SelectorItem<int>(_languageService.Get(OutfitComponents.RingsLeftHand), -1, GetOutfitComponentsByCategory(OutfitComponents.RingsLeftHand).Count - 1, -1, 1, async (item) =>
             {
-                await SetPedComponent(CharacterClothComponents.RingsLeftHand, item);
+                await SetPedComponent(OutfitComponents.RingsLeftHand, item);
             });
 
-            braceletsItem = new SelectorItem<int>(_languageService.Get(CharacterClothComponents.Bracelts), -1, GetClothByCategory(CharacterClothComponents.Bracelts).Count - 1, -1, 1, async (item) =>
+            braceletsItem = new SelectorItem<int>(_languageService.Get(OutfitComponents.Bracelts), -1, GetOutfitComponentsByCategory(OutfitComponents.Bracelts).Count - 1, -1, 1, async (item) =>
             {
-                await SetPedComponent(CharacterClothComponents.Bracelts, item);
+                await SetPedComponent(OutfitComponents.Bracelts, item);
             });
 
-            gunbeltItem = new SelectorItem<int>(_languageService.Get(CharacterClothComponents.Gunbelts), -1, GetClothByCategory(CharacterClothComponents.Gunbelts).Count - 1, -1, 1, async (item) =>
+            gunbeltItem = new SelectorItem<int>(_languageService.Get(OutfitComponents.Gunbelts), -1, GetOutfitComponentsByCategory(OutfitComponents.Gunbelts).Count - 1, -1, 1, async (item) =>
             {
-                await SetPedComponent(CharacterClothComponents.Gunbelts, item);
+                await SetPedComponent(OutfitComponents.Gunbelts, item);
             });
 
-            beltItem = new SelectorItem<int>(_languageService.Get(CharacterClothComponents.Belts), -1, GetClothByCategory(CharacterClothComponents.Belts).Count - 1, -1, 1, async (item) =>
+            beltItem = new SelectorItem<int>(_languageService.Get(OutfitComponents.Belts), -1, GetOutfitComponentsByCategory(OutfitComponents.Belts).Count - 1, -1, 1, async (item) =>
             {
-                await SetPedComponent(CharacterClothComponents.Belts, item);
+                await SetPedComponent(OutfitComponents.Belts, item);
             });
 
-            buckleItem = new SelectorItem<int>(_languageService.Get(CharacterClothComponents.Beltbuckles), -1, GetClothByCategory(CharacterClothComponents.Beltbuckles).Count - 1, -1, 1, async (item) =>
+            buckleItem = new SelectorItem<int>(_languageService.Get(OutfitComponents.Beltbuckles), -1, GetOutfitComponentsByCategory(OutfitComponents.Beltbuckles).Count - 1, -1, 1, async (item) =>
             {
-                await SetPedComponent(CharacterClothComponents.Beltbuckles, item);
+                await SetPedComponent(OutfitComponents.Beltbuckles, item);
             });
 
-            holstersCrossdrawItem = new SelectorItem<int>(_languageService.Get(CharacterClothComponents.HolsterCrossdraw), -1, GetClothByCategory(CharacterClothComponents.HolsterCrossdraw).Count - 1, -1, 1, async (item) =>
+            holstersCrossdrawItem = new SelectorItem<int>(_languageService.Get(OutfitComponents.HolsterCrossdraw), -1, GetOutfitComponentsByCategory(OutfitComponents.HolsterCrossdraw).Count - 1, -1, 1, async (item) =>
             {
-                await SetPedComponent(CharacterClothComponents.HolsterCrossdraw, item);
+                await SetPedComponent(OutfitComponents.HolsterCrossdraw, item);
             });
 
-            holstersLeftItem = new SelectorItem<int>(_languageService.Get(CharacterClothComponents.HolstersLeft), -1, GetClothByCategory(CharacterClothComponents.HolstersLeft).Count - 1, -1, 1, async (item) =>
+            holstersLeftItem = new SelectorItem<int>(_languageService.Get(OutfitComponents.HolstersLeft), -1, GetOutfitComponentsByCategory(OutfitComponents.HolstersLeft).Count - 1, -1, 1, async (item) =>
             {
-                await SetPedComponent(CharacterClothComponents.HolstersLeft, item);
+                await SetPedComponent(OutfitComponents.HolstersLeft, item);
             });
 
-            holstersRightItem = new SelectorItem<int>(_languageService.Get(CharacterClothComponents.HolstersRight), -1, GetClothByCategory(CharacterClothComponents.HolstersRight).Count - 1, -1, 1, async (item) =>
+            holstersRightItem = new SelectorItem<int>(_languageService.Get(OutfitComponents.HolstersRight), -1, GetOutfitComponentsByCategory(OutfitComponents.HolstersRight).Count - 1, -1, 1, async (item) =>
             {
-                await SetPedComponent(CharacterClothComponents.HolstersRight, item);
+                await SetPedComponent(OutfitComponents.HolstersRight, item);
             });
 
-            pantsItem = new SelectorItem<int>(_languageService.Get(CharacterClothComponents.Pants), -1, GetClothByCategory(CharacterClothComponents.Pants).Count - 1, -1, 1, async (item) =>
+            pantsItem = new SelectorItem<int>(_languageService.Get(OutfitComponents.Pants), -1, GetOutfitComponentsByCategory(OutfitComponents.Pants).Count - 1, -1, 1, async (item) =>
             {
-                await SetPedComponent(CharacterClothComponents.Pants, item);
+                await SetPedComponent(OutfitComponents.Pants, item);
             });
 
-            skirtsItem = new SelectorItem<int>(_languageService.Get(CharacterClothComponents.Skirts), -1, GetClothByCategory(CharacterClothComponents.Skirts).Count - 1, -1, 1, async (item) =>
+            skirtsItem = new SelectorItem<int>(_languageService.Get(OutfitComponents.Skirts), -1, GetOutfitComponentsByCategory(OutfitComponents.Skirts).Count - 1, -1, 1, async (item) =>
             {
-                await SetPedComponent(CharacterClothComponents.Skirts, item);
+                await SetPedComponent(OutfitComponents.Skirts, item);
             });
 
-            bootsItem = new SelectorItem<int>(_languageService.Get(CharacterClothComponents.Boots), -1, GetClothByCategory(CharacterClothComponents.Boots).Count - 1, -1, 1, async (item) =>
+            bootsItem = new SelectorItem<int>(_languageService.Get(OutfitComponents.Boots), -1, GetOutfitComponentsByCategory(OutfitComponents.Boots).Count - 1, -1, 1, async (item) =>
             {
-                await SetPedComponent(CharacterClothComponents.Boots, item);
+                await SetPedComponent(OutfitComponents.Boots, item);
             });
 
-            chapsItem = new SelectorItem<int>(_languageService.Get(CharacterClothComponents.Chaps), -1, GetClothByCategory(CharacterClothComponents.Chaps).Count - 1, -1, 1, async (item) =>
+            chapsItem = new SelectorItem<int>(_languageService.Get(OutfitComponents.Chaps), -1, GetOutfitComponentsByCategory(OutfitComponents.Chaps).Count - 1, -1, 1, async (item) =>
             {
-                await SetPedComponent(CharacterClothComponents.Chaps, item);
+                await SetPedComponent(OutfitComponents.Chaps, item);
             });
 
-            spursItem = new SelectorItem<int>(_languageService.Get(CharacterClothComponents.Spurs), -1, GetClothByCategory(CharacterClothComponents.Spurs).Count - 1, -1, 1, async (item) =>
+            spursItem = new SelectorItem<int>(_languageService.Get(OutfitComponents.Spurs), -1, GetOutfitComponentsByCategory(OutfitComponents.Spurs).Count - 1, -1, 1, async (item) =>
             {
-                await SetPedComponent(CharacterClothComponents.Spurs, item);
+                await SetPedComponent(OutfitComponents.Spurs, item);
             });
 
-            spatsItem = new SelectorItem<int>(_languageService.Get(CharacterClothComponents.Spats), -1, GetClothByCategory(CharacterClothComponents.Spats).Count - 1, -1, 1, async (item) =>
+            spatsItem = new SelectorItem<int>(_languageService.Get(OutfitComponents.Spats), -1, GetOutfitComponentsByCategory(OutfitComponents.Spats).Count - 1, -1, 1, async (item) =>
             {
-                await SetPedComponent(CharacterClothComponents.Spats, item);
+                await SetPedComponent(OutfitComponents.Spats, item);
             });
 
-            satchelsItem = new SelectorItem<int>(_languageService.Get(CharacterClothComponents.Satchels), -1, GetClothByCategory(CharacterClothComponents.Satchels).Count - 1, -1, 1, async (item) =>
+            satchelsItem = new SelectorItem<int>(_languageService.Get(OutfitComponents.Satchels), -1, GetOutfitComponentsByCategory(OutfitComponents.Satchels).Count - 1, -1, 1, async (item) =>
             {
-                await SetPedComponent(CharacterClothComponents.Satchels, item);
+                await SetPedComponent(OutfitComponents.Satchels, item);
             });
 
-            masksItem = new SelectorItem<int>(_languageService.Get(CharacterClothComponents.Masks), -1, GetClothByCategory(CharacterClothComponents.Masks).Count - 1, -1, 1, async (item) =>
+            masksItem = new SelectorItem<int>(_languageService.Get(OutfitComponents.Masks), -1, GetOutfitComponentsByCategory(OutfitComponents.Masks).Count - 1, -1, 1, async (item) =>
             {
-                await SetPedComponent(CharacterClothComponents.Masks, item);
+                await SetPedComponent(OutfitComponents.Masks, item);
             });
 
-            masksLargeItem = new SelectorItem<int>(_languageService.Get(CharacterClothComponents.MasksLarge), -1, GetClothByCategory(CharacterClothComponents.MasksLarge).Count - 1, -1, 1, async (item) =>
+            masksLargeItem = new SelectorItem<int>(_languageService.Get(OutfitComponents.MasksLarge), -1, GetOutfitComponentsByCategory(OutfitComponents.MasksLarge).Count - 1, -1, 1, async (item) =>
             {
-                await SetPedComponent(CharacterClothComponents.MasksLarge, item);
+                await SetPedComponent(OutfitComponents.MasksLarge, item);
             });
 
-            loadoutsItem = new SelectorItem<int>(_languageService.Get(CharacterClothComponents.Loadouts), -1, GetClothByCategory(CharacterClothComponents.Loadouts).Count - 1, -1, 1, async (item) =>
+            loadoutsItem = new SelectorItem<int>(_languageService.Get(OutfitComponents.Loadouts), -1, GetOutfitComponentsByCategory(OutfitComponents.Loadouts).Count - 1, -1, 1, async (item) =>
             {
-                await SetPedComponent(CharacterClothComponents.Loadouts, item);
+                await SetPedComponent(OutfitComponents.Loadouts, item);
             });
 
-            legAttachmentsItem = new SelectorItem<int>(_languageService.Get(CharacterClothComponents.LegAttachements), -1, GetClothByCategory(CharacterClothComponents.LegAttachements).Count - 1, -1, 1, async (item) =>
+            legAttachmentsItem = new SelectorItem<int>(_languageService.Get(OutfitComponents.LegAttachements), -1, GetOutfitComponentsByCategory(OutfitComponents.LegAttachements).Count - 1, -1, 1, async (item) =>
             {
-                await SetPedComponent(CharacterClothComponents.LegAttachements, item);
+                await SetPedComponent(OutfitComponents.LegAttachements, item);
             });
 
-            gauntletsItem = new SelectorItem<int>(_languageService.Get(CharacterClothComponents.Gauntlets), -1, GetClothByCategory(CharacterClothComponents.Gauntlets).Count - 1, -1, 1, async (item) =>
+            gauntletsItem = new SelectorItem<int>(_languageService.Get(OutfitComponents.Gauntlets), -1, GetOutfitComponentsByCategory(OutfitComponents.Gauntlets).Count - 1, -1, 1, async (item) =>
             {
-                await SetPedComponent(CharacterClothComponents.Gauntlets, item);
+                await SetPedComponent(OutfitComponents.Gauntlets, item);
             });
 
-            accessoriesItem = new SelectorItem<int>(_languageService.Get(CharacterClothComponents.Accessories), -1, GetClothByCategory(CharacterClothComponents.Accessories).Count - 1, -1, 1, async (item) =>
+            accessoriesItem = new SelectorItem<int>(_languageService.Get(OutfitComponents.Accessories), -1, GetOutfitComponentsByCategory(OutfitComponents.Accessories).Count - 1, -1, 1, async (item) =>
             {
-                await SetPedComponent(CharacterClothComponents.Accessories, item);
+                await SetPedComponent(OutfitComponents.Accessories, item);
             });
 
-            sheathsItem = new SelectorItem<int>(_languageService.Get(CharacterClothComponents.Sheaths), -1, GetClothByCategory(CharacterClothComponents.Sheaths).Count - 1, -1, 1, async (item) =>
+            sheathsItem = new SelectorItem<int>(_languageService.Get(OutfitComponents.Sheaths), -1, GetOutfitComponentsByCategory(OutfitComponents.Sheaths).Count - 1, -1, 1, async (item) =>
             {
-                await SetPedComponent(CharacterClothComponents.Sheaths, item);
+                await SetPedComponent(OutfitComponents.Sheaths, item);
             });
 
-            apronsItem = new SelectorItem<int>(_languageService.Get(CharacterClothComponents.Aprons), -1, GetClothByCategory(CharacterClothComponents.Aprons).Count - 1, -1, 1, async (item) =>
+            apronsItem = new SelectorItem<int>(_languageService.Get(OutfitComponents.Aprons), -1, GetOutfitComponentsByCategory(OutfitComponents.Aprons).Count - 1, -1, 1, async (item) =>
             {
-                await SetPedComponent(CharacterClothComponents.Aprons, item);
+                await SetPedComponent(OutfitComponents.Aprons, item);
             });
 
-            femaleUnknow01Item = new SelectorItem<int>(_languageService.Get(CharacterClothComponents.FemaleUnknow01), -1, GetClothByCategory(CharacterClothComponents.FemaleUnknow01).Count - 1, -1, 1, async (item) =>
+            femaleUnknow01Item = new SelectorItem<int>(_languageService.Get(OutfitComponents.HairAccessories), -1, GetOutfitComponentsByCategory(OutfitComponents.HairAccessories).Count - 1, -1, 1, async (item) =>
             {
-                await SetPedComponent(CharacterClothComponents.FemaleUnknow01, item);
+                await SetPedComponent(OutfitComponents.HairAccessories, item);
             });
 
-            talismanBeltItem = new SelectorItem<int>(_languageService.Get(CharacterClothComponents.TalismanBelt), -1, GetClothByCategory(CharacterClothComponents.TalismanBelt).Count - 1, -1, 1, async (item) =>
+            talismanBeltItem = new SelectorItem<int>(_languageService.Get(OutfitComponents.TalismanBelt), -1, GetOutfitComponentsByCategory(OutfitComponents.TalismanBelt).Count - 1, -1, 1, async (item) =>
             {
-                await SetPedComponent(CharacterClothComponents.TalismanBelt, item);
+                await SetPedComponent(OutfitComponents.TalismanBelt, item);
             });
 
-            talismanHolsterItem = new SelectorItem<int>(_languageService.Get(CharacterClothComponents.TalismanHolster), -1, GetClothByCategory(CharacterClothComponents.TalismanHolster).Count - 1, -1, 1, async (item) =>
+            talismanHolsterItem = new SelectorItem<int>(_languageService.Get(OutfitComponents.TalismanHolster), -1, GetOutfitComponentsByCategory(OutfitComponents.TalismanHolster).Count - 1, -1, 1, async (item) =>
             {
-                await SetPedComponent(CharacterClothComponents.TalismanHolster, item);
+                await SetPedComponent(OutfitComponents.TalismanHolster, item);
             });
 
-            talismanSatchelItem = new SelectorItem<int>(_languageService.Get(CharacterClothComponents.TalismanSatchel), -1, GetClothByCategory(CharacterClothComponents.TalismanSatchel).Count - 1, -1, 1, async (item) =>
+            talismanSatchelItem = new SelectorItem<int>(_languageService.Get(OutfitComponents.TalismanSatchel), -1, GetOutfitComponentsByCategory(OutfitComponents.TalismanSatchel).Count - 1, -1, 1, async (item) =>
             {
-                await SetPedComponent(CharacterClothComponents.TalismanSatchel, item);
+                await SetPedComponent(OutfitComponents.TalismanSatchel, item);
             });
 
-            talismanWristItem = new SelectorItem<int>(_languageService.Get(CharacterClothComponents.TalismanWrist), -1, GetClothByCategory(CharacterClothComponents.TalismanWrist).Count - 1, -1, 1, async (item) =>
+            talismanWristItem = new SelectorItem<int>(_languageService.Get(OutfitComponents.TalismanWrist), -1, GetOutfitComponentsByCategory(OutfitComponents.TalismanWrist).Count - 1, -1, 1, async (item) =>
             {
-                await SetPedComponent(CharacterClothComponents.TalismanWrist, item);
+                await SetPedComponent(OutfitComponents.TalismanWrist, item);
             });
 
             clothesMenu.AddItem(new LabelItem("Tête"));
@@ -1976,50 +2010,50 @@ namespace Average.Client.Framework.Services
                 clothesMenu.AddItem(talismanWristItem);
             }
 
-            await SetPedComponent(CharacterClothComponents.Hats, hatsItem);
-            await SetPedComponent(CharacterClothComponents.Eyewear, eyewearItem);
-            await SetPedComponent(CharacterClothComponents.Neckwear, neckwearItem);
-            await SetPedComponent(CharacterClothComponents.Neckties, necktiesItem);
-            await SetPedComponent(CharacterClothComponents.Shirts, shirtsItem);
-            await SetPedComponent(CharacterClothComponents.Suspenders, suspendersItem);
-            await SetPedComponent(CharacterClothComponents.Vests, vestItem);
-            await SetPedComponent(CharacterClothComponents.Coats, coatsItem);
-            await SetPedComponent(CharacterClothComponents.CoatsClosed, coatsClosedItem);
-            await SetPedComponent(CharacterClothComponents.Ponchos, ponchosItem);
-            await SetPedComponent(CharacterClothComponents.Cloaks, cloakItem);
-            await SetPedComponent(CharacterClothComponents.Gloves, glovesItem);
-            await SetPedComponent(CharacterClothComponents.RingsRightHand, ringsRightHandItem);
-            await SetPedComponent(CharacterClothComponents.RingsLeftHand, ringsLeftHandItem);
-            await SetPedComponent(CharacterClothComponents.Bracelts, braceletsItem);
-            await SetPedComponent(CharacterClothComponents.Gunbelts, gunbeltItem);
-            await SetPedComponent(CharacterClothComponents.Belts, beltItem);
-            await SetPedComponent(CharacterClothComponents.Beltbuckles, buckleItem);
-            await SetPedComponent(CharacterClothComponents.HolsterCrossdraw, holstersCrossdrawItem);
-            await SetPedComponent(CharacterClothComponents.HolstersLeft, holstersLeftItem);
-            await SetPedComponent(CharacterClothComponents.HolstersRight, holstersRightItem);
-            await SetPedComponent(CharacterClothComponents.Pants, pantsItem);
-            await SetPedComponent(CharacterClothComponents.Boots, bootsItem);
-            await SetPedComponent(CharacterClothComponents.Chaps, chapsItem);
-            await SetPedComponent(CharacterClothComponents.Spurs, spursItem);
-            await SetPedComponent(CharacterClothComponents.Spats, spatsItem);
-            await SetPedComponent(CharacterClothComponents.Satchels, satchelsItem);
-            await SetPedComponent(CharacterClothComponents.Masks, masksItem);
-            await SetPedComponent(CharacterClothComponents.MasksLarge, masksLargeItem);
-            await SetPedComponent(CharacterClothComponents.Loadouts, loadoutsItem);
-            await SetPedComponent(CharacterClothComponents.LegAttachements, legAttachmentsItem);
-            await SetPedComponent(CharacterClothComponents.Gauntlets, gauntletsItem);
-            await SetPedComponent(CharacterClothComponents.Accessories, accessoriesItem);
-            await SetPedComponent(CharacterClothComponents.Sheaths, sheathsItem);
-            await SetPedComponent(CharacterClothComponents.Aprons, apronsItem);
-            await SetPedComponent(CharacterClothComponents.TalismanBelt, talismanBeltItem);
-            await SetPedComponent(CharacterClothComponents.TalismanHolster, talismanHolsterItem);
-            await SetPedComponent(CharacterClothComponents.TalismanSatchel, talismanSatchelItem);
-            await SetPedComponent(CharacterClothComponents.TalismanWrist, talismanWristItem);
+            await SetPedComponent(OutfitComponents.Hats, hatsItem);
+            await SetPedComponent(OutfitComponents.Eyewear, eyewearItem);
+            await SetPedComponent(OutfitComponents.Neckwear, neckwearItem);
+            await SetPedComponent(OutfitComponents.Neckties, necktiesItem);
+            await SetPedComponent(OutfitComponents.Shirts, shirtsItem);
+            await SetPedComponent(OutfitComponents.Suspenders, suspendersItem);
+            await SetPedComponent(OutfitComponents.Vests, vestItem);
+            await SetPedComponent(OutfitComponents.Coats, coatsItem);
+            await SetPedComponent(OutfitComponents.CoatsClosed, coatsClosedItem);
+            await SetPedComponent(OutfitComponents.Ponchos, ponchosItem);
+            await SetPedComponent(OutfitComponents.Cloaks, cloakItem);
+            await SetPedComponent(OutfitComponents.Gloves, glovesItem);
+            await SetPedComponent(OutfitComponents.RingsRightHand, ringsRightHandItem);
+            await SetPedComponent(OutfitComponents.RingsLeftHand, ringsLeftHandItem);
+            await SetPedComponent(OutfitComponents.Bracelts, braceletsItem);
+            await SetPedComponent(OutfitComponents.Gunbelts, gunbeltItem);
+            await SetPedComponent(OutfitComponents.Belts, beltItem);
+            await SetPedComponent(OutfitComponents.Beltbuckles, buckleItem);
+            await SetPedComponent(OutfitComponents.HolsterCrossdraw, holstersCrossdrawItem);
+            await SetPedComponent(OutfitComponents.HolstersLeft, holstersLeftItem);
+            await SetPedComponent(OutfitComponents.HolstersRight, holstersRightItem);
+            await SetPedComponent(OutfitComponents.Pants, pantsItem);
+            await SetPedComponent(OutfitComponents.Boots, bootsItem);
+            await SetPedComponent(OutfitComponents.Chaps, chapsItem);
+            await SetPedComponent(OutfitComponents.Spurs, spursItem);
+            await SetPedComponent(OutfitComponents.Spats, spatsItem);
+            await SetPedComponent(OutfitComponents.Satchels, satchelsItem);
+            await SetPedComponent(OutfitComponents.Masks, masksItem);
+            await SetPedComponent(OutfitComponents.MasksLarge, masksLargeItem);
+            await SetPedComponent(OutfitComponents.Loadouts, loadoutsItem);
+            await SetPedComponent(OutfitComponents.LegAttachements, legAttachmentsItem);
+            await SetPedComponent(OutfitComponents.Gauntlets, gauntletsItem);
+            await SetPedComponent(OutfitComponents.Accessories, accessoriesItem);
+            await SetPedComponent(OutfitComponents.Sheaths, sheathsItem);
+            await SetPedComponent(OutfitComponents.Aprons, apronsItem);
+            await SetPedComponent(OutfitComponents.TalismanBelt, talismanBeltItem);
+            await SetPedComponent(OutfitComponents.TalismanHolster, talismanHolsterItem);
+            await SetPedComponent(OutfitComponents.TalismanSatchel, talismanSatchelItem);
+            await SetPedComponent(OutfitComponents.TalismanWrist, talismanWristItem);
 
             if (gender == Gender.Female)
             {
-                await SetPedComponent(CharacterClothComponents.Skirts, skirtsItem);
-                await SetPedComponent(CharacterClothComponents.FemaleUnknow01, femaleUnknow01Item);
+                await SetPedComponent(OutfitComponents.Skirts, skirtsItem);
+                await SetPedComponent(OutfitComponents.HairAccessories, femaleUnknow01Item);
             }
             else
             {
@@ -2133,7 +2167,8 @@ namespace Average.Client.Framework.Services
         {
             try
             {
-                var clothes = _characterService.clothes.Where(x => x.CategoryHash == categoryHash && x.PedType == (int)gender).ToList();
+                var clothes = GetOutfitComponentsByCategory(categoryHash);
+                //var clothes = _characterService.clothes.Where(x => x.CategoryHash == categoryHash && x.PedType == (int)gender).ToList();
                 var clothName = _languageService.Get(categoryHash);
 
                 if (item.Value == -1)
@@ -2157,6 +2192,7 @@ namespace Average.Client.Framework.Services
 
                     var cloth = clothes[item.Value];
                     var component = uint.Parse(cloth.Hash, NumberStyles.AllowHexSpecifier);
+
                     SetPedComponentEnabled(PlayerPedId(), component, true, cloth.IsMultiplayer, false);
                     characterClothes[cloth.CategoryHash] = component;
                     UpdatePedVariation();

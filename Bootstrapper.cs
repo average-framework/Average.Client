@@ -43,6 +43,7 @@ namespace Average.Client
             _container.Register<MenuService>();
             _container.Register<CharacterService>();
             _container.Register<CharacterCreatorService>();
+            _container.Register<WorldService>();
 
             // Handlers
             _container.Register<UIHandler>();
@@ -50,6 +51,7 @@ namespace Average.Client
             _container.Register<ClientHandler>();
             _container.Register<CharacterHandler>();
             _container.Register<CharacterCreatorHandler>();
+            _container.Register<WorldHandler>();
 
             // Reflections
             _container.Resolve<EventManager>().Reflect();

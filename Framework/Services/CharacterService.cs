@@ -78,7 +78,7 @@ namespace Average.Client.Framework.Services
             Call(0xD3A7B003ED343FD9, ped, legs, false, true, true);
 
             // Remove default pants
-            RemovePedComponent(CharacterClothComponents.Pants);
+            RemovePedComponent(OutfitComponents.Pants);
         }
 
         private void SetPedFaceFeatures(SkinData skin)
@@ -145,7 +145,7 @@ namespace Average.Client.Framework.Services
                 //var category = Call<uint>(0x5FF9A878C3D115B8, cloth.Value, metaped, c.IsMultiplayer);
 
                 Call(0x59BD177A1A48600A, ped, category);
-                Call(0xD3A7B003ED343FD9, ped, cloth, false, clothInfo.IsMultiplayer, true);
+                Call(0xD3A7B003ED343FD9, ped, cloth, false, clothInfo.IsMultiplayer, false);
 
                 await BaseScript.Delay(250);
 
@@ -287,7 +287,7 @@ namespace Average.Client.Framework.Services
                         var metaped = Call<int>(0xEC9A1261BF0CE510, ped);
                         var category = Call<uint>(0x5FF9A878C3D115B8, cloth.Value, metaped, c.IsMultiplayer);
                         Call(0x59BD177A1A48600A, ped, categoryHash);
-                        Call(0xD3A7B003ED343FD9, ped, cloth.Value, false, c.IsMultiplayer, true);
+                        Call(0xD3A7B003ED343FD9, ped, cloth.Value, false, c.IsMultiplayer, false);
                         await BaseScript.Delay(250);
                         Logger.Debug("reapply: " + metaped + ", " + cloth.Key + ", " + categoryHash + ", " + category);
                     }
@@ -352,56 +352,56 @@ namespace Average.Client.Framework.Services
         {
             var ped = PlayerPedId();
 
-            RemovePedComponent(ped, CharacterClothComponents.Accessories);
-            RemovePedComponent(ped, CharacterClothComponents.Armors);
-            RemovePedComponent(ped, CharacterClothComponents.Badges);
-            RemovePedComponent(ped, CharacterClothComponents.Mustache);
-            RemovePedComponent(ped, CharacterClothComponents.MustacheMP);
-            RemovePedComponent(ped, CharacterClothComponents.Beltbuckles);
-            RemovePedComponent(ped, CharacterClothComponents.Belts);
-            RemovePedComponent(ped, CharacterClothComponents.Boots);
-            RemovePedComponent(ped, CharacterClothComponents.Bracelts);
-            RemovePedComponent(ped, CharacterClothComponents.Chaps);
-            RemovePedComponent(ped, CharacterClothComponents.Cloaks);
-            RemovePedComponent(ped, CharacterClothComponents.Coats);
-            RemovePedComponent(ped, CharacterClothComponents.Eyes);
-            RemovePedComponent(ped, CharacterClothComponents.Eyewear);
-            RemovePedComponent(ped, CharacterClothComponents.Gauntlets);
-            RemovePedComponent(ped, CharacterClothComponents.Gloves);
-            RemovePedComponent(ped, CharacterClothComponents.Gunbelts);
-            RemovePedComponent(ped, CharacterClothComponents.Hairs);
-            RemovePedComponent(ped, CharacterClothComponents.Hats);
-            RemovePedComponent(ped, CharacterClothComponents.Loadouts);
-            RemovePedComponent(ped, CharacterClothComponents.Masks);
-            RemovePedComponent(ped, CharacterClothComponents.Neckties);
-            RemovePedComponent(ped, CharacterClothComponents.Neckwear);
-            RemovePedComponent(ped, CharacterClothComponents.Pants);
-            RemovePedComponent(ped, CharacterClothComponents.Ponchos);
-            RemovePedComponent(ped, CharacterClothComponents.Satchels);
-            RemovePedComponent(ped, CharacterClothComponents.Shirts);
-            RemovePedComponent(ped, CharacterClothComponents.Skirts);
-            RemovePedComponent(ped, CharacterClothComponents.Spats);
-            RemovePedComponent(ped, CharacterClothComponents.Spurs);
-            RemovePedComponent(ped, CharacterClothComponents.Suspenders);
-            RemovePedComponent(ped, CharacterClothComponents.Teeth);
-            RemovePedComponent(ped, CharacterClothComponents.Vests);
-            RemovePedComponent(ped, CharacterClothComponents.LegAttachements);
-            RemovePedComponent(ped, CharacterClothComponents.RingsLeftHand);
-            RemovePedComponent(ped, CharacterClothComponents.RingsRightHand);
-            RemovePedComponent(ped, CharacterClothComponents.HolsterCrossdraw);
-            RemovePedComponent(ped, CharacterClothComponents.HolstersLeft);
-            RemovePedComponent(ped, CharacterClothComponents.HolstersRight);
-            RemovePedComponent(ped, CharacterClothComponents.TalismanHolster);
-            RemovePedComponent(ped, CharacterClothComponents.TalismanBelt);
-            RemovePedComponent(ped, CharacterClothComponents.TalismanSatchel);
-            RemovePedComponent(ped, CharacterClothComponents.TalismanWrist);
-            RemovePedComponent(ped, CharacterClothComponents.Sheaths);
-            RemovePedComponent(ped, CharacterClothComponents.Aprons);
-            RemovePedComponent(ped, CharacterClothComponents.Goatees);
-            RemovePedComponent(ped, CharacterClothComponents.MasksLarge);
-            RemovePedComponent(ped, CharacterClothComponents.CoatsClosed);
-            RemovePedComponent(ped, CharacterClothComponents.BeardChops);
-            RemovePedComponent(ped, CharacterClothComponents.FemaleUnknow01);
+            RemovePedComponent(ped, OutfitComponents.Accessories);
+            RemovePedComponent(ped, OutfitComponents.Armors);
+            RemovePedComponent(ped, OutfitComponents.Badges);
+            RemovePedComponent(ped, OutfitComponents.Mustache);
+            RemovePedComponent(ped, OutfitComponents.MustacheMP);
+            RemovePedComponent(ped, OutfitComponents.Beltbuckles);
+            RemovePedComponent(ped, OutfitComponents.Belts);
+            RemovePedComponent(ped, OutfitComponents.Boots);
+            RemovePedComponent(ped, OutfitComponents.Bracelts);
+            RemovePedComponent(ped, OutfitComponents.Chaps);
+            RemovePedComponent(ped, OutfitComponents.Cloaks);
+            RemovePedComponent(ped, OutfitComponents.Coats);
+            RemovePedComponent(ped, OutfitComponents.Eyes);
+            RemovePedComponent(ped, OutfitComponents.Eyewear);
+            RemovePedComponent(ped, OutfitComponents.Gauntlets);
+            RemovePedComponent(ped, OutfitComponents.Gloves);
+            RemovePedComponent(ped, OutfitComponents.Gunbelts);
+            RemovePedComponent(ped, OutfitComponents.Hairs);
+            RemovePedComponent(ped, OutfitComponents.Hats);
+            RemovePedComponent(ped, OutfitComponents.Loadouts);
+            RemovePedComponent(ped, OutfitComponents.Masks);
+            RemovePedComponent(ped, OutfitComponents.Neckties);
+            RemovePedComponent(ped, OutfitComponents.Neckwear);
+            RemovePedComponent(ped, OutfitComponents.Pants);
+            RemovePedComponent(ped, OutfitComponents.Ponchos);
+            RemovePedComponent(ped, OutfitComponents.Satchels);
+            RemovePedComponent(ped, OutfitComponents.Shirts);
+            RemovePedComponent(ped, OutfitComponents.Skirts);
+            RemovePedComponent(ped, OutfitComponents.Spats);
+            RemovePedComponent(ped, OutfitComponents.Spurs);
+            RemovePedComponent(ped, OutfitComponents.Suspenders);
+            RemovePedComponent(ped, OutfitComponents.Teeth);
+            RemovePedComponent(ped, OutfitComponents.Vests);
+            RemovePedComponent(ped, OutfitComponents.LegAttachements);
+            RemovePedComponent(ped, OutfitComponents.RingsLeftHand);
+            RemovePedComponent(ped, OutfitComponents.RingsRightHand);
+            RemovePedComponent(ped, OutfitComponents.HolsterCrossdraw);
+            RemovePedComponent(ped, OutfitComponents.HolstersLeft);
+            RemovePedComponent(ped, OutfitComponents.HolstersRight);
+            RemovePedComponent(ped, OutfitComponents.TalismanHolster);
+            RemovePedComponent(ped, OutfitComponents.TalismanBelt);
+            RemovePedComponent(ped, OutfitComponents.TalismanSatchel);
+            RemovePedComponent(ped, OutfitComponents.TalismanWrist);
+            RemovePedComponent(ped, OutfitComponents.Sheaths);
+            RemovePedComponent(ped, OutfitComponents.Aprons);
+            RemovePedComponent(ped, OutfitComponents.Goatees);
+            RemovePedComponent(ped, OutfitComponents.MasksLarge);
+            RemovePedComponent(ped, OutfitComponents.CoatsClosed);
+            RemovePedComponent(ped, OutfitComponents.BeardChops);
+            RemovePedComponent(ped, OutfitComponents.HairAccessories);
         }
     }
 }

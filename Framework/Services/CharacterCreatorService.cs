@@ -685,7 +685,7 @@ namespace Average.Client.Framework.Services
         {
             _threadManager.StartThread(WeatherUpdate);
 
-            await _characterService.RespawnPed(gender);
+            await _characterService.SpawnPed(gender);
 
             var ped = PlayerPedId();
             var x = (float)_config["CreationPosition"]["X"];

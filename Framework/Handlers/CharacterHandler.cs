@@ -30,17 +30,16 @@ namespace Average.Client.Framework.Handlers
         }
 
         [ClientEvent("character:set_appearance")]
-        private async void OnSetAppearance(string skinJson, string clothesJson)
+        private async void OnSetAppearance(string characterJson)
         {
             var player = PlayerId();
             var ped = GetPlayerPed(player);
 
             Logger.Debug("Set ped appearance: " + ped + ", " + player);
 
-            var skin = skinJson.Deserialize<SkinData>();
-            var clothes = clothesJson.Deserialize<OutfitData>();
+            var characterData = characterJson.Deserialize<CharacterData>();
 
-            await _characterService.SetAppearance(ped, skin, clothes);
+            await _characterService.SetAppearance(ped, characterData);
         }
 
         [ClientEvent("character:remove_all_clothes")]
@@ -59,10 +58,18 @@ namespace Average.Client.Framework.Handlers
             await _characterService.SetPedOutfit(ped, outfit);
         }
 
-        [ClientEvent("character:respawn_ped")]
-        private async void OnRespawnPed(int gender)
+        [ClientEvent("character:spawn_ped")]
+        private async void OnRespawnPed(string characterJson)
         {
-            await _characterService.RespawnPed((Gender)gender);
+            var characterData = characterJson.Deserialize<CharacterData>();
+            Logger.Warn("Start");
+            await _characterService.SpawnPed(characterData.Skin.Gender);
+            Logger.Warn("Middle");
+            await _characterService.SetAppearance(PlayerPedId(), characterData);
+            Logger.Warn("End: " + PlayerPedId());
+
+            ShutdownLoadingScreen();
+            await FadeIn(1000);
         }
     }
 }

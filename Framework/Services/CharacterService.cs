@@ -7,12 +7,8 @@ using Average.Shared.DataModels;
 using Average.Shared.Enums;
 using CitizenFX.Core;
 using CitizenFX.Core.Native;
-using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using static Average.Client.Framework.GameAPI;
 using static CitizenFX.Core.Native.API;
@@ -32,6 +28,8 @@ namespace Average.Client.Framework.Services
 
         private readonly EventManager _eventManager;
 
+        private List<string> _blockedClothes = new();
+
         public CharacterService(EventManager eventManager)
         {
             _eventManager = eventManager;
@@ -48,17 +46,17 @@ namespace Average.Client.Framework.Services
             _eventManager.EmitServer("character:create_character", characterData.ToJson());
         }
 
-        internal async Task SetAppearance(int ped, SkinData skin, OutfitData clothes)
+        internal async Task SetAppearance(int ped, CharacterData characterData)
         {
-            _scale = skin.Scale;
+            _scale = characterData.Skin.Scale;
 
-            SetPedBody(ped, skin.Gender, skin.Head, skin.Body, skin.Legs);
-            SetPedBodyComponents((uint)skin.BodyType, (uint)skin.WaistType);
+            SetPedBody(ped, characterData.Skin.Gender, characterData.Skin.Head, characterData.Skin.Body, characterData.Skin.Legs);
+            SetPedBodyComponents((uint)characterData.Skin.BodyType, (uint)characterData.Skin.WaistType);
 
-            await SetPedClothes(ped, skin.Gender, clothes);
-            await SetFaceOverlays(ped, skin);
+            await SetPedClothes(ped, characterData.Skin.Gender, characterData.Outfit);
+            await SetFaceOverlays(ped, characterData.Skin);
 
-            SetPedFaceFeatures(skin);
+            SetPedFaceFeatures(characterData.Skin);
 
             SetPedComponentDisabled(ped, 0x3F1F01E5, 0, false);
             SetPedComponentDisabled(ped, 0xDA0E2C55, 0, false);
@@ -68,7 +66,7 @@ namespace Average.Client.Framework.Services
             UpdatePedVariation();
         }
 
-        internal void SetPedBody(int ped, Gender gender, uint head, uint body, uint legs)
+        private void SetPedBody(int ped, Gender gender, uint head, uint body, uint legs)
         {
             Call(0x704C908E9C405136, ped);
             Call(0xD3A7B003ED343FD9, ped, head, false, true, true);
@@ -83,7 +81,7 @@ namespace Average.Client.Framework.Services
             RemovePedComponent(CharacterClothComponents.Pants);
         }
 
-        internal void SetPedFaceFeatures(SkinData skin)
+        private void SetPedFaceFeatures(SkinData skin)
         {
             SetPedFaceFeature(CharacterFacePart.CheeckBonesDepth, skin.CheeckBonesDepth);
             SetPedFaceFeature(CharacterFacePart.CheeckBonesHeight, skin.CheeckBonesHeight);
@@ -126,7 +124,7 @@ namespace Average.Client.Framework.Services
             SetPedFaceFeature(CharacterFacePart.UpperLipWidth, skin.UpperLipWidth);
         }
 
-        internal async Task SetPedCloth(int ped, uint cloth)
+        private async Task SetPedCloth(int ped, uint cloth)
         {
             // Empty cloth
             if (cloth == 0) return;
@@ -163,73 +161,71 @@ namespace Average.Client.Framework.Services
             }
         }
 
-        private List<string> _blockedClothes = new List<string>();
-
-        internal async Task SetPedClothes(int ped, Gender gender, OutfitData clothes)
+        private async Task SetPedClothes(int ped, Gender gender, OutfitData outfitData)
         {
             while (!Call<bool>(0xA0BC8FAED8CFEB3C, ped)) await BaseScript.Delay(250);
 
-            await SetPedCloth(ped, clothes.Torso);
-            await SetPedCloth(ped, clothes.Leg);
-            await SetPedCloth(ped, clothes.Head);
-            await SetPedCloth(ped, clothes.Hair);
-            await SetPedCloth(ped, clothes.Teeth);
-            await SetPedCloth(ped, clothes.Eye);
+            await SetPedCloth(ped, outfitData.Torso);
+            await SetPedCloth(ped, outfitData.Leg);
+            await SetPedCloth(ped, outfitData.Head);
+            await SetPedCloth(ped, outfitData.Hair);
+            await SetPedCloth(ped, outfitData.Teeth);
+            await SetPedCloth(ped, outfitData.Eye);
 
             if (gender == Gender.Male)
             {
-                await SetPedCloth(ped, clothes.Goatee);
-                await SetPedCloth(ped, clothes.BeardChop);
-                await SetPedCloth(ped, clothes.Mustache);
-                await SetPedCloth(ped, clothes.MustacheMP);
+                await SetPedCloth(ped, outfitData.Goatee);
+                await SetPedCloth(ped, outfitData.BeardChop);
+                await SetPedCloth(ped, outfitData.Mustache);
+                await SetPedCloth(ped, outfitData.MustacheMP);
             }
 
-            await SetPedCloth(ped, clothes.Shirt);
-            await SetPedCloth(ped, clothes.Vest);
-            await SetPedCloth(ped, clothes.Pant);
-            await SetPedCloth(ped, clothes.Skirt);
-            await SetPedCloth(ped, clothes.Apron);
-            await SetPedCloth(ped, clothes.Cloak);
-            await SetPedCloth(ped, clothes.Coat);
-            await SetPedCloth(ped, clothes.CoatClosed);
-            await SetPedCloth(ped, clothes.Chap);
-            await SetPedCloth(ped, clothes.Necktie);
-            await SetPedCloth(ped, clothes.Neckwear);
-            await SetPedCloth(ped, clothes.Poncho);
-            await SetPedCloth(ped, clothes.Boot);
-            await SetPedCloth(ped, clothes.Spur);
-            await SetPedCloth(ped, clothes.Hat);
-            await SetPedCloth(ped, clothes.Mask);
-            await SetPedCloth(ped, clothes.MaskLarge);
-            await SetPedCloth(ped, clothes.Eyewear);
-            await SetPedCloth(ped, clothes.RingLeftHand);
-            await SetPedCloth(ped, clothes.RingRightHand);
-            await SetPedCloth(ped, clothes.Glove);
-            await SetPedCloth(ped, clothes.Bracelt);
-            await SetPedCloth(ped, clothes.Gauntlet);
-            await SetPedCloth(ped, clothes.Suspender);
-            await SetPedCloth(ped, clothes.Belt);
-            await SetPedCloth(ped, clothes.Beltbuckle);
-            await SetPedCloth(ped, clothes.Gunbelt);
-            await SetPedCloth(ped, clothes.Loadout);
-            await SetPedCloth(ped, clothes.Armor);
-            await SetPedCloth(ped, clothes.Badge);
-            await SetPedCloth(ped, clothes.HolsterCrossdraw);
-            await SetPedCloth(ped, clothes.HolsterLeft);
-            await SetPedCloth(ped, clothes.HolsterRight);
-            await SetPedCloth(ped, clothes.LegAttachement);
-            await SetPedCloth(ped, clothes.Sheath);
-            await SetPedCloth(ped, clothes.Spat);
-            await SetPedCloth(ped, clothes.Accessory);
-            await SetPedCloth(ped, clothes.TalismanBelt);
-            await SetPedCloth(ped, clothes.TalismanHolster);
-            await SetPedCloth(ped, clothes.TalismanSatchel);
-            await SetPedCloth(ped, clothes.TalismanWrist);
-            await SetPedCloth(ped, clothes.Satchel);
+            await SetPedCloth(ped, outfitData.Shirt);
+            await SetPedCloth(ped, outfitData.Vest);
+            await SetPedCloth(ped, outfitData.Pant);
+            await SetPedCloth(ped, outfitData.Skirt);
+            await SetPedCloth(ped, outfitData.Apron);
+            await SetPedCloth(ped, outfitData.Cloak);
+            await SetPedCloth(ped, outfitData.Coat);
+            await SetPedCloth(ped, outfitData.CoatClosed);
+            await SetPedCloth(ped, outfitData.Chap);
+            await SetPedCloth(ped, outfitData.Necktie);
+            await SetPedCloth(ped, outfitData.Neckwear);
+            await SetPedCloth(ped, outfitData.Poncho);
+            await SetPedCloth(ped, outfitData.Boot);
+            await SetPedCloth(ped, outfitData.Spur);
+            await SetPedCloth(ped, outfitData.Hat);
+            await SetPedCloth(ped, outfitData.Mask);
+            await SetPedCloth(ped, outfitData.MaskLarge);
+            await SetPedCloth(ped, outfitData.Eyewear);
+            await SetPedCloth(ped, outfitData.RingLeftHand);
+            await SetPedCloth(ped, outfitData.RingRightHand);
+            await SetPedCloth(ped, outfitData.Glove);
+            await SetPedCloth(ped, outfitData.Bracelt);
+            await SetPedCloth(ped, outfitData.Gauntlet);
+            await SetPedCloth(ped, outfitData.Suspender);
+            await SetPedCloth(ped, outfitData.Belt);
+            await SetPedCloth(ped, outfitData.Beltbuckle);
+            await SetPedCloth(ped, outfitData.Gunbelt);
+            await SetPedCloth(ped, outfitData.Loadout);
+            await SetPedCloth(ped, outfitData.Armor);
+            await SetPedCloth(ped, outfitData.Badge);
+            await SetPedCloth(ped, outfitData.HolsterCrossdraw);
+            await SetPedCloth(ped, outfitData.HolsterLeft);
+            await SetPedCloth(ped, outfitData.HolsterRight);
+            await SetPedCloth(ped, outfitData.LegAttachement);
+            await SetPedCloth(ped, outfitData.Sheath);
+            await SetPedCloth(ped, outfitData.Spat);
+            await SetPedCloth(ped, outfitData.Accessory);
+            await SetPedCloth(ped, outfitData.TalismanBelt);
+            await SetPedCloth(ped, outfitData.TalismanHolster);
+            await SetPedCloth(ped, outfitData.TalismanSatchel);
+            await SetPedCloth(ped, outfitData.TalismanWrist);
+            await SetPedCloth(ped, outfitData.Satchel);
 
             if (gender == Gender.Female)
             {
-                await SetPedCloth(ped, clothes.FemaleUnknow01);
+                await SetPedCloth(ped, outfitData.FemaleUnknow01);
             }
 
             Call(0x704C908E9C405136, ped);
@@ -239,8 +235,8 @@ namespace Average.Client.Framework.Services
             if (_blockedClothes.Count > 0 && _blockedClothesState <= 2)
             {
                 _blockedClothesState++;
-                Logger.Warn($"[Character] Restart clothes loading.. Attempt [{_blockedClothesState}/3]");
-                await RespawnPed(gender);
+                Logger.Debug($"[Character] Restart clothes loading.. Attempt [{_blockedClothesState}/3]");
+                await SpawnPed(gender);
             }
             else
             {
@@ -248,9 +244,9 @@ namespace Average.Client.Framework.Services
             }
         }
 
-        public async Task RespawnPed(Gender gender)
+        public async Task SpawnPed(Gender gender)
         {
-            var model = gender == 0 ? (uint)GetHashKey("mp_male") : (uint)GetHashKey("mp_female");
+            var model = gender == Gender.Male ? (uint)GetHashKey("mp_male") : (uint)GetHashKey("mp_female");
 
             await LoadModel(model);
             SetPlayerModel(model);
@@ -305,13 +301,13 @@ namespace Average.Client.Framework.Services
             Logger.Info("[Character] Clothes successfully loaded.");
         }
 
-        internal void SetPedBodyComponents(uint bodyType, uint waistType)
+        private void SetPedBodyComponents(uint bodyType, uint waistType)
         {
             SetPedBodyComponent(bodyType);
             SetPedBodyComponent(waistType);
         }
 
-        internal async Task SetFaceOverlay(int ped, int textureId, OverlayData overlay)
+        private async Task SetFaceOverlay(int ped, int textureId, OverlayData overlay)
         {
             if (overlay.TextureVisibility)
             {
@@ -334,7 +330,7 @@ namespace Average.Client.Framework.Services
             UpdatePedVariation();
         }
 
-        internal async Task SetFaceOverlays(int ped, SkinData skin)
+        private async Task SetFaceOverlays(int ped, SkinData skin)
         {
             var textureId = -1;
 
@@ -346,30 +342,10 @@ namespace Average.Client.Framework.Services
 
             textureId = Call<int>(0xC5E7204F322E49EB, skin.Albedo, skin.Normal, skin.Material);
 
-            foreach(var overlay in skin.OverlaysData)
+            foreach (var overlay in skin.OverlaysData)
             {
                 await SetFaceOverlay(ped, textureId, overlay);
             }
-
-
-            //await SetFaceOverlay(ped, textureId, skin.Acne);
-            //await SetFaceOverlay(ped, textureId, skin.Ageing);
-            //await SetFaceOverlay(ped, textureId, skin.Beardstabble);
-            //await SetFaceOverlay(ped, textureId, skin.Blush);
-            //await SetFaceOverlay(ped, textureId, skin.Complex);
-            //await SetFaceOverlay(ped, textureId, skin.Disc);
-            //await SetFaceOverlay(ped, textureId, skin.Eyebrows);
-            //await SetFaceOverlay(ped, textureId, skin.Eyeliners);
-            //await SetFaceOverlay(ped, textureId, skin.Foundation);
-            //await SetFaceOverlay(ped, textureId, skin.Freckles);
-            //await SetFaceOverlay(ped, textureId, skin.Grime);
-            //await SetFaceOverlay(ped, textureId, skin.Hair);
-            //await SetFaceOverlay(ped, textureId, skin.Lipsticks);
-            //await SetFaceOverlay(ped, textureId, skin.Moles);
-            //await SetFaceOverlay(ped, textureId, skin.Paintedmasks);
-            //await SetFaceOverlay(ped, textureId, skin.Scars);
-            //await SetFaceOverlay(ped, textureId, skin.Shadows);
-            //await SetFaceOverlay(ped, textureId, skin.Spots);
         }
 
         internal void RemoveAllClothes()

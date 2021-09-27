@@ -43,7 +43,7 @@ namespace Average.Client.Framework.Services
 
             _eventHandlers["server-event:triggered"] += new Action<string, List<object>>(OnTriggerEvent);
 
-            Logger.Debug("EventManager Initialized successfully");
+            Logger.Debug("EventService Initialized successfully");
         }
 
         public event EventHandler<ResourceStartEventArgs> ResourceStart;

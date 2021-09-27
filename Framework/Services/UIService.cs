@@ -31,45 +31,72 @@ namespace Average.Client.Framework.Services
             await GameAPI.FadeOut(duration);
         }
 
-        internal void Focus(bool showCursor = true) => SetNuiFocus(true, showCursor);
-        internal void Unfocus() => SetNuiFocus(false, false);
-
-        internal async void _SendNui(object message)
+        internal void FocusFrame(string frame) => Emit(new
         {
-            //await BaseScript.Delay(0);
-            SendNuiMessage(message.ToJson());
+            eventName = "ui:focus",
+            frame
+        });
+
+        internal void Focus(bool showCursor = true)
+        {
+            SetNuiFocus(true, showCursor);
         }
 
-        internal void SendNui(string frame, string requestType, object message = null) => _SendNui(new
+        internal void Unfocus() => SetNuiFocus(false, false);
+
+        internal async void Emit(object message) => SendNuiMessage(message.ToJson());
+
+        internal void SendNui(string frame, string requestType, object message = null) => Emit(new
         {
             eventName = "ui:emit",
             frame,
             requestType,
-            message = (message == null ? new { } : message)
+            message = message ?? new { }
         });
 
-        internal void LoadFrame(string frame) => _SendNui(new
+        internal void LoadFrame(string frame) => Emit(new
         {
             eventName = "ui:load_frame",
             frame
         });
 
-        internal void DestroyFrame(string frame) => _SendNui(new
+        internal void DestroyFrame(string frame) => Emit(new
         {
             eventName = "ui:destroy_frame",
             frame
         });
 
-        internal void Show(string frame) => _SendNui(new
+        internal void Show(string frame) => Emit(new
         {
             eventName = "ui:show",
             frame
         });
 
-        internal void Hide(string frame) => _SendNui(new
+        internal void Hide(string frame) => Emit(new
         {
             eventName = "ui:hide",
             frame
+        });
+
+        internal void FadeIn(string frame, int fadeDuration = 100) => Emit(new
+        {
+            eventName = "ui:fadein",
+            frame,
+            fade = fadeDuration
+        });
+
+        internal void FadeOut(string frame, int fadeDuration = 100) => Emit(new
+        {
+            eventName = "ui:fadeout",
+            frame,
+            fade = fadeDuration
+        });
+
+        internal void SetZIndex(string frame, int zIndex) => Emit(new
+        {
+            eventName = "ui:zindex",
+            frame,
+            zIndex
         });
     }
 }

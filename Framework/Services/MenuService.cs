@@ -219,8 +219,8 @@ namespace Average.Client.Framework.Services
             return result;
         }
 
-        [UICallback("menu/keypress")]
-        private CallbackDelegate OnKeypress(IDictionary<string, object> data, CallbackDelegate result)
+        [UICallback("menu/keydown")]
+        private CallbackDelegate OnKeydown(IDictionary<string, object> data, CallbackDelegate result)
         {
             var key = int.Parse(data["key"].ToString());
 

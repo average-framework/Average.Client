@@ -36,12 +36,12 @@ namespace Average.Client
             _container.Register<LanguageService>();
             _container.Register<UIService>();
             _container.Register<MenuService>();
+            _container.Register<RayService>();
 
             // Services
 
             _container.Register<CharacterService>();
             _container.Register<CharacterCreatorService>();
-            //_container.Register<WorldService>();
 
             // Handlers
             _container.Register<RpcHandler>();
@@ -50,10 +50,10 @@ namespace Average.Client
             _container.Register<ClientHandler>();
             _container.Register<CharacterHandler>();
             _container.Register<CharacterCreatorHandler>();
-            //_container.Register<WorldHandler>();
 
             // Reflections
             _container.Resolve<EventService>().Reflect();
+            _container.Resolve<ThreadService>().Reflect();
 
             // Called on resource start for initialize the client on server side
             _container.Resolve<ClientHandler>().OnClientInitialized();

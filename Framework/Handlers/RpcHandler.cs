@@ -5,7 +5,6 @@ using Average.Client.Framework.Interfaces;
 using CitizenFX.Core.Native;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using static Average.Client.Framework.GameAPI;
 using static CitizenFX.Core.Native.API;
 
@@ -21,27 +20,30 @@ namespace Average.Client.Framework.Handlers
         [ClientEvent("rpc:native_call")]
         private void OnNativeCall(object native, List<object> args)
         {
-            Logger.Debug("Native Call: " + native + ", " + native.GetType());
-
             var newArgs = new List<InputArgument>();
 
             try
             {
                 foreach (var arg in args)
                 {
-                    if (arg is int @int)
+                    if (arg is string @str)
                     {
-                        var networkIdExists = NetworkDoesNetworkIdExist(@int);
+                        if (str.StartsWith("netid:"))
+                        {
+                            var netId = int.Parse(@str.Substring(6));
 
-                        if (networkIdExists)
-                        {
                             // This argument is an networked entity
-                            var entity = NetworkGetEntityFromNetworkId(@int);
-                            newArgs.Add(entity);
-                        }
-                        else
-                        {
-                            newArgs.Add(arg.ToInputArgument());
+                            var networkIdExists = NetworkDoesNetworkIdExist(netId);
+
+                            if (networkIdExists)
+                            {
+                                var entity = NetworkGetEntityFromNetworkId(netId);
+                                newArgs.Add(entity);
+                            }
+                            else
+                            {
+                                newArgs.Add(arg.ToInputArgument());
+                            }
                         }
                     }
                     else
@@ -50,19 +52,17 @@ namespace Average.Client.Framework.Handlers
                     }
                 }
 
-                Logger.Debug("Execute: " + string.Join(", ", newArgs));
-
                 switch (native)
                 {
                     case long:
                         Call((long)native, newArgs.ToArray());
-                        Logger.Debug("long");
                         break;
                     case ulong:
                         Call((ulong)native, newArgs.ToArray());
-                        Logger.Debug("ulong");
                         break;
                 }
+
+                Logger.Debug("Native Call: " + native + ", " + string.Join(", ", args));
             }
             catch (Exception ex)
             {

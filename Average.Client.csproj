@@ -116,7 +116,6 @@
     <Compile Include="Framework\Handlers\MenuHandler.cs" />
     <Compile Include="Framework\Handlers\RpcHandler.cs" />
     <Compile Include="Framework\Handlers\UIHandler.cs" />
-    <Compile Include="Framework\Handlers\WorldHandler.cs" />
     <Compile Include="Framework\Helpers\ConversionHelpers.cs" />
     <Compile Include="Framework\Helpers\MathHelpers.cs" />
     <Compile Include="Framework\Interfaces\IHandler.cs" />
@@ -134,7 +133,6 @@
     <Compile Include="Framework\Services\LanguageService.cs" />
     <Compile Include="Framework\Services\MenuService.cs" />
     <Compile Include="Framework\Services\UIService.cs" />
-    <Compile Include="Framework\Services\WorldService.cs" />
     <Compile Include="Framework\UIEvents.cs" />
     <Compile Include="Handlers\ClientHandler.cs" />
     <Compile Include="Interfaces\IMenuItem.cs" />

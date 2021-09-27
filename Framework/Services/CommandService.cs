@@ -1,5 +1,5 @@
 ﻿using Average.Client.Framework.Diagnostics;
-using Average.Client.Framework.Rpc;
+using Average.Client.Framework.Interfaces;
 using Average.Shared.Models;
 using CitizenFX.Core.Native;
 using Newtonsoft.Json;
@@ -7,17 +7,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Average.Client.Framework.Managers
+namespace Average.Client.Framework.Services
 {
-    internal class CommandManager
+    internal class CommandService : IService
     {
-        private readonly EventManager _eventManager;
-        private readonly RpcRequest _rpc;
+        private readonly RpcService _rpc;
+
         private readonly List<Tuple<string, string[]>> _commands = new List<Tuple<string, string[]>>();
 
-        public CommandManager(EventManager eventManager, RpcRequest rpc)
+        public CommandService(RpcService rpc)
         {
-            _eventManager = eventManager;
             _rpc = rpc;
 
             Logger.Debug("CommandManager Initialized successfully");

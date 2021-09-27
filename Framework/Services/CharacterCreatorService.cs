@@ -3,7 +3,7 @@ using Average.Client.Framework.Diagnostics;
 using Average.Client.Framework.Events;
 using Average.Client.Framework.Extensions;
 using Average.Client.Framework.Interfaces;
-using Average.Client.Framework.Managers;
+using Average.Client.Framework.Services;
 using Average.Client.Menu;
 using Average.Client.Models;
 using Average.Shared.DataModels;
@@ -286,8 +286,8 @@ namespace Average.Client.Framework.Services
         };
 
         private readonly MenuService _menuService;
-        private readonly ThreadManager _threadManager;
-        private readonly EventManager _eventManager;
+        private readonly ThreadService _threadService;
+        private readonly EventService _eventService;
         private readonly LanguageService _languageService;
         private readonly CharacterService _characterService;
         private readonly UIService _uiService;
@@ -298,11 +298,11 @@ namespace Average.Client.Framework.Services
 
         public bool IsOpen { get; private set; }
 
-        public CharacterCreatorService(UIService uiService, CharacterService characterService, MenuService menuService, ThreadManager threadManager, EventManager eventManager, LanguageService languageService)
+        public CharacterCreatorService(UIService uiService, CharacterService characterService, MenuService menuService, ThreadService threadService, EventService eventService, LanguageService languageService)
         {
             _menuService = menuService;
-            _threadManager = threadManager;
-            _eventManager = eventManager;
+            _threadService = threadService;
+            _eventService = eventService;
             _languageService = languageService;
             _characterService = characterService;
             _uiService = uiService;
@@ -310,7 +310,7 @@ namespace Average.Client.Framework.Services
             _config = Configuration.ParseToObject("configs/character_creator.json");
 
             // Events
-            _eventManager.ResourceStop += OnResourceStop;
+            _eventService.ResourceStop += OnResourceStop;
         }
 
         private async Task WeatherUpdate()
@@ -574,7 +574,7 @@ namespace Average.Client.Framework.Services
             Unfocus();
 
             _characterService.Create(characterData);
-            _eventManager.EmitServer("character:character_created");
+            _eventService.EmitServer("character:character_created");
 
             await FadeOut(500);
             await BaseScript.Delay(1000);
@@ -586,7 +586,7 @@ namespace Average.Client.Framework.Services
             SetWeatherTypeFrozen(false);
             FreezeEntityPosition(PlayerPedId(), false);
 
-            _threadManager.StopThread(WeatherUpdate);
+            _threadService.StopThread(WeatherUpdate);
 
             IsOpen = false;
 
@@ -683,7 +683,7 @@ namespace Average.Client.Framework.Services
 
         internal async void StartCreator()
         {
-            _threadManager.StartThread(WeatherUpdate);
+            _threadService.StartThread(WeatherUpdate);
 
             await _characterService.SpawnPed(gender);
 

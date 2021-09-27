@@ -1,22 +1,22 @@
 ﻿using Average.Client.Framework.Diagnostics;
 using Average.Client.Framework.Interfaces;
-using Average.Client.Framework.Managers;
+using Average.Client.Framework.Services;
 
 namespace Average.Client.Handlers
 {
     internal class ClientHandler : IHandler
     {
-        private readonly EventManager _eventManager;
+        private readonly EventService _eventService;
 
-        public ClientHandler(EventManager eventManager)
+        public ClientHandler(EventService eventService)
         {
-            _eventManager = eventManager;
+            _eventService = eventService;
         }
 
         internal void OnClientInitialized()
         {
             // Initialize client
-            _eventManager.EmitServer("client:initialized");
+            _eventService.EmitServer("client:initialized");
         }
     }
 }

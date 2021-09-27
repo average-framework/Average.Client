@@ -1,7 +1,6 @@
 ﻿using Average.Client.Framework.Diagnostics;
 using Average.Client.Framework.Extensions;
 using Average.Client.Framework.Interfaces;
-using Average.Client.Framework.Managers;
 using Average.Client.Models;
 using Average.Shared.DataModels;
 using Average.Shared.Enums;
@@ -26,13 +25,13 @@ namespace Average.Client.Framework.Services
         public readonly List<string> faceParts;
         public readonly List<string> colorPalettes;
 
-        private readonly EventManager _eventManager;
+        private readonly EventService _eventService;
 
         private List<string> _blockedClothes = new();
 
-        public CharacterService(EventManager eventManager)
+        public CharacterService(EventService eventService)
         {
-            _eventManager = eventManager;
+            _eventService = eventService;
 
             clothes = Configuration.Parse<List<Cloth>>("utilities/clothes.json");
             bodyTypes = Configuration.Parse<List<int>>("utilities/body_types.json");
@@ -43,7 +42,7 @@ namespace Average.Client.Framework.Services
 
         internal void Create(CharacterData characterData)
         {
-            _eventManager.EmitServer("character:create_character", characterData.ToJson());
+            _eventService.EmitServer("character:create_character", characterData.ToJson());
         }
 
         internal async Task SetAppearance(int ped, CharacterData characterData)

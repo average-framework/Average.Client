@@ -1,6 +1,7 @@
 ﻿using Average.Client.Framework.Attributes;
 using Average.Client.Framework.Diagnostics;
 using Average.Client.Framework.Events;
+using Average.Client.Framework.Interfaces;
 using Average.Client.Framework.IoC;
 using CitizenFX.Core;
 using System;
@@ -10,9 +11,9 @@ using System.Linq.Expressions;
 using System.Reflection;
 using static CitizenFX.Core.Native.API;
 
-namespace Average.Client.Framework.Managers
+namespace Average.Client.Framework.Services
 {
-    internal class EventManager
+    internal class EventService : IService
     {
         private readonly Container _container;
         private readonly EventHandlerDictionary _eventHandlers;
@@ -21,7 +22,7 @@ namespace Average.Client.Framework.Managers
         private readonly Dictionary<string, List<Delegate>> _events = new();
         private readonly Dictionary<string, List<Delegate>> _nuiEvents = new();
 
-        public EventManager(Container container, EventHandlerDictionary eventHandlers)
+        public EventService(Container container, EventHandlerDictionary eventHandlers)
         {
             _container = container;
             _eventHandlers = eventHandlers;

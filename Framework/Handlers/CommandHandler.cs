@@ -1,14 +1,14 @@
 ﻿using Average.Client.Framework.Attributes;
 using Average.Client.Framework.Interfaces;
-using Average.Client.Framework.Managers;
+using Average.Client.Framework.Services;
 
 namespace Average.Client.Framework.Handlers
 {
     internal class CommandHandler : IHandler
     {
-        private readonly CommandManager _commandManager;
+        private readonly CommandService _commandManager;
 
-        public CommandHandler(CommandManager commandManager)
+        public CommandHandler(CommandService commandManager)
         {
             _commandManager = commandManager;
         }

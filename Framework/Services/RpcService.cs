@@ -1,20 +1,22 @@
 ﻿using Average.Client.Framework.Extensions;
+using Average.Client.Framework.Interfaces;
+using Average.Client.Framework.Rpc;
 using Average.Shared.Rpc;
 using CitizenFX.Core;
 using System;
 using System.Linq;
 using static CitizenFX.Core.Native.API;
 
-namespace Average.Client.Framework.Rpc
+namespace Average.Client.Framework.Services
 {
-    public class RpcRequest
+    internal class RpcService : IService
     {
         private RpcMessage _message;
-        private RpcHandler _handler;
-        private RpcTrigger _trigger;
-        private RpcSerializer _serializer;
+        private readonly RpcHandler _handler;
+        private readonly RpcTrigger _trigger;
+        private readonly RpcSerializer _serializer;
 
-        public RpcRequest(EventHandlerDictionary eventHandlers)
+        public RpcService(EventHandlerDictionary eventHandlers)
         {
             _message = new RpcMessage();
             _handler = new RpcHandler(eventHandlers);
@@ -22,7 +24,7 @@ namespace Average.Client.Framework.Rpc
             _serializer = new RpcSerializer();
         }
 
-        public RpcRequest Event(string eventName)
+        public RpcService Event(string eventName)
         {
             _message.Event = eventName;
             return this;
@@ -36,7 +38,7 @@ namespace Average.Client.Framework.Rpc
             _trigger.Trigger(_message);
         }
 
-        public RpcRequest On(Action<RpcMessage> action)
+        public RpcService On(Action<RpcMessage> action)
         {
             Action<string> c = null;
             c = response =>
@@ -52,7 +54,7 @@ namespace Average.Client.Framework.Rpc
             return this;
         }
 
-        public RpcRequest On<T1>(Action<T1> action)
+        public RpcService On<T1>(Action<T1> action)
         {
             Action<string> c = null;
             c = response =>
@@ -69,7 +71,7 @@ namespace Average.Client.Framework.Rpc
             return this;
         }
 
-        public RpcRequest On<T1, T2>(Action<T1, T2> action)
+        public RpcService On<T1, T2>(Action<T1, T2> action)
         {
             Action<string> c = null;
             c = response =>
@@ -87,7 +89,7 @@ namespace Average.Client.Framework.Rpc
             return this;
         }
 
-        public RpcRequest On<T1, T2, T3>(Action<T1, T2, T3> action)
+        public RpcService On<T1, T2, T3>(Action<T1, T2, T3> action)
         {
             Action<string> c = null;
             c = response =>
@@ -106,7 +108,7 @@ namespace Average.Client.Framework.Rpc
             return this;
         }
 
-        public RpcRequest On<T1, T2, T3, T4>(Action<T1, T2, T3, T4> action)
+        public RpcService On<T1, T2, T3, T4>(Action<T1, T2, T3, T4> action)
         {
             Action<string> c = null;
             c = response =>
@@ -126,7 +128,7 @@ namespace Average.Client.Framework.Rpc
             return this;
         }
 
-        public RpcRequest On<T1, T2, T3, T4, T5>(Action<T1, T2, T3, T4, T5> action)
+        public RpcService On<T1, T2, T3, T4, T5>(Action<T1, T2, T3, T4, T5> action)
         {
             Action<string> c = null;
             c = response =>
@@ -147,7 +149,7 @@ namespace Average.Client.Framework.Rpc
             return this;
         }
 
-        public RpcRequest On<T1, T2, T3, T4, T5, T6>(Action<T1, T2, T3, T4, T5, T6> action)
+        public RpcService On<T1, T2, T3, T4, T5, T6>(Action<T1, T2, T3, T4, T5, T6> action)
         {
             Action<string> c = null;
             c = response =>
@@ -169,7 +171,7 @@ namespace Average.Client.Framework.Rpc
             return this;
         }
 
-        public RpcRequest On<T1, T2, T3, T4, T5, T6, T7>(Action<T1, T2, T3, T4, T5, T6, T7> action)
+        public RpcService On<T1, T2, T3, T4, T5, T6, T7>(Action<T1, T2, T3, T4, T5, T6, T7> action)
         {
             Action<string> c = null;
             c = response =>
@@ -192,7 +194,7 @@ namespace Average.Client.Framework.Rpc
             return this;
         }
 
-        public RpcRequest On<T1, T2, T3, T4, T5, T6, T7, T8>(Action<T1, T2, T3, T4, T5, T6, T7, T8> action)
+        public RpcService On<T1, T2, T3, T4, T5, T6, T7, T8>(Action<T1, T2, T3, T4, T5, T6, T7, T8> action)
         {
             Action<string> c = null;
             c = response =>
@@ -216,7 +218,7 @@ namespace Average.Client.Framework.Rpc
             return this;
         }
 
-        public RpcRequest On<T1, T2, T3, T4, T5, T6, T7, T8, T9>(Action<T1, T2, T3, T4, T5, T6, T7, T8, T9> action)
+        public RpcService On<T1, T2, T3, T4, T5, T6, T7, T8, T9>(Action<T1, T2, T3, T4, T5, T6, T7, T8, T9> action)
         {
             Action<string> c = null;
             c = response =>
@@ -241,7 +243,7 @@ namespace Average.Client.Framework.Rpc
             return this;
         }
 
-        public RpcRequest On<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(Action<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> action)
+        public RpcService On<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(Action<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> action)
         {
             Action<string> c = null;
             c = response =>
@@ -267,7 +269,7 @@ namespace Average.Client.Framework.Rpc
             return this;
         }
 
-        public RpcRequest On<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>(Action<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11> action)
+        public RpcService On<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>(Action<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11> action)
         {
             Action<string> c = null;
             c = response =>
@@ -294,7 +296,7 @@ namespace Average.Client.Framework.Rpc
             return this;
         }
 
-        public RpcRequest On<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>(Action<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12> action)
+        public RpcService On<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>(Action<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12> action)
         {
             Action<string> c = null;
             c = response =>
@@ -322,7 +324,7 @@ namespace Average.Client.Framework.Rpc
             return this;
         }
 
-        public RpcRequest On<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>(Action<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13> action)
+        public RpcService On<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>(Action<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13> action)
         {
             Action<string> c = null;
             c = response =>
@@ -351,7 +353,7 @@ namespace Average.Client.Framework.Rpc
             return this;
         }
 
-        public RpcRequest On<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>(Action<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14> action)
+        public RpcService On<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>(Action<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14> action)
         {
             Action<string> c = null;
             c = response =>

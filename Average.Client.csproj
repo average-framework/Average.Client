@@ -114,16 +114,17 @@
     <Compile Include="Framework\Handlers\CharacterHandler.cs" />
     <Compile Include="Framework\Handlers\CommandHandler.cs" />
     <Compile Include="Framework\Handlers\MenuHandler.cs" />
+    <Compile Include="Framework\Handlers\RpcHandler.cs" />
     <Compile Include="Framework\Handlers\UIHandler.cs" />
     <Compile Include="Framework\Handlers\WorldHandler.cs" />
     <Compile Include="Framework\Helpers\ConversionHelpers.cs" />
     <Compile Include="Framework\Helpers\MathHelpers.cs" />
     <Compile Include="Framework\Interfaces\IHandler.cs" />
     <Compile Include="Framework\Interfaces\IService.cs" />
-    <Compile Include="Framework\Managers\CommandManager.cs" />
-    <Compile Include="Framework\Managers\EventManager.cs" />
-    <Compile Include="Framework\Managers\ThreadManager.cs" />
-    <Compile Include="Framework\Rpc\RpcRequest.cs" />
+    <Compile Include="Framework\Services\CommandService.cs" />
+    <Compile Include="Framework\Services\EventService.cs" />
+    <Compile Include="Framework\Services\ThreadService.cs" />
+    <Compile Include="Framework\Services\RpcService.cs" />
     <Compile Include="Framework\Rpc\RpcTrigger.cs" />
     <Compile Include="Framework\IoC\Container.cs" />
     <Compile Include="Framework\IoC\ContainerItem.cs" />
@@ -163,6 +164,8 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Framework\Managers\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

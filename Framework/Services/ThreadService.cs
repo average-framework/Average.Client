@@ -1,5 +1,6 @@
 ﻿using Average.Client.Framework.Attributes;
 using Average.Client.Framework.Diagnostics;
+using Average.Client.Framework.Interfaces;
 using Average.Client.Framework.IoC;
 using System;
 using System.Collections.Generic;
@@ -7,9 +8,9 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 
-namespace Average.Client.Framework.Managers
+namespace Average.Client.Framework.Services
 {
-    internal class ThreadManager
+    internal class ThreadService : IService
     {
         public class Thread
         {
@@ -33,10 +34,10 @@ namespace Average.Client.Framework.Managers
         private readonly Action<Func<Task>> _attachCallback;
         private readonly Action<Func<Task>> _detachCallback;
         private const BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy;
-        
+
         private readonly List<Thread> _threads = new();
 
-        public ThreadManager(Container container, Action<Func<Task>> attachCallback, Action<Func<Task>> detachCallback)
+        public ThreadService(Container container, Action<Func<Task>> attachCallback, Action<Func<Task>> detachCallback)
         {
             _container = container;
             _attachCallback = attachCallback;

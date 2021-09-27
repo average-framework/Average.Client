@@ -41,7 +41,7 @@ namespace Average.Client
 
             _container.Register<CharacterService>();
             _container.Register<CharacterCreatorService>();
-            _container.Register<WorldService>();
+            //_container.Register<WorldService>();
 
             // Handlers
             _container.Register<RpcHandler>();
@@ -50,7 +50,7 @@ namespace Average.Client
             _container.Register<ClientHandler>();
             _container.Register<CharacterHandler>();
             _container.Register<CharacterCreatorHandler>();
-            _container.Register<WorldHandler>();
+            //_container.Register<WorldHandler>();
 
             // Reflections
             _container.Resolve<EventService>().Reflect();

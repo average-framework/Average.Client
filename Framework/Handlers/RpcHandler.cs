@@ -5,7 +5,9 @@ using Average.Client.Framework.Interfaces;
 using CitizenFX.Core.Native;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using static Average.Client.Framework.GameAPI;
+using static CitizenFX.Core.Native.API;
 
 namespace Average.Client.Framework.Handlers
 {
@@ -17,8 +19,10 @@ namespace Average.Client.Framework.Handlers
         }
 
         [ClientEvent("rpc:native_call")]
-        private void OnNativeCall(long native, List<object> args)
+        private void OnNativeCall(object native, List<object> args)
         {
+            Logger.Debug("Native Call: " + native + ", " + native.GetType());
+
             var newArgs = new List<InputArgument>();
 
             try
@@ -27,12 +31,12 @@ namespace Average.Client.Framework.Handlers
                 {
                     if (arg is int @int)
                     {
-                        var networkIdExists = API.NetworkDoesNetworkIdExist(@int);
+                        var networkIdExists = NetworkDoesNetworkIdExist(@int);
 
                         if (networkIdExists)
                         {
-                            // This int argument is an networked entity
-                            var entity = API.NetworkGetEntityFromNetworkId(@int);
+                            // This argument is an networked entity
+                            var entity = NetworkGetEntityFromNetworkId(@int);
                             newArgs.Add(entity);
                         }
                         else
@@ -46,11 +50,31 @@ namespace Average.Client.Framework.Handlers
                     }
                 }
 
-                Call(native, newArgs.ToArray());
+                Logger.Debug("Execute: " + string.Join(", ", newArgs));
+
+                switch (native)
+                {
+                    case long:
+                        Call((long)native, newArgs.ToArray());
+                        Logger.Debug("long");
+                        break;
+                    case ulong:
+                        Call((ulong)native, newArgs.ToArray());
+                        Logger.Debug("ulong");
+                        break;
+                }
             }
             catch (Exception ex)
             {
-                Logger.Error($"Unable to call native: {(Hash)native}. Error: {ex.Message}\n{ex.StackTrace}.");
+                switch (native)
+                {
+                    case long:
+                        Logger.Error($"Unable to call native: {(Hash)native}. Error: {ex.Message}\n{ex.StackTrace}.");
+                        break;
+                    case ulong:
+                        Logger.Error($"Unable to call native: {(ulong)native:X8}. Error: {ex.Message}\n{ex.StackTrace}.");
+                        break;
+                }
             }
         }
     }

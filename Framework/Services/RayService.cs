@@ -5,6 +5,7 @@ using Average.Client.Framework.Ray;
 using Average.Shared.Enums;
 using CitizenFX.Core;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using static Average.Client.Framework.GameAPI;
@@ -87,6 +88,7 @@ namespace Average.Client.Framework.Services
                 if (item.CloseMenuOnAction)
                 {
                     CloseMenu();
+                    Unfocus();
                 }
             }
 
@@ -150,7 +152,7 @@ namespace Average.Client.Framework.Services
         [Thread]
         private async Task KeyboardUpdate()
         {
-            if (IsControlJustReleased(0, 0x8CC9CD42))
+            if (IsControlJustReleased(0, 0x8CC9CD42) && _rayGroupList.Count > 0)
             {
                 ShowMenu();
                 SetVisibility(true);

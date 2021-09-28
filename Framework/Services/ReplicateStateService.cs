@@ -19,7 +19,7 @@ namespace Average.Client.Framework.Services
 
         private readonly List<GetReplicatedState> _getReplicatedStates = new();
 
-        private const int SyncRate = 60;
+        //private const int SyncRate = 60;
 
         public ReplicateStateService(Container container, EventService eventService, ThreadService threadService)
         {

@@ -2,6 +2,7 @@
 using Average.Client.Framework.Extensions;
 using Average.Client.Framework.Interfaces;
 using Average.Client.Models;
+using Average.Shared.Attributes;
 using Average.Shared.DataModels;
 using Average.Shared.Enums;
 using CitizenFX.Core;

@@ -8,13 +8,11 @@ namespace Average.Client
 {
     internal class Bootstrapper
     {
-        private readonly Main _main;
         private readonly Container _container;
         private readonly EventHandlerDictionary _eventHandlers;
 
-        public Bootstrapper(Main main, Container container, EventHandlerDictionary eventHandlers)
+        public Bootstrapper(Container container, EventHandlerDictionary eventHandlers)
         {
-            _main = main;
             _container = container;
             _eventHandlers = eventHandlers;
 
@@ -25,8 +23,6 @@ namespace Average.Client
         {
             // Others
             _container.RegisterInstance(_eventHandlers);
-            _container.RegisterInstance(_main._attachCallback, serviceKey: "attachCallback");
-            _container.RegisterInstance(_main._detachCallback, serviceKey: "detachCallback");
 
             // Framework Services
             _container.Register<RpcService>(reuse: Reuse.Transient);

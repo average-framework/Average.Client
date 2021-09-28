@@ -31,10 +31,10 @@ namespace Average.Client
             // Framework Services
             _container.Register<RpcService>(reuse: Reuse.Transient);
             _container.Register<EventService>();
-            _container.Register<ReplicateStateService>();
-            _container.Register<CommandService>();
             _container.Register<ThreadService>();
+            _container.Register<CommandService>();
             _container.Register<LanguageService>();
+            _container.Register<ReplicateStateService>();
             _container.Register<UIService>();
             _container.Register<MenuService>();
             _container.Register<RayService>();

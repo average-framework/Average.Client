@@ -99,7 +99,6 @@
     <Compile Include="Framework\Events\ResourceStopEventArgs.cs" />
     <Compile Include="Framework\Events\PopulationPedCreatingEventArgs.cs" />
     <Compile Include="Framework\Events\SessionInitializedEventArgs.cs" />
-    <Compile Include="Framework\Attributes\NetworkGetSyncAttribute.cs" />
     <Compile Include="Framework\Attributes\UICallbackAttribute.cs" />
     <Compile Include="Framework\Diagnostics\Logger.cs" />
     <Compile Include="Framework\Diagnostics\LogInfo.cs" />
@@ -113,6 +112,7 @@
     <Compile Include="Framework\Handlers\CharacterCreatorHandler.cs" />
     <Compile Include="Framework\Handlers\CharacterHandler.cs" />
     <Compile Include="Framework\Handlers\CommandHandler.cs" />
+    <Compile Include="Framework\Handlers\ReplicateStateHandler.cs" />
     <Compile Include="Framework\Handlers\RpcHandler.cs" />
     <Compile Include="Framework\Handlers\UIHandler.cs" />
     <Compile Include="Framework\Helpers\ConversionHelpers.cs" />
@@ -125,6 +125,7 @@
     <Compile Include="Framework\Services\CommandService.cs" />
     <Compile Include="Framework\Services\EventService.cs" />
     <Compile Include="Framework\Services\RayService.cs" />
+    <Compile Include="Framework\Services\ReplicateStateService.cs" />
     <Compile Include="Framework\Services\ThreadService.cs" />
     <Compile Include="Framework\Services\RpcService.cs" />
     <Compile Include="Framework\Rpc\RpcTrigger.cs" />

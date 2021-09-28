@@ -31,6 +31,7 @@ namespace Average.Client
             // Framework Services
             _container.Register<RpcService>(reuse: Reuse.Transient);
             _container.Register<EventService>();
+            _container.Register<ReplicateStateService>();
             _container.Register<CommandService>();
             _container.Register<ThreadService>();
             _container.Register<LanguageService>();
@@ -39,7 +40,6 @@ namespace Average.Client
             _container.Register<RayService>();
 
             // Services
-
             _container.Register<CharacterService>();
             _container.Register<CharacterCreatorService>();
 
@@ -50,10 +50,12 @@ namespace Average.Client
             _container.Register<ClientHandler>();
             _container.Register<CharacterHandler>();
             _container.Register<CharacterCreatorHandler>();
+            _container.Register<ReplicateStateHandler>();
 
             // Reflections
             _container.Resolve<EventService>().Reflect();
             _container.Resolve<ThreadService>().Reflect();
+            _container.Resolve<ReplicateStateService>().Reflect();
 
             // Called on resource start for initialize the client on server side
             _container.Resolve<ClientHandler>().OnClientInitialized();

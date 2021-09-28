@@ -5,7 +5,6 @@ using Average.Client.Framework.Ray;
 using Average.Shared.Enums;
 using CitizenFX.Core;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using static Average.Client.Framework.GameAPI;
@@ -15,31 +14,28 @@ namespace Average.Client.Framework.Services
 {
     internal class RayService : IService
     {
+        private readonly UIService _uiService;
+
         private RaycastHit _currentRay;
         private bool _isFocusActive;
-
-        private string _currentGroup;
+        private RayGroup _currentGroup;
         private int _lastEntityHit = 0;
-
-        private readonly List<string> _containerHistories = new();
 
         public bool CanCloseMenu { get; set; } = true;
         public bool IsOpen { get; private set; }
         public float TargetRange => 6f;
-
         public Action<RaycastHit, bool> CrossairCondition { get; set; }
 
-        private const int CrossairTransitionDuration = 150;
-
-        private readonly UIService _uiService;
-
         private readonly RayGroupList _rayGroupList = new();
+        private readonly List<RayGroup> _containerHistories = new();
+
+        private const int CrossairTransitionDuration = 150;
 
         public RayService(UIService uiService)
         {
             _uiService = uiService;
 
-            _currentGroup = "main";
+            _currentGroup = new RayGroup("main");
 
             AddGroupToHistory(_currentGroup);
             CrossairCondition = DefaultCrossairCondition;
@@ -52,25 +48,9 @@ namespace Average.Client.Framework.Services
         [UICallback("window_ready")]
         private CallbackDelegate OnWindowReady(IDictionary<string, object> data, CallbackDelegate result)
         {
-            Logger.Error("OnWindowReady");
-
             // Load menu in html page
             _uiService.LoadFrame("ray");
             _uiService.SetZIndex("ray", 80000);
-
-            return result;
-        }
-
-        [UICallback("frame_ready")]
-        private CallbackDelegate OnFrameReady(IDictionary<string, object> data, CallbackDelegate result)
-        {
-            if (data.TryGetValue("frame", out var frame))
-            {
-                if ((string)frame == "ray")
-                {
-                    Logger.Error("OnFrameReady");
-                }
-            }
 
             return result;
         }
@@ -80,7 +60,7 @@ namespace Average.Client.Framework.Services
         {
             if (data.TryGetValue("id", out var id))
             {
-                var item = _rayGroupList[_currentGroup][id.ToString()];
+                var item = _rayGroupList[_currentGroup.Name][id.ToString()];
                 if (item == null) return result;
 
                 item.Action?.Invoke(_currentRay);
@@ -145,20 +125,35 @@ namespace Average.Client.Framework.Services
         private async Task CrossairUpdate()
         {
             _currentRay = GetTarget(PlayerPedId(), TargetRange);
-            CrossairCondition.Invoke(_currentRay, _lastEntityHit != _currentRay.EntityHit);
-            await BaseScript.Delay(100);
+
+            if(_lastEntityHit != _currentRay.EntityHit)
+            {
+                _lastEntityHit = _currentRay.EntityHit;
+                CrossairCondition.Invoke(_currentRay, _lastEntityHit != _currentRay.EntityHit);
+            }
+            else
+            {
+                await BaseScript.Delay(500);
+            }
         }
 
         [Thread]
         private async Task KeyboardUpdate()
         {
-            if (IsControlJustReleased(0, 0x8CC9CD42) && _rayGroupList.Count > 0)
+            if(_rayGroupList.Count > 0)
             {
-                ShowMenu();
-                SetVisibility(true);
-                await ShowGroup();
-                _uiService.FocusFrame("ray");
-                _uiService.Focus();
+                if (IsControlJustReleased(0, 0x8CC9CD42))
+                {
+                    ShowMenu();
+                    SetVisibility(true);
+                    await ShowGroup();
+                    _uiService.FocusFrame("ray");
+                    _uiService.Focus();
+                }
+            }
+            else
+            {
+                await BaseScript.Delay(500);
             }
         }
 
@@ -226,11 +221,9 @@ namespace Average.Client.Framework.Services
             OnRender(items);
         }
 
-        internal async void Open(string groupName)
+        internal async void Open(RayGroup group)
         {
-            _currentGroup = groupName;
-
-            var group = _rayGroupList[groupName];
+            _currentGroup = group;
 
             foreach (var item in group)
             {
@@ -253,7 +246,7 @@ namespace Average.Client.Framework.Services
             {
                 IsOpen = false;
 
-                _currentGroup = "main";
+                _currentGroup = new RayGroup("main");
 
                 ClearHistory();
                 AddGroupToHistory(_currentGroup);
@@ -295,22 +288,21 @@ namespace Average.Client.Framework.Services
         });
 
         internal void ClearHistory() => _containerHistories.Clear();
+        internal bool HistoryExists(RayGroup group) => _containerHistories.Exists(x => x.Name == group.Name);
 
-        internal bool Exists(string groupName) => _containerHistories.Exists(x => x == groupName);
-
-        private void AddGroupToHistory(string groupName)
+        private void AddGroupToHistory(RayGroup group)
         {
-            if (!Exists(groupName))
+            if (!HistoryExists(group))
             {
-                _containerHistories.Add(groupName);
+                _containerHistories.Add(group);
             }
         }
 
-        private void RemoveGroupInHistory(string groupName)
+        private void RemoveGroupInHistory(RayGroup group)
         {
-            if (Exists(groupName))
+            if (HistoryExists(group))
             {
-                _containerHistories.Remove(groupName);
+                _containerHistories.Remove(group);
             }
         }
     }

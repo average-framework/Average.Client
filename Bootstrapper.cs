@@ -34,6 +34,7 @@ namespace Average.Client
             _container.Register<UIService>();
             _container.Register<MenuService>();
             _container.Register<RayService>();
+            _container.Register<InputService>();
 
             // Services
             _container.Register<CharacterService>();
@@ -47,6 +48,7 @@ namespace Average.Client
             _container.Register<CharacterHandler>();
             _container.Register<CharacterCreatorHandler>();
             _container.Register<ReplicateStateHandler>();
+            _container.Register<InputHandler>();
 
             // Reflections
             _container.Resolve<EventService>().Reflect();

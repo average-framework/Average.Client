@@ -45,6 +45,16 @@ namespace Average.Client.Framework.Handlers
                                 newArgs.Add(arg.ToInputArgument());
                             }
                         }
+                        else
+                        {
+                            if (str.StartsWith("player:"))
+                            {
+                                var playerId = int.Parse(@str.Substring(7));
+
+                                // This argument is an player
+                                newArgs.Add(playerId);
+                            }
+                        }
                     }
                     else
                     {

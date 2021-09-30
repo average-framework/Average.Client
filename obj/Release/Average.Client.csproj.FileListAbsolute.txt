@@ -1,0 +1,3 @@
+C:\Users\bub.bl\Desktop\Average Framework\Average.Client\obj\Release\Average.Client.csproj.AssemblyReference.cache
+C:\Users\bub.bl\Desktop\Average Framework\Average.Client\obj\Release\Average.Client.csproj.CoreCompileInputs.cache
+C:\Users\bub.bl\Desktop\Average Framework\Average.Client\obj\Release\Average.Client.net.dll

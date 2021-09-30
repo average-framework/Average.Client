@@ -31,17 +31,13 @@ namespace Average.Client.Framework.Services
         }
 
         private readonly Container _container;
-        private readonly Action<Func<Task>> _attachCallback;
-        private readonly Action<Func<Task>> _detachCallback;
         private const BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy;
 
         private readonly List<Thread> _threads = new();
 
-        public ThreadService(Container container, Action<Func<Task>> attachCallback, Action<Func<Task>> detachCallback)
+        public ThreadService(Container container)
         {
             _container = container;
-            _attachCallback = attachCallback;
-            _detachCallback = detachCallback;
 
             Logger.Debug("ThreadManager Initialized successfully");
         }
@@ -73,7 +69,7 @@ namespace Average.Client.Framework.Services
             }
         }
 
-        internal void RegisterInternalThread(ThreadAttribute threadAttr, object classObj, MethodInfo method)
+        private void RegisterInternalThread(ThreadAttribute threadAttr, object classObj, MethodInfo method)
         {
             var methodParams = method.GetParameters();
 
@@ -111,7 +107,7 @@ namespace Average.Client.Framework.Services
                                     _threads[_threads.FindIndex(x => x.Func == func)].IsRunning = false;
                                     _threads[_threads.FindIndex(x => x.Func == func)].IsTerminated = true;
 
-                                    _detachCallback(func);
+                                    Main.RemoveTick(func);
                                 }
                             }
                         }
@@ -120,7 +116,7 @@ namespace Average.Client.Framework.Services
                     thread.Func = func;
                     _threads.Add(thread);
 
-                    _attachCallback(func);
+                    Main.AddTick(func);
 
                     Logger.Debug($"Registering [Thread] to method: {method.Name}.");
                 }
@@ -131,8 +127,8 @@ namespace Average.Client.Framework.Services
             }
         }
 
-        public void StartThread(Func<Task> action) => _attachCallback(action);
-        public void StopThread(Func<Task> action) => _detachCallback(action);
+        internal void StartThread(Func<Task> action) => Main.AddTick(action);
+        internal void StopThread(Func<Task> action) => Main.RemoveTick(action);
 
         public IEnumerable<Thread> GetThreads() => _threads.AsEnumerable();
     }

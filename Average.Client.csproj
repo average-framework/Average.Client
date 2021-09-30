@@ -67,7 +67,7 @@
       <HintPath>..\..\AverageFrameworkServer\resources\avg\libs\average.shared.net.dll</HintPath>
     </Reference>
     <Reference Include="CitizenFX.Client.Core">
-      <HintPath>..\..\Averagge Framework TestServer\resources\avg\libs\CitizenFX.Client.Core.dll</HintPath>
+      <HintPath>..\..\AverageFrameworkServer\resources\avg\libs\CitizenFX.Client.Core.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\AverageFrameworkServer\resources\avg\libs\Newtonsoft.Json.dll</HintPath>
@@ -112,6 +112,7 @@
     <Compile Include="Framework\Handlers\CharacterCreatorHandler.cs" />
     <Compile Include="Framework\Handlers\CharacterHandler.cs" />
     <Compile Include="Framework\Handlers\CommandHandler.cs" />
+    <Compile Include="Framework\Handlers\InputHandler.cs" />
     <Compile Include="Framework\Handlers\ReplicateStateHandler.cs" />
     <Compile Include="Framework\Handlers\RpcHandler.cs" />
     <Compile Include="Framework\Handlers\UIHandler.cs" />
@@ -124,6 +125,7 @@
     <Compile Include="Framework\Ray\RayItem.cs" />
     <Compile Include="Framework\Services\CommandService.cs" />
     <Compile Include="Framework\Services\EventService.cs" />
+    <Compile Include="Framework\Services\InputService.cs" />
     <Compile Include="Framework\Services\RayService.cs" />
     <Compile Include="Framework\Services\ReplicateStateService.cs" />
     <Compile Include="Framework\Services\ThreadService.cs" />
@@ -166,8 +168,6 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Framework\Managers\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

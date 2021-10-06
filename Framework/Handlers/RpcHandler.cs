@@ -2,6 +2,7 @@
 using Average.Client.Framework.Diagnostics;
 using Average.Client.Framework.Extensions;
 using Average.Client.Framework.Interfaces;
+using Average.Client.Framework.Services;
 using CitizenFX.Core.Native;
 using System;
 using System.Collections.Generic;
@@ -12,9 +13,23 @@ namespace Average.Client.Framework.Handlers
 {
     internal class RpcHandler : IHandler
     {
-        public RpcHandler()
-        {
+        private readonly RpcService _rpcService;
 
+        public RpcHandler(RpcService rpcService)
+        {
+            _rpcService = rpcService;
+        }
+
+        [ClientEvent("rpc:send_response")]
+        private void OnReceiveResponse(string @event, string response)
+        {
+            _rpcService.TriggerResponse(@event, response);
+        }
+
+        [ClientEvent("rpc:trigger_event")]
+        private void OnTriggerEvent(string @event, string request)
+        {
+            _rpcService.OnInternalRequest(@event, request);
         }
 
         [ClientEvent("rpc:native_call")]

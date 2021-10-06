@@ -7,6 +7,7 @@ using Average.Shared.DataModels;
 using Average.Shared.Enums;
 using CitizenFX.Core;
 using CitizenFX.Core.Native;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
@@ -43,7 +44,15 @@ namespace Average.Client.Framework.Services
 
         internal void Create(CharacterData characterData)
         {
-            _eventService.EmitServer("character:create_character", characterData.ToJson());
+            try
+            {
+                var test = characterData.ToJson();
+                _eventService.EmitServer("character:create_character", characterData.ToJson());
+            }
+            catch(Exception ex)
+            {
+                Logger.Debug("Test: " + ex.Message + "\n" + ex.StackTrace);
+            }
         }
 
         internal async Task SetAppearance(int ped, CharacterData characterData)

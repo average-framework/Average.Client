@@ -1,386 +1,410 @@
-﻿using Average.Client.Framework.Extensions;
+﻿using Average.Client.Framework.Diagnostics;
+using Average.Client.Framework.Extensions;
 using Average.Client.Framework.Interfaces;
-using Average.Client.Framework.Rpc;
 using Average.Shared.Rpc;
 using CitizenFX.Core;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.Linq;
-using static CitizenFX.Core.Native.API;
+using System.Threading.Tasks;
 
 namespace Average.Client.Framework.Services
 {
     internal class RpcService : IService
     {
-        private RpcMessage _message;
-        private readonly RpcHandler _handler;
-        private readonly RpcTrigger _trigger;
-        private readonly RpcSerializer _serializer;
+        private readonly EventService _eventService;
+        private readonly Dictionary<string, Delegate> _events = new();
 
-        public RpcService(EventHandlerDictionary eventHandlers)
+        internal delegate object RpcCallback(params object[] args);
+
+        private RpcMessage _preparedRequest;
+
+        public RpcService(EventService eventService)
         {
-            _message = new RpcMessage();
-            _handler = new RpcHandler(eventHandlers);
-            _trigger = new RpcTrigger();
-            _serializer = new RpcSerializer();
+            _eventService = eventService;
+
+            OnResponse<bool>("rpc:test2", result =>
+            {
+                Logger.Debug("Age Result: " + result);
+            }).Emit(24);
+
+            OnRequest<int>("rpc:test", (cb, age) =>
+            {
+                Logger.Error("OnRequest: " + age);
+                cb($"J'ai {(age > 24 ? "plus" : "moins")} de 24 ans");
+            });
+
+            OnRequest("GetPedScale", (cb) =>
+            {
+                Logger.Debug("Send player scale: " + 1.8f);
+                cb(1.8f);
+            });
+
+            Task.Factory.StartNew(async () =>
+            {
+                Logger.Error("Getting player count..");
+                var result = await Request<int>("player_count");
+                Logger.Error("Player count: " + result.Item1);
+            });
         }
 
-        public RpcService Event(string eventName)
+        internal void TriggerResponse(string @event, string response)
         {
-            _message.Event = eventName;
-            return this;
+            if (_events.ContainsKey(@event))
+            {
+                _events[@event].DynamicInvoke(response);
+            }
         }
-
-        public void Emit() => _trigger.Trigger(_message);
 
         public void Emit(params object[] args)
         {
-            _message.Args = args.ToList();
-            _trigger.Trigger(_message);
+            _preparedRequest.Args = args.ToList();
+            _eventService.EmitServer("rpc:trigger_event", _preparedRequest.Event, _preparedRequest.ToJson());
         }
 
-        public RpcService On(Action<RpcMessage> action)
+        private void Register(string @event, Delegate callback)
         {
-            Action<string> c = null;
-            c = response =>
+            if (!_events.ContainsKey(@event))
             {
-                _message = _serializer.Deserialize<RpcMessage>(response);
-                action(_message);
+                _events.Add(@event, callback);
+            }
+        }
 
-                _handler.Detach(_message.Event, c);
+        private void Unregister(string @event)
+        {
+            if (_events.ContainsKey(@event))
+            {
+                _events.Remove(@event);
+            }
+        }
+
+        private void OnInternalResponse(string @event, Delegate callback)
+        {
+            _preparedRequest = new RpcMessage(@event);
+
+            Action<string> action = null;
+            action = response =>
+            {
+                Unregister(@event);
+
+                var message = response.Deserialize<RpcMessage>();
+                var @params = callback.Method.GetParameters().ToList();
+                var newArgs = new List<object>();
+
+                for (int i = 0; i < message.Args.Count; i++)
+                {
+                    var arg = message.Args[i];
+                    var param = @params[i];
+
+                    if (arg.GetType() != param.ParameterType)
+                    {
+                        if (arg.GetType() == typeof(JArray))
+                        {
+                            // Need to convert arg or type JArray to param type if is it not the same
+                            var array = arg as JArray;
+                            var newArg = array.ToObject(param.ParameterType);
+                            newArgs.Add(newArg);
+                        }
+                        else
+                        {
+                            // Need to convert arg type to param type if is it not the same
+                            var newArg = Convert.ChangeType(arg, param.ParameterType);
+                            newArgs.Add(newArg);
+                        }
+                    }
+                    else
+                    {
+                        newArgs.Add(arg);
+                    }
+                }
+
+                callback.DynamicInvoke(newArgs.ToArray());
             };
 
-            _message.Target = GetPlayerServerId(PlayerId());
-            _handler.Attach(_message.Event, c);
+            Register(@event, action);
+        }
+
+        internal void OnInternalRequest(string @event, string request)
+        {
+            var message = request.Deserialize<RpcMessage>();
+
+            if (_events.ContainsKey(@event))
+            {
+                var newArgs = new List<object>();
+
+                newArgs.Add(new RpcCallback(args =>
+                {
+                    var response = new RpcMessage();
+                    response.Event = @event;
+                    response.Args = args.ToList();
+
+                    _eventService.EmitServer("rpc:send_response", @event, response.ToJson());
+                    return args;
+                }));
+
+                // Need to skip two first args (RpcCallback) args
+                var methodParams = _events[@event].Method.GetParameters().Skip(1).ToList();
+
+                for (int i = 0; i < methodParams.Count; i++)
+                {
+                    var arg = message.Args[i];
+                    var param = methodParams[i];
+
+                    if (arg.GetType() != param.ParameterType)
+                    {
+                        if (arg.GetType() == typeof(JArray))
+                        {
+                            // Need to convert arg or type JArray to param type if is it not the same
+                            var array = arg as JArray;
+                            var newArg = array.ToObject(param.ParameterType);
+                            newArgs.Add(newArg);
+                        }
+                        else
+                        {
+                            // Need to convert arg type to param type if is it not the same
+                            var newArg = Convert.ChangeType(arg, param.ParameterType);
+                            newArgs.Add(newArg);
+                        }
+                    }
+                    else
+                    {
+                        newArgs.Add(arg);
+                    }
+                }
+
+                _events[@event].DynamicInvoke(newArgs.ToArray());
+            }
+        }
+
+        #region OnResponse<,>
+
+        public RpcService OnResponse(string @event, Action callback)
+        {
+            OnInternalResponse(@event, callback);
             return this;
         }
 
-        public RpcService On<T1>(Action<T1> action)
+        public RpcService OnResponse<T1>(string @event, Action<T1> callback)
         {
-            Action<string> c = null;
-            c = response =>
-            {
-                _message = _serializer.Deserialize<RpcMessage>(response);
-                var arg1 = _message.Args[0].Deserialize<T1>();
-                action(arg1);
-
-                _handler.Detach(_message.Event, c);
-            };
-
-            _message.Target = GetPlayerServerId(PlayerId());
-            _handler.Attach(_message.Event, c);
+            OnInternalResponse(@event, callback);
             return this;
         }
 
-        public RpcService On<T1, T2>(Action<T1, T2> action)
+        public RpcService OnResponse<T1, T2>(string @event, Action<T1, T2> callback)
         {
-            Action<string> c = null;
-            c = response =>
-            {
-                _message = _serializer.Deserialize<RpcMessage>(response);
-                var arg1 = _message.Args[0].Deserialize<T1>();
-                var arg2 = _message.Args[1].Deserialize<T2>();
-                action(arg1, arg2);
-
-                _handler.Detach(_message.Event, c);
-            };
-
-            _message.Target = GetPlayerServerId(PlayerId());
-            _handler.Attach(_message.Event, c);
+            OnInternalResponse(@event, callback);
             return this;
         }
 
-        public RpcService On<T1, T2, T3>(Action<T1, T2, T3> action)
+        public RpcService OnResponse<T1, T2, T3>(string @event, Action<T1, T2, T3> callback)
         {
-            Action<string> c = null;
-            c = response =>
-            {
-                _message = _serializer.Deserialize<RpcMessage>(response);
-                var arg1 = _message.Args[0].Deserialize<T1>();
-                var arg2 = _message.Args[1].Deserialize<T2>();
-                var arg3 = _message.Args[2].Deserialize<T3>();
-                action(arg1, arg2, arg3);
-
-                _handler.Detach(_message.Event, c);
-            };
-
-            _message.Target = GetPlayerServerId(PlayerId());
-            _handler.Attach(_message.Event, c);
+            OnInternalResponse(@event, callback);
             return this;
         }
 
-        public RpcService On<T1, T2, T3, T4>(Action<T1, T2, T3, T4> action)
+        public RpcService OnResponse<T1, T2, T3, T4>(string @event, Action<T1, T2, T3, T4> callback)
         {
-            Action<string> c = null;
-            c = response =>
-            {
-                _message = _serializer.Deserialize<RpcMessage>(response);
-                var arg1 = _message.Args[0].Deserialize<T1>();
-                var arg2 = _message.Args[1].Deserialize<T2>();
-                var arg3 = _message.Args[2].Deserialize<T3>();
-                var arg4 = _message.Args[3].Deserialize<T4>();
-                action(arg1, arg2, arg3, arg4);
-
-                _handler.Detach(_message.Event, c);
-            };
-
-            _message.Target = GetPlayerServerId(PlayerId());
-            _handler.Attach(_message.Event, c);
+            OnInternalResponse(@event, callback);
             return this;
         }
 
-        public RpcService On<T1, T2, T3, T4, T5>(Action<T1, T2, T3, T4, T5> action)
+        public RpcService OnResponse<T1, T2, T3, T4, T5>(string @event, Action<T1, T2, T3, T4, T5> callback)
         {
-            Action<string> c = null;
-            c = response =>
-            {
-                _message = _serializer.Deserialize<RpcMessage>(response);
-                var arg1 = _message.Args[0].Deserialize<T1>();
-                var arg2 = _message.Args[1].Deserialize<T2>();
-                var arg3 = _message.Args[2].Deserialize<T3>();
-                var arg4 = _message.Args[3].Deserialize<T4>();
-                var arg5 = _message.Args[4].Deserialize<T5>();
-                action(arg1, arg2, arg3, arg4, arg5);
-
-                _handler.Detach(_message.Event, c);
-            };
-
-            _message.Target = GetPlayerServerId(PlayerId());
-            _handler.Attach(_message.Event, c);
+            OnInternalResponse(@event, callback);
             return this;
         }
 
-        public RpcService On<T1, T2, T3, T4, T5, T6>(Action<T1, T2, T3, T4, T5, T6> action)
+        public RpcService OnResponse<T1, T2, T3, T4, T5, T6>(string @event, Action<T1, T2, T3, T4, T5, T6> callback)
         {
-            Action<string> c = null;
-            c = response =>
-            {
-                _message = _serializer.Deserialize<RpcMessage>(response);
-                var arg1 = _message.Args[0].Deserialize<T1>();
-                var arg2 = _message.Args[1].Deserialize<T2>();
-                var arg3 = _message.Args[2].Deserialize<T3>();
-                var arg4 = _message.Args[3].Deserialize<T4>();
-                var arg5 = _message.Args[4].Deserialize<T5>();
-                var arg6 = _message.Args[5].Deserialize<T6>();
-                action(arg1, arg2, arg3, arg4, arg5, arg6);
-
-                _handler.Detach(_message.Event, c);
-            };
-
-            _message.Target = GetPlayerServerId(PlayerId());
-            _handler.Attach(_message.Event, c);
+            OnInternalResponse(@event, callback);
             return this;
         }
 
-        public RpcService On<T1, T2, T3, T4, T5, T6, T7>(Action<T1, T2, T3, T4, T5, T6, T7> action)
+        public RpcService OnResponse<T1, T2, T3, T4, T5, T6, T7>(string @event, Action<T1, T2, T3, T4, T5, T6, T7> callback)
         {
-            Action<string> c = null;
-            c = response =>
-            {
-                _message = _serializer.Deserialize<RpcMessage>(response);
-                var arg1 = _message.Args[0].Deserialize<T1>();
-                var arg2 = _message.Args[1].Deserialize<T2>();
-                var arg3 = _message.Args[2].Deserialize<T3>();
-                var arg4 = _message.Args[3].Deserialize<T4>();
-                var arg5 = _message.Args[4].Deserialize<T5>();
-                var arg6 = _message.Args[5].Deserialize<T6>();
-                var arg7 = _message.Args[6].Deserialize<T7>();
-                action(arg1, arg2, arg3, arg4, arg5, arg6, arg7);
-
-                _handler.Detach(_message.Event, c);
-            };
-
-            _message.Target = GetPlayerServerId(PlayerId());
-            _handler.Attach(_message.Event, c);
+            OnInternalResponse(@event, callback);
             return this;
         }
 
-        public RpcService On<T1, T2, T3, T4, T5, T6, T7, T8>(Action<T1, T2, T3, T4, T5, T6, T7, T8> action)
+        public RpcService OnResponse<T1, T2, T3, T4, T5, T6, T7, T8>(string @event, Action<T1, T2, T3, T4, T5, T6, T7, T8> callback)
         {
-            Action<string> c = null;
-            c = response =>
-            {
-                _message = _serializer.Deserialize<RpcMessage>(response);
-                var arg1 = _message.Args[0].Deserialize<T1>();
-                var arg2 = _message.Args[1].Deserialize<T2>();
-                var arg3 = _message.Args[2].Deserialize<T3>();
-                var arg4 = _message.Args[3].Deserialize<T4>();
-                var arg5 = _message.Args[4].Deserialize<T5>();
-                var arg6 = _message.Args[5].Deserialize<T6>();
-                var arg7 = _message.Args[6].Deserialize<T7>();
-                var arg8 = _message.Args[7].Deserialize<T8>();
-                action(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);
-
-                _handler.Detach(_message.Event, c);
-            };
-
-            _message.Target = GetPlayerServerId(PlayerId());
-            _handler.Attach(_message.Event, c);
+            OnInternalResponse(@event, callback);
             return this;
         }
 
-        public RpcService On<T1, T2, T3, T4, T5, T6, T7, T8, T9>(Action<T1, T2, T3, T4, T5, T6, T7, T8, T9> action)
+        public RpcService OnResponse<T1, T2, T3, T4, T5, T6, T7, T8, T9>(string @event, Action<T1, T2, T3, T4, T5, T6, T7, T8, T9> callback)
         {
-            Action<string> c = null;
-            c = response =>
-            {
-                _message = _serializer.Deserialize<RpcMessage>(response);
-                var arg1 = _message.Args[0].Deserialize<T1>();
-                var arg2 = _message.Args[1].Deserialize<T2>();
-                var arg3 = _message.Args[2].Deserialize<T3>();
-                var arg4 = _message.Args[3].Deserialize<T4>();
-                var arg5 = _message.Args[4].Deserialize<T5>();
-                var arg6 = _message.Args[5].Deserialize<T6>();
-                var arg7 = _message.Args[6].Deserialize<T7>();
-                var arg8 = _message.Args[7].Deserialize<T8>();
-                var arg9 = _message.Args[8].Deserialize<T9>();
-                action(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9);
-
-                _handler.Detach(_message.Event, c);
-            };
-
-            _message.Target = GetPlayerServerId(PlayerId());
-            _handler.Attach(_message.Event, c);
+            OnInternalResponse(@event, callback);
             return this;
         }
 
-        public RpcService On<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(Action<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> action)
+        public RpcService OnResponse<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(string @event, Action<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> callback)
         {
-            Action<string> c = null;
-            c = response =>
-            {
-                _message = _serializer.Deserialize<RpcMessage>(response);
-                var arg1 = _message.Args[0].Deserialize<T1>();
-                var arg2 = _message.Args[1].Deserialize<T2>();
-                var arg3 = _message.Args[2].Deserialize<T3>();
-                var arg4 = _message.Args[3].Deserialize<T4>();
-                var arg5 = _message.Args[4].Deserialize<T5>();
-                var arg6 = _message.Args[5].Deserialize<T6>();
-                var arg7 = _message.Args[6].Deserialize<T7>();
-                var arg8 = _message.Args[7].Deserialize<T8>();
-                var arg9 = _message.Args[8].Deserialize<T9>();
-                var arg10 = _message.Args[9].Deserialize<T10>();
-                action(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10);
-
-                _handler.Detach(_message.Event, c);
-            };
-
-            _message.Target = GetPlayerServerId(PlayerId());
-            _handler.Attach(_message.Event, c);
+            OnInternalResponse(@event, callback);
             return this;
         }
 
-        public RpcService On<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>(Action<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11> action)
+        #endregion
+
+        #region OnRequest<,>
+
+        public void OnRequest(string @event, Action<RpcCallback> callback)
         {
-            Action<string> c = null;
-            c = response =>
-            {
-                _message = _serializer.Deserialize<RpcMessage>(response);
-                var arg1 = _message.Args[0].Deserialize<T1>();
-                var arg2 = _message.Args[1].Deserialize<T2>();
-                var arg3 = _message.Args[2].Deserialize<T3>();
-                var arg4 = _message.Args[3].Deserialize<T4>();
-                var arg5 = _message.Args[4].Deserialize<T5>();
-                var arg6 = _message.Args[5].Deserialize<T6>();
-                var arg7 = _message.Args[6].Deserialize<T7>();
-                var arg8 = _message.Args[7].Deserialize<T8>();
-                var arg9 = _message.Args[8].Deserialize<T9>();
-                var arg10 = _message.Args[9].Deserialize<T10>();
-                var arg11 = _message.Args[10].Deserialize<T11>();
-                action(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11);
-
-                _handler.Detach(_message.Event, c);
-            };
-
-            _message.Target = GetPlayerServerId(PlayerId());
-            _handler.Attach(_message.Event, c);
-            return this;
+            Register(@event, callback);
         }
 
-        public RpcService On<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>(Action<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12> action)
+        public void OnRequest<T1>(string @event, Action<RpcCallback, T1> callback)
         {
-            Action<string> c = null;
-            c = response =>
-            {
-                _message = _serializer.Deserialize<RpcMessage>(response);
-                var arg1 = _message.Args[0].Deserialize<T1>();
-                var arg2 = _message.Args[1].Deserialize<T2>();
-                var arg3 = _message.Args[2].Deserialize<T3>();
-                var arg4 = _message.Args[3].Deserialize<T4>();
-                var arg5 = _message.Args[4].Deserialize<T5>();
-                var arg6 = _message.Args[5].Deserialize<T6>();
-                var arg7 = _message.Args[6].Deserialize<T7>();
-                var arg8 = _message.Args[7].Deserialize<T8>();
-                var arg9 = _message.Args[8].Deserialize<T9>();
-                var arg10 = _message.Args[9].Deserialize<T10>();
-                var arg11 = _message.Args[10].Deserialize<T11>();
-                var arg12 = _message.Args[11].Deserialize<T12>();
-                action(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12);
-
-                _handler.Detach(_message.Event, c);
-            };
-
-            _message.Target = GetPlayerServerId(PlayerId());
-            _handler.Attach(_message.Event, c);
-            return this;
+            Register(@event, callback);
         }
 
-        public RpcService On<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>(Action<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13> action)
+        public void OnRequest<T1, T2>(string @event, Action<RpcCallback, T1, T2> callback)
         {
-            Action<string> c = null;
-            c = response =>
-            {
-                _message = _serializer.Deserialize<RpcMessage>(response);
-                var arg1 = _message.Args[0].Deserialize<T1>();
-                var arg2 = _message.Args[1].Deserialize<T2>();
-                var arg3 = _message.Args[2].Deserialize<T3>();
-                var arg4 = _message.Args[3].Deserialize<T4>();
-                var arg5 = _message.Args[4].Deserialize<T5>();
-                var arg6 = _message.Args[5].Deserialize<T6>();
-                var arg7 = _message.Args[6].Deserialize<T7>();
-                var arg8 = _message.Args[7].Deserialize<T8>();
-                var arg9 = _message.Args[8].Deserialize<T9>();
-                var arg10 = _message.Args[9].Deserialize<T10>();
-                var arg11 = _message.Args[10].Deserialize<T11>();
-                var arg12 = _message.Args[11].Deserialize<T12>();
-                var arg13 = _message.Args[12].Deserialize<T13>();
-                action(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13);
-
-                _handler.Detach(_message.Event, c);
-            };
-
-            _message.Target = GetPlayerServerId(PlayerId());
-            _handler.Attach(_message.Event, c);
-            return this;
+            Register(@event, callback);
         }
 
-        public RpcService On<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>(Action<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14> action)
+        public void OnRequest<T1, T2, T3>(string @event, Action<RpcCallback, T1, T2, T3> callback)
         {
-            Action<string> c = null;
-            c = response =>
-            {
-                _message = _serializer.Deserialize<RpcMessage>(response);
-                var arg1 = _message.Args[0].Deserialize<T1>();
-                var arg2 = _message.Args[1].Deserialize<T2>();
-                var arg3 = _message.Args[2].Deserialize<T3>();
-                var arg4 = _message.Args[3].Deserialize<T4>();
-                var arg5 = _message.Args[4].Deserialize<T5>();
-                var arg6 = _message.Args[5].Deserialize<T6>();
-                var arg7 = _message.Args[6].Deserialize<T7>();
-                var arg8 = _message.Args[7].Deserialize<T8>();
-                var arg9 = _message.Args[8].Deserialize<T9>();
-                var arg10 = _message.Args[9].Deserialize<T10>();
-                var arg11 = _message.Args[10].Deserialize<T11>();
-                var arg12 = _message.Args[11].Deserialize<T12>();
-                var arg13 = _message.Args[12].Deserialize<T13>();
-                var arg14 = _message.Args[13].Deserialize<T14>();
-                action(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
-
-                _handler.Detach(_message.Event, c);
-            };
-
-            _message.Target = GetPlayerServerId(PlayerId());
-            _handler.Attach(_message.Event, c);
-            return this;
+            Register(@event, callback);
         }
+
+        public void OnRequest<T1, T2, T3, T4>(string @event, Action<RpcCallback, T1, T2, T3, T4> callback)
+        {
+            Register(@event, callback);
+        }
+
+        public void OnRequest<T1, T2, T3, T4, T5>(string @event, Action<RpcCallback, T1, T2, T3, T4, T5> callback)
+        {
+            Register(@event, callback);
+        }
+
+        public void OnRequest<T1, T2, T3, T4, T5, T6>(string @event, Action<RpcCallback, T1, T2, T3, T4, T5, T6> callback)
+        {
+            Register(@event, callback);
+        }
+
+        public void OnRequest<T1, T2, T3, T4, T5, T6, T7>(string @event, Action<RpcCallback, T1, T2, T3, T4, T5, T6, T7> callback)
+        {
+            Register(@event, callback);
+        }
+
+        public void OnRequest<T1, T2, T3, T4, T5, T6, T7, T8>(string @event, Action<RpcCallback, T1, T2, T3, T4, T5, T6, T7, T8> callback)
+        {
+            Register(@event, callback);
+        }
+
+        public void OnRequest<T1, T2, T3, T4, T5, T6, T7, T8, T9>(string @event, Action<RpcCallback, T1, T2, T3, T4, T5, T6, T7, T8, T9> callback)
+        {
+            Register(@event, callback);
+        }
+
+        public void OnRequest<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(string @event, Action<RpcCallback, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> callback)
+        {
+            Register(@event, callback);
+        }
+
+        #endregion
+
+        #region Request<,>
+
+        private async Task WaitResponse(object value)
+        {
+            while (value == null) await BaseScript.Delay(1);
+        }
+
+        public async Task<Tuple<T1>> Request<T1>(string @event, params object[] args)
+        {
+            object result = null;
+
+            OnResponse<T1>(@event, arg0 =>
+            {
+                result = Tuple.Create(arg0);
+            }).Emit(args);
+
+            while (result == null) await BaseScript.Delay(1);
+            return result as Tuple<T1>;
+        }
+
+        public async Task<Tuple<T1, T2>> Request<T1, T2>(string @event, params object[] args)
+        {
+            object result = null;
+
+            OnResponse<T1, T2>(@event, (arg0, arg1) =>
+            {
+                result = Tuple.Create(arg0, arg1);
+            }).Emit(args);
+
+            while (result == null) await BaseScript.Delay(1);
+            return result as Tuple<T1, T2>;
+        }
+
+        public async Task<Tuple<T1, T2, T3>> Request<T1, T2, T3>(string @event, params object[] args)
+        {
+            object result = null;
+
+            OnResponse<T1, T2, T3>(@event, (arg0, arg1, arg2) =>
+            {
+                result = Tuple.Create(arg0, arg1, arg2);
+            }).Emit(args);
+
+            while (result == null) await BaseScript.Delay(1);
+            return result as Tuple<T1, T2, T3>;
+        }
+
+        public async Task<Tuple<T1, T2, T3, T4>> Request<T1, T2, T3, T4>(string @event, params object[] args)
+        {
+            object result = null;
+
+            OnResponse<T1, T2, T3, T4>(@event, (arg0, arg1, arg2, arg3) =>
+            {
+                result = Tuple.Create(arg0, arg1, arg2, arg3);
+            }).Emit(args);
+
+            while (result == null) await BaseScript.Delay(1);
+            return result as Tuple<T1, T2, T3, T4>;
+        }
+
+        public async Task<Tuple<T1, T2, T3, T4, T5>> Request<T1, T2, T3, T4, T5>(string @event, params object[] args)
+        {
+            object result = null;
+
+            OnResponse<T1, T2, T3, T4, T5>(@event, (arg0, arg1, arg2, arg3, arg4) =>
+            {
+                result = Tuple.Create(arg0, arg1, arg2, arg3, arg4);
+            }).Emit(args);
+
+            while (result == null) await BaseScript.Delay(1);
+            return result as Tuple<T1, T2, T3, T4, T5>;
+        }
+
+        public async Task<Tuple<T1, T2, T3, T4, T5, T6>> Request<T1, T2, T3, T4, T5, T6>(string @event, params object[] args)
+        {
+            object result = null;
+
+            OnResponse<T1, T2, T3, T4, T5, T6>(@event, (arg0, arg1, arg2, arg3, arg4, arg5) =>
+            {
+                result = Tuple.Create(arg0, arg1, arg2, arg3, arg4, arg5);
+            }).Emit(args);
+
+            while (result == null) await BaseScript.Delay(1);
+            return result as Tuple<T1, T2, T3, T4, T5, T6>;
+        }
+
+        public async Task<Tuple<T1, T2, T3, T4, T5, T6, T7>> Request<T1, T2, T3, T4, T5, T6, T7>(string @event, params object[] args)
+        {
+            object result = null;
+
+            OnResponse<T1, T2, T3, T4, T5, T6, T7>(@event, (arg0, arg1, arg2, arg3, arg4, arg5, arg6) =>
+            {
+                result = Tuple.Create(arg0, arg1, arg2, arg3, arg4, arg5, arg6);
+            }).Emit(args);
+
+            while (result == null) await BaseScript.Delay(1);
+            return result as Tuple<T1, T2, T3, T4, T5, T6, T7>;
+        }
+
+        #endregion
     }
 }

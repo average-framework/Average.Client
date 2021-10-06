@@ -3,7 +3,6 @@ using Average.Client.Framework.Diagnostics;
 using Average.Client.Framework.Events;
 using Average.Client.Framework.Extensions;
 using Average.Client.Framework.Interfaces;
-using Average.Client.Framework.Services;
 using Average.Client.Menu;
 using Average.Client.Models;
 using Average.Shared.DataModels;
@@ -568,6 +567,7 @@ namespace Average.Client.Framework.Services
                     Bank = (decimal)_config["DefaultBank"]
                 },
                 Position = new PositionData((float)_config["Locations"][_locationIndex]["X"], (float)_config["Locations"][_locationIndex]["Y"], (float)_config["Locations"][_locationIndex]["Z"], (float)_config["Locations"][_locationIndex]["H"]),
+                Data = new Dictionary<string, object>()
             };
 
             _menuService.Close();
@@ -1132,7 +1132,7 @@ namespace Average.Client.Framework.Services
                     return _characterService.clothes.Where(x => x.CategoryHash == categoryHash && x.PedType == (int)gender).ToList();
             }
 
-            return  _characterService.clothes.Where(x => x.CategoryHash == categoryHash && x.IsMultiplayer && x.PedType == (int)gender).ToList();
+            return _characterService.clothes.Where(x => x.CategoryHash == categoryHash && x.IsMultiplayer && x.PedType == (int)gender).ToList();
         }
 
         private void InitFaceMenu()
@@ -1507,14 +1507,23 @@ namespace Average.Client.Framework.Services
 
                 overlays = CharacterUtilities.FaceOverlays.Where(x => x.Name == overlay.Name).ToList();
 
-                if (overlays.Exists(x => x.Id == overlay.Id))
+                if (overlays.Exists(x => x.Id == overlay.TextureId))
                 {
-                    overlayInfo = overlays.Find(x => x.Id == overlay.Id);
+                    overlayInfo = overlays.Find(x => x.Id == overlay.TextureId);
                 }
                 else
                 {
                     overlayInfo = overlays[0];
                 }
+
+                //if (overlays.Exists(x => x.Id == overlay.Id))
+                //{
+                //    overlayInfo = overlays.Find(x => x.Id == overlay.Id);
+                //}
+                //else
+                //{
+                //    overlayInfo = overlays[0];
+                //}
 
                 await BaseScript.Delay(0);
 

@@ -24,7 +24,7 @@
     <DebugSymbols>false</DebugSymbols>
     <DebugType>none</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\AverageFrameworkServer\resources\avg\</OutputPath>
+    <OutputPath>..\..\AverageFrameworkServerMongo\resources\avg\</OutputPath>
     <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -62,9 +62,9 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="average.shared.net, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Average.Shared.net, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\AverageFrameworkServer\resources\avg\libs\average.shared.net.dll</HintPath>
+      <HintPath>..\..\AverageFrameworkServerMongo\resources\avg\libs\Average.Shared.net.dll</HintPath>
     </Reference>
     <Reference Include="CitizenFX.Client.Core">
       <HintPath>..\..\AverageFrameworkServer\resources\avg\libs\CitizenFX.Client.Core.dll</HintPath>
@@ -130,7 +130,6 @@
     <Compile Include="Framework\Services\ReplicateStateService.cs" />
     <Compile Include="Framework\Services\ThreadService.cs" />
     <Compile Include="Framework\Services\RpcService.cs" />
-    <Compile Include="Framework\Rpc\RpcTrigger.cs" />
     <Compile Include="Framework\IoC\Container.cs" />
     <Compile Include="Framework\IoC\ContainerItem.cs" />
     <Compile Include="Framework\IoC\Reuse.cs" />
@@ -168,6 +167,8 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Framework\Rpc\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

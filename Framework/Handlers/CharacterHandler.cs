@@ -5,6 +5,8 @@ using Average.Client.Framework.Interfaces;
 using Average.Client.Framework.Services;
 using Average.Shared.DataModels;
 using CitizenFX.Core;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using static Average.Client.Framework.GameAPI;
 using static CitizenFX.Core.Native.API;
@@ -59,14 +61,21 @@ namespace Average.Client.Framework.Handlers
         }
 
         [ClientEvent("character:spawn_ped")]
-        private async void OnRespawnPed(string characterJson)
+        private async void OnSpawnPed(string characterJson)
         {
             NetworkStartSoloTutorialSession();
+
+            Logger.Debug("0: " + characterJson);
+
             var characterData = characterJson.Deserialize<CharacterData>();
+            Logger.Debug("1: " + (characterData == null));
             await _characterService.SpawnPed(characterData.Skin.Gender);
+            Logger.Debug("2");
+
 
             var ped = PlayerPedId();
             await _characterService.SetAppearance(ped, characterData);
+
 
             RequestCollisionAtCoord(characterData.Position.X, characterData.Position.Y, characterData.Position.Z);
             SetEntityCoords(ped, characterData.Position.X, characterData.Position.Y, characterData.Position.Z, true, true, true, false);

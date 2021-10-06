@@ -25,8 +25,9 @@ namespace Average.Client
             _container.RegisterInstance(_eventHandlers);
 
             // Framework Services
-            _container.Register<RpcService>(reuse: Reuse.Transient);
+            //_container.Register<RpcService>(reuse: Reuse.Transient);
             _container.Register<EventService>();
+            _container.Register<RpcService>();
             _container.Register<ThreadService>();
             _container.Register<CommandService>();
             _container.Register<LanguageService>();

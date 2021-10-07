@@ -185,6 +185,7 @@ namespace Average.Client.Framework.Services
         private void OnTriggerEvent(string eventName, List<object> args)
         {
             Logger.Debug("Receive event from server: " + eventName + ", " + string.Join(", ", args));
+            Logger.Debug("Types: " + eventName + ", " + string.Join(", ", args.Select(x => x.GetType())));
 
             Emit(eventName, args.ToArray());
         }

@@ -688,6 +688,7 @@ namespace Average.Client.Framework
             DoScreenFadeOut(duration);
             while (!IsScreenFadedOut()) await Wait(100);
         }
+
         public static void Call(long address, params InputArgument[] args) => Function.Call((Hash)address, args);
         public static void Call(ulong address, params InputArgument[] args) => Function.Call((Hash)address, args);
         public static void Call(Hash address, params InputArgument[] args) => Function.Call(address, args);
@@ -695,5 +696,11 @@ namespace Average.Client.Framework
         public static T Call<T>(long address, params InputArgument[] args) => Function.Call<T>((Hash)address, args);
         public static T Call<T>(ulong address, params InputArgument[] args) => Function.Call<T>((Hash)address, args);
         public static T Call<T>(Hash address, params InputArgument[] args) => Function.Call<T>(address, args);
+        public static T Call<T>(string address, params InputArgument[] args) => Function.Call<T>((Hash)(uint)GetHashKey(address), args);
+
+        public static T Call<T>(long address, T resultType, params InputArgument[] args) => Function.Call<T>((Hash)address, args);
+        public static T Call<T>(ulong address, T resultType, params InputArgument[] args) => Function.Call<T>((Hash)address, args);
+        public static T Call<T>(Hash address, T resultType, params InputArgument[] args) => Function.Call<T>(address, args);
+        public static T Call<T>(string address, T resultType, params InputArgument[] args) => Function.Call<T>((Hash)(uint)GetHashKey(address), args);
     }
 }

@@ -2,7 +2,6 @@
 using Average.Client.Framework.Extensions;
 using Average.Client.Framework.Interfaces;
 using Average.Client.Models;
-using Average.Shared.Attributes;
 using Average.Shared.DataModels;
 using Average.Shared.Enums;
 using CitizenFX.Core;
@@ -49,9 +48,9 @@ namespace Average.Client.Framework.Services
                 var test = characterData.ToJson();
                 _eventService.EmitServer("character:create_character", characterData.ToJson());
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                Logger.Debug("Test: " + ex.Message + "\n" + ex.StackTrace);
+                Logger.Debug("Create: " + ex.Message + "\n" + ex.StackTrace);
             }
         }
 
@@ -63,9 +62,8 @@ namespace Average.Client.Framework.Services
             SetPedBodyComponents((uint)characterData.Skin.BodyType, (uint)characterData.Skin.WaistType);
 
             await SetPedClothes(ped, characterData.Skin.Gender, characterData.Outfit);
-            await SetFaceOverlays(ped, characterData.Skin);
-
             SetPedFaceFeatures(characterData.Skin);
+            await SetFaceOverlays(ped, characterData.Skin);
 
             SetPedComponentDisabled(ped, 0x3F1F01E5, 0, false);
             SetPedComponentDisabled(ped, 0xDA0E2C55, 0, false);
@@ -144,7 +142,9 @@ namespace Average.Client.Framework.Services
             // Cloth does not exists in clothes.json file
             if (clothInfo == null) return;
 
-            while (!Call<bool>(0xFB4891BD7578CDC1, ped, category))
+            var time = GetGameTimer();
+
+            while (!Call<bool>(0xFB4891BD7578CDC1, ped, category) && (GetGameTimer() - time < 5000))
             {
                 Call(0xD710A5007C2AC539, ped, category, 1);
                 Call(0xDF631E4BCE1B1FC4, ped, category, 0, 1);
@@ -158,7 +158,7 @@ namespace Average.Client.Framework.Services
 
                 await BaseScript.Delay(250);
 
-                Logger.Debug("reapply: " + metaped + ", " + cloth + ", " + category + ", " + category);
+                Logger.Debug("Reapply: " + metaped + ", " + cloth + ", " + category);
             }
 
             if (!Call<bool>(0xFB4891BD7578CDC1, ped, category))
@@ -274,12 +274,14 @@ namespace Average.Client.Framework.Services
             Call(0xAAA34F8A7CB32098, PlayerPedId());
             Call(0xF25DF915FA38C5F3, PlayerPedId());
             Call(0x4E4B996C928C7AA6, PlayerId());
-            ClearPlayerWantedLevel(PlayerId());
 
             Call(Hash.CLEAR_PED_TASKS_IMMEDIATELY, PlayerPedId());
+
+            Call(0x71BC8E838B9C6035, PlayerPedId());
+            Call(0xEA23C49EAA83ACFB, 0f, 0f, 500f, 0f, 1, true, 0, 0);
         }
 
-        public async Task SetPedOutfit(int ped, Dictionary<string, uint> newClothes, int delay = 100)
+        public async Task SetPedOutfit(int ped, Dictionary<string, uint> newClothes, int delay = 250)
         {
             foreach (var cloth in newClothes)
             {
@@ -297,7 +299,7 @@ namespace Average.Client.Framework.Services
                         var category = Call<uint>(0x5FF9A878C3D115B8, cloth.Value, metaped, c.IsMultiplayer);
                         Call(0x59BD177A1A48600A, ped, categoryHash);
                         Call(0xD3A7B003ED343FD9, ped, cloth.Value, false, c.IsMultiplayer, false);
-                        await BaseScript.Delay(250);
+                        await BaseScript.Delay(delay);
                         Logger.Debug("reapply: " + metaped + ", " + cloth.Key + ", " + categoryHash + ", " + category);
                     }
                 }

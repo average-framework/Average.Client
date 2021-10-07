@@ -33,15 +33,6 @@ namespace Average.Client.Framework.Services
             API.RegisterCommand(commandName, new Action<int, List<object>, string>(async (source, args, raw) =>
             {
                 // Need to add an rpc check, if the command have no valid argument or error, we need to get a command result from the server
-
-                //_rpc.Event("command:execute").On<bool, string>((success, errorMessage) =>
-                //{
-                //    if (!success)
-                //    {
-                //        Logger.Error(errorMessage);
-                //    }
-                //}).Emit(commandName, args);
-
                 _rpc.OnResponse<bool, string>("command:execute", (success, errorMessage) =>
                 {
                     if (!success)

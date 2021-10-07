@@ -18,4 +18,3 @@ C:\Users\bub.bl\Desktop\Average Framework MongoDB\Average.Client\obj\Debug\Avera
 C:\Users\bub.bl\Desktop\Average Framework MongoDB\Average.Client\obj\Debug\Average.Client.csproj.CoreCompileInputs.cache
 C:\Users\bub.bl\Desktop\Average Framework MongoDB\Average.Client\obj\Debug\Average.Client.net.dll
 C:\Users\bub.bl\Desktop\AverageFrameworkServerMongo\resources\avg\Average.Client.net.dll
-C:\Users\bub.bl\Desktop\Average Framework MongoDB\Average.Client\obj\Debug\Average.Client.csproj.CopyComplete

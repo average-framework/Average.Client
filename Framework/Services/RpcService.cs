@@ -1,4 +1,5 @@
-﻿using Average.Client.Framework.Extensions;
+﻿using Average.Client.Framework.Diagnostics;
+using Average.Client.Framework.Extensions;
 using Average.Client.Framework.Interfaces;
 using Average.Shared.Rpc;
 using CitizenFX.Core;
@@ -81,6 +82,13 @@ namespace Average.Client.Framework.Services
                             var newArg = array.ToObject(param.ParameterType);
                             newArgs.Add(newArg);
                         }
+                        else if (arg.GetType() == typeof(JObject))
+                        {
+                            // Need to convert arg or type JArray to param type if is it not the same
+                            var obj = arg as JObject;
+                            var newArg = obj.ToObject(param.ParameterType);
+                            newArgs.Add(newArg);
+                        }
                         else
                         {
                             // Need to convert arg type to param type if is it not the same
@@ -133,6 +141,13 @@ namespace Average.Client.Framework.Services
                             // Need to convert arg or type JArray to param type if is it not the same
                             var array = arg as JArray;
                             var newArg = array.ToObject(param.ParameterType);
+                            newArgs.Add(newArg);
+                        }
+                        else if (arg.GetType() == typeof(JObject))
+                        {
+                            // Need to convert arg or type JArray to param type if is it not the same
+                            var obj = arg as JObject;
+                            var newArg = obj.ToObject(param.ParameterType);
                             newArgs.Add(newArg);
                         }
                         else
@@ -282,11 +297,6 @@ namespace Average.Client.Framework.Services
         #endregion
 
         #region Request<,>
-
-        private async Task WaitResponse(object value)
-        {
-            while (value == null) await BaseScript.Delay(1);
-        }
 
         public async Task<Tuple<T1>> Request<T1>(string @event, params object[] args)
         {

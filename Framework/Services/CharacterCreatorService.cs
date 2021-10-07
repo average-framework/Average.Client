@@ -335,7 +335,7 @@ namespace Average.Client.Framework.Services
             return result;
         }
 
-        [UICallback("menu/keypress")]
+        [UICallback("menu/keydown")]
         private CallbackDelegate OnKeydown(IDictionary<string, object> data, CallbackDelegate result)
         {
             if (IsOpen)
@@ -590,17 +590,7 @@ namespace Average.Client.Framework.Services
 
             IsOpen = false;
 
-            //await Character.Load();
-
-            //Storage.Create(StorageDataType.PlayerInventory, 25f, Character.Current.License);
-
             await BaseScript.Delay(1000);
-
-            //await Storage.LoadInventory(Character.Current.License);
-            //await Storage.IsReady();
-            //await Storage.IsItemsInfoReady();
-
-            //Export.CallMethod("World.SetCanChangeWorld", true);
 
             NetworkEndTutorialSession();
 
@@ -694,12 +684,13 @@ namespace Average.Client.Framework.Services
             var h = (float)_config["CreationPosition"]["H"];
 
             RequestCollisionAtCoord(x, y, z);
-            Call(0x239A3351AC1DA385, ped, x, y, z, false, false, false, true);
-            SetEntityHeading(ped, h);
             Call(0xEA23C49EAA83ACFB, x, y, z, h, true, true, false);
 
             var timer = GetGameTimer();
             while (!HasCollisionLoadedAroundEntity(ped) && (GetGameTimer() - timer) < 5000) await BaseScript.Delay(0);
+
+            SetEntityCoords(ped, x, y, z, true, true, true, true);
+            SetEntityHeading(ped, h);
 
             IsOpen = true;
             _menuService.CanCloseMenu = false;

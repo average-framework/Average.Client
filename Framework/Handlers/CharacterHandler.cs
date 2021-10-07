@@ -45,7 +45,7 @@ namespace Average.Client.Framework.Handlers
         }
 
         [ClientEvent("character:remove_all_clothes")]
-        private async void OnRemoveAllClothes()
+        private void OnRemoveAllClothes()
         {
             _characterService.RemoveAllClothes();
         }
@@ -63,19 +63,18 @@ namespace Average.Client.Framework.Handlers
         [ClientEvent("character:spawn_ped")]
         private async void OnSpawnPed(string characterJson)
         {
+            ShutdownLoadingScreen();
             NetworkStartSoloTutorialSession();
 
             Logger.Debug("0: " + characterJson);
-
             var characterData = characterJson.Deserialize<CharacterData>();
             Logger.Debug("1: " + (characterData == null));
             await _characterService.SpawnPed(characterData.Skin.Gender);
             Logger.Debug("2");
 
-
             var ped = PlayerPedId();
+            Logger.Debug("ped: " + ped);
             await _characterService.SetAppearance(ped, characterData);
-
 
             RequestCollisionAtCoord(characterData.Position.X, characterData.Position.Y, characterData.Position.Z);
             SetEntityCoords(ped, characterData.Position.X, characterData.Position.Y, characterData.Position.Z, true, true, true, false);
@@ -87,8 +86,10 @@ namespace Average.Client.Framework.Handlers
             SetEntityHeading(ped, characterData.Position.H);
             NetworkEndTutorialSession();
 
-            ShutdownLoadingScreen();
             await FadeIn(1000);
+
+            Logger.Error("Coords: ");
+            SetEntityCoords(ped, characterData.Position.X, characterData.Position.Y, characterData.Position.Z, true, true, true, false);
         }
     }
 }

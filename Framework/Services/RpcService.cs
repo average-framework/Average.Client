@@ -1,9 +1,7 @@
-﻿using Average.Client.Framework.Diagnostics;
-using Average.Client.Framework.Extensions;
+﻿using Average.Client.Framework.Extensions;
 using Average.Client.Framework.Interfaces;
 using Average.Shared.Rpc;
 using CitizenFX.Core;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -24,30 +22,6 @@ namespace Average.Client.Framework.Services
         public RpcService(EventService eventService)
         {
             _eventService = eventService;
-
-            OnResponse<bool>("rpc:test2", result =>
-            {
-                Logger.Debug("Age Result: " + result);
-            }).Emit(24);
-
-            OnRequest<int>("rpc:test", (cb, age) =>
-            {
-                Logger.Error("OnRequest: " + age);
-                cb($"J'ai {(age > 24 ? "plus" : "moins")} de 24 ans");
-            });
-
-            OnRequest("GetPedScale", (cb) =>
-            {
-                Logger.Debug("Send player scale: " + 1.8f);
-                cb(1.8f);
-            });
-
-            Task.Factory.StartNew(async () =>
-            {
-                Logger.Error("Getting player count..");
-                var result = await Request<int>("player_count");
-                Logger.Error("Player count: " + result.Item1);
-            });
         }
 
         internal void TriggerResponse(string @event, string response)

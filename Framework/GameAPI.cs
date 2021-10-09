@@ -698,9 +698,9 @@ namespace Average.Client.Framework
         public static T Call<T>(Hash address, params InputArgument[] args) => Function.Call<T>(address, args);
         public static T Call<T>(string address, params InputArgument[] args) => Function.Call<T>((Hash)(uint)GetHashKey(address), args);
 
-        public static T Call<T>(long address, T resultType, params InputArgument[] args) => Function.Call<T>((Hash)address, args);
-        public static T Call<T>(ulong address, T resultType, params InputArgument[] args) => Function.Call<T>((Hash)address, args);
-        public static T Call<T>(Hash address, T resultType, params InputArgument[] args) => Function.Call<T>(address, args);
-        public static T Call<T>(string address, T resultType, params InputArgument[] args) => Function.Call<T>((Hash)(uint)GetHashKey(address), args);
+        public static T RpcCall<T>(long address, T resultType, params InputArgument[] args) => Function.Call<T>((Hash)address, args);
+        public static T RpcCall<T>(ulong address, T resultType, params InputArgument[] args) => Function.Call<T>((Hash)address, args);
+        public static T RpcCall<T>(Hash address, T resultType, params InputArgument[] args) => Function.Call<T>(address, args);
+        public static T RpcCall<T>(string address, T resultType, params InputArgument[] args) => Function.Call<T>((Hash)(uint)GetHashKey(address), args);
     }
 }

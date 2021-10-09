@@ -5,8 +5,6 @@ using Average.Client.Framework.Interfaces;
 using Average.Client.Framework.Services;
 using Average.Shared.DataModels;
 using CitizenFX.Core;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using static Average.Client.Framework.GameAPI;
 using static CitizenFX.Core.Native.API;
@@ -63,33 +61,28 @@ namespace Average.Client.Framework.Handlers
         [ClientEvent("character:spawn_ped")]
         private async void OnSpawnPed(string characterJson)
         {
-            ShutdownLoadingScreen();
             NetworkStartSoloTutorialSession();
 
-            Logger.Debug("0: " + characterJson);
-            var characterData = characterJson.Deserialize<CharacterData>();
-            Logger.Debug("1: " + (characterData == null));
-            await _characterService.SpawnPed(characterData.Skin.Gender);
-            Logger.Debug("2");
-
             var ped = PlayerPedId();
-            Logger.Debug("ped: " + ped);
-            await _characterService.SetAppearance(ped, characterData);
+            var characterData = characterJson.Deserialize<CharacterData>();
+
+            await _characterService.SpawnPed(characterData.Skin.Gender);
 
             RequestCollisionAtCoord(characterData.Position.X, characterData.Position.Y, characterData.Position.Z);
-            SetEntityCoords(ped, characterData.Position.X, characterData.Position.Y, characterData.Position.Z, true, true, true, false);
+            Call(0xEA23C49EAA83ACFB, characterData.Position.X, characterData.Position.Y, characterData.Position.Z, characterData.Position.H, true, true, false);
 
             var timer = GetGameTimer();
-
             while (!HasCollisionLoadedAroundEntity(ped) && GetGameTimer() - timer < 5000) await BaseScript.Delay(0);
 
+            SetEntityCoords(ped, characterData.Position.X, characterData.Position.Y, characterData.Position.Z, true, true, true, false);
             SetEntityHeading(ped, characterData.Position.H);
+
+            await _characterService.SetAppearance(ped, characterData);
+
             NetworkEndTutorialSession();
 
+            ShutdownLoadingScreen();
             await FadeIn(1000);
-
-            Logger.Error("Coords: ");
-            SetEntityCoords(ped, characterData.Position.X, characterData.Position.Y, characterData.Position.Z, true, true, true, false);
         }
     }
 }

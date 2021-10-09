@@ -73,66 +73,64 @@ namespace Average.Client.Framework.Handlers
                             dynamic result = null;
 
                             if (type == typeof(bool))
-                                result = Call((long)native, default(bool), newArgs.ToArray());
+                                result = RpcCall((long)native, default(bool), newArgs.ToArray());
                             else if (type == typeof(sbyte))
-                                result = Call((long)native, default(sbyte), newArgs.ToArray());
+                                result = RpcCall((long)native, default(sbyte), newArgs.ToArray());
                             else if (type == typeof(byte))
-                                result = Call((long)native, default(byte), newArgs.ToArray());
+                                result = RpcCall((long)native, default(byte), newArgs.ToArray());
                             else if (type == typeof(short))
-                                result = Call((long)native, default(short), newArgs.ToArray());
+                                result = RpcCall((long)native, default(short), newArgs.ToArray());
                             else if (type == typeof(ushort))
-                                result = Call((long)native, default(ushort), newArgs.ToArray());
+                                result = RpcCall((long)native, default(ushort), newArgs.ToArray());
                             else if (type == typeof(int))
-                                result = Call((long)native, default(int), newArgs.ToArray());
+                                result = RpcCall((long)native, default(int), newArgs.ToArray());
                             else if (type == typeof(uint))
-                                result = Call((long)native, default(uint), newArgs.ToArray());
+                                result = RpcCall((long)native, default(uint), newArgs.ToArray());
                             else if (type == typeof(long))
-                                result = Call((long)native, default(long), newArgs.ToArray());
+                                result = RpcCall((long)native, default(long), newArgs.ToArray());
                             else if (type == typeof(ulong))
-                                result = Call((long)native, default(ulong), newArgs.ToArray());
+                                result = RpcCall((long)native, default(ulong), newArgs.ToArray());
                             else if (type == typeof(float))
-                                result = Call((long)native, default(float), newArgs.ToArray());
+                                result = RpcCall((long)native, default(float), newArgs.ToArray());
                             else if (type == typeof(double))
-                                result = Call((long)native, default(double), newArgs.ToArray());
+                                result = RpcCall((long)native, default(double), newArgs.ToArray());
                             else if (type == typeof(string))
-                                result = Call((long)native, default(string), newArgs.ToArray());
+                                result = RpcCall((long)native, default(string), newArgs.ToArray());
                             else if (type == typeof(Vector3))
-                                result = Call((long)native, default(Vector3), newArgs.ToArray());
+                                result = RpcCall((long)native, default(Vector3), newArgs.ToArray());
 
-                            Logger.Error("Result1: " + result);
                             cb(result);
                             break;
                         case ulong:
                             result = null;
 
                             if (type == typeof(bool))
-                                result = Call((ulong)native, default(bool), newArgs.ToArray());
+                                result = RpcCall((ulong)native, default(bool), newArgs.ToArray());
                             else if (type == typeof(sbyte))
-                                result = Call((ulong)native, default(sbyte), newArgs.ToArray());
+                                result = RpcCall((ulong)native, default(sbyte), newArgs.ToArray());
                             else if (type == typeof(byte))
-                                result = Call((ulong)native, default(byte), newArgs.ToArray());
+                                result = RpcCall((ulong)native, default(byte), newArgs.ToArray());
                             else if (type == typeof(short))
-                                result = Call((ulong)native, default(short), newArgs.ToArray());
+                                result = RpcCall((ulong)native, default(short), newArgs.ToArray());
                             else if (type == typeof(ushort))
-                                result = Call((ulong)native, default(ushort), newArgs.ToArray());
+                                result = RpcCall((ulong)native, default(ushort), newArgs.ToArray());
                             else if (type == typeof(int))
-                                result = Call((ulong)native, default(int), newArgs.ToArray());
+                                result = RpcCall((ulong)native, default(int), newArgs.ToArray());
                             else if (type == typeof(uint))
-                                result = Call((ulong)native, default(uint), newArgs.ToArray());
+                                result = RpcCall((ulong)native, default(uint), newArgs.ToArray());
                             else if (type == typeof(long))
-                                result = Call((ulong)native, default(long), newArgs.ToArray());
+                                result = RpcCall((ulong)native, default(long), newArgs.ToArray());
                             else if (type == typeof(ulong))
-                                result = Call((ulong)native, default(ulong), newArgs.ToArray());
+                                result = RpcCall((ulong)native, default(ulong), newArgs.ToArray());
                             else if (type == typeof(float))
-                                result = Call((ulong)native, default(float), newArgs.ToArray());
+                                result = RpcCall((ulong)native, default(float), newArgs.ToArray());
                             else if (type == typeof(double))
-                                result = Call((ulong)native, default(double), newArgs.ToArray());
+                                result = RpcCall((ulong)native, default(double), newArgs.ToArray());
                             else if (type == typeof(string))
-                                result = Call((ulong)native, default(string), newArgs.ToArray());
+                                result = RpcCall((ulong)native, default(string), newArgs.ToArray());
                             else if (type == typeof(Vector3))
-                                result = Call((ulong)native, default(Vector3), newArgs.ToArray());
-
-                            Logger.Error("Result2: " + result);
+                                result = RpcCall((ulong)native, default(Vector3), newArgs.ToArray());
+                            
                             cb(result);
                             break;
                     }

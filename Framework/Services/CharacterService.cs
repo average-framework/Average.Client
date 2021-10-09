@@ -58,7 +58,7 @@ namespace Average.Client.Framework.Services
         {
             _scale = characterData.Skin.Scale;
 
-            SetPedBody(ped, characterData.Skin.Gender, characterData.Skin.Head, characterData.Skin.Body, characterData.Skin.Legs);
+            SetPedBody(ped, characterData.Skin.Head, characterData.Skin.Body, characterData.Skin.Legs);
             SetPedBodyComponents((uint)characterData.Skin.BodyType, (uint)characterData.Skin.WaistType);
 
             await SetPedClothes(ped, characterData.Skin.Gender, characterData.Outfit);
@@ -73,7 +73,7 @@ namespace Average.Client.Framework.Services
             UpdatePedVariation();
         }
 
-        private void SetPedBody(int ped, Gender gender, uint head, uint body, uint legs)
+        private void SetPedBody(int ped, uint head, uint body, uint legs)
         {
             Call(0x704C908E9C405136, ped);
             Call(0xD3A7B003ED343FD9, ped, head, false, true, true);
@@ -133,15 +133,17 @@ namespace Average.Client.Framework.Services
 
         private async Task SetPedCloth(int ped, uint cloth)
         {
-            // Empty cloth
+            // No cloth
             if (cloth == 0) return;
 
             var clothInfo = clothes.Find(x => x.Hash == cloth.ToString("X8"));
-            var category = uint.Parse(clothInfo.CategoryHash, NumberStyles.AllowHexSpecifier);
 
             // Cloth does not exists in clothes.json file
             if (clothInfo == null) return;
 
+            var category = uint.Parse(clothInfo.CategoryHash, NumberStyles.AllowHexSpecifier);
+
+            var metaped = Call<int>(0xEC9A1261BF0CE510, ped);
             var time = GetGameTimer();
 
             while (!Call<bool>(0xFB4891BD7578CDC1, ped, category) && (GetGameTimer() - time < 5000))
@@ -150,23 +152,18 @@ namespace Average.Client.Framework.Services
                 Call(0xDF631E4BCE1B1FC4, ped, category, 0, 1);
                 Call(0xCC8CA3E88256E58F, ped, 0, 1, 1, 1, 0);
 
-                var metaped = Call<int>(0xEC9A1261BF0CE510, ped);
-                //var category = Call<uint>(0x5FF9A878C3D115B8, cloth.Value, metaped, c.IsMultiplayer);
-
                 Call(0x59BD177A1A48600A, ped, category);
-                Call(0xD3A7B003ED343FD9, ped, cloth, false, clothInfo.IsMultiplayer, false);
+                Call(0xD3A7B003ED343FD9, ped, cloth, true, clothInfo.IsMultiplayer, false);
 
                 await BaseScript.Delay(250);
-
-                Logger.Debug("Reapply: " + metaped + ", " + cloth + ", " + category);
             }
 
             if (!Call<bool>(0xFB4891BD7578CDC1, ped, category))
             {
-                // cloth is not applied
+                // Cloth is not applied
                 _blockedClothes.Add(clothInfo.CategoryHash);
 
-                Logger.Warn($"[Character] Unable to loading cloth: {clothInfo.CategoryHash}, {clothInfo.Hash}");
+                //Logger.Warn($"[Character] Unable to loading cloth: {clothInfo.CategoryHash}, {clothInfo.Hash} -> {cloth}");
             }
         }
 
@@ -259,26 +256,26 @@ namespace Average.Client.Framework.Services
 
             await LoadModel(model);
             SetPlayerModel(model);
-            SetPedOutfitPreset(PlayerPedId(), 0);
+
+            var ped = PlayerPedId();
+
+            SetPedOutfitPreset(ped, 0);
 
             await BaseScript.Delay(1000);
 
-            SetPedComponentDisabled(PlayerPedId(), 0x3F1F01E5, 0, false);
-            SetPedComponentDisabled(PlayerPedId(), 0xDA0E2C55, 0, false);
+            SetPedComponentDisabled(ped, 0x3F1F01E5, 0, false);
+            SetPedComponentDisabled(ped, 0xDA0E2C55, 0, false);
 
             await BaseScript.Delay(1000);
 
             UpdatePedVariation();
             SetModelAsNoLongerNeeded(model);
 
-            Call(0xAAA34F8A7CB32098, PlayerPedId());
-            Call(0xF25DF915FA38C5F3, PlayerPedId());
+            Call(0xAAA34F8A7CB32098, ped);
+            Call(0xF25DF915FA38C5F3, ped);
             Call(0x4E4B996C928C7AA6, PlayerId());
 
-            Call(Hash.CLEAR_PED_TASKS_IMMEDIATELY, PlayerPedId());
-
-            Call(0x71BC8E838B9C6035, PlayerPedId());
-            Call(0xEA23C49EAA83ACFB, 0f, 0f, 500f, 0f, 1, true, 0, 0);
+            Call(Hash.CLEAR_PED_TASKS_IMMEDIATELY, ped);
         }
 
         public async Task SetPedOutfit(int ped, Dictionary<string, uint> newClothes, int delay = 250)
@@ -289,18 +286,21 @@ namespace Average.Client.Framework.Services
                 {
                     var c = clothes.Find(x => x.Hash == cloth.Value.ToString("X8"));
                     var categoryHash = uint.Parse(cloth.Key, NumberStyles.AllowHexSpecifier);
+                    var time = GetGameTimer();
 
-                    while (!Call<bool>(0xFB4891BD7578CDC1, ped, categoryHash))
+                    while (!Call<bool>(0xFB4891BD7578CDC1, ped, categoryHash) && (GetGameTimer() - time < 5000))
                     {
                         Call(0xD710A5007C2AC539, ped, categoryHash, 1);
                         Call(0xDF631E4BCE1B1FC4, ped, categoryHash, 0, 1);
                         Call(0xCC8CA3E88256E58F, ped, 0, 1, 1, 1, 0);
+
                         var metaped = Call<int>(0xEC9A1261BF0CE510, ped);
                         var category = Call<uint>(0x5FF9A878C3D115B8, cloth.Value, metaped, c.IsMultiplayer);
+
                         Call(0x59BD177A1A48600A, ped, categoryHash);
-                        Call(0xD3A7B003ED343FD9, ped, cloth.Value, false, c.IsMultiplayer, false);
+                        Call(0xD3A7B003ED343FD9, ped, cloth.Value, true, c.IsMultiplayer, false);
+
                         await BaseScript.Delay(delay);
-                        Logger.Debug("reapply: " + metaped + ", " + cloth.Key + ", " + categoryHash + ", " + category);
                     }
                 }
             }

@@ -81,5 +81,11 @@ namespace Average.Client.Framework.Handlers
 
             await FadeIn(1000);
         }
+
+        [ClientEvent("character:teleport")]
+        private async void OnTeleport(Vector3 position)
+        {
+            await _characterService.Teleport(PlayerPedId(), position);
+        }
     }
 }

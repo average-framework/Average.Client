@@ -389,5 +389,34 @@ namespace Average.Client.Framework.Services
             RemovePedComponent(ped, OutfitComponents.BeardChops);
             RemovePedComponent(ped, OutfitComponents.HairAccessories);
         }
+
+        internal async Task Teleport(int ped, Vector3 position)
+        {
+            await FadeOut(250);
+
+            for (int i = (int)GetHeightmapBottomZForPosition(position.X, position.Y) - 10; i < 1000; i++)
+            {
+                FreezeEntityPosition(ped, true);
+                SetEntityCoords(ped, position.X, position.Y, i, true, true, true, false);
+                var rayHandle = StartShapeTestRay(position.X, position.Y, i, position.X, position.Y, i - 2f, -1, ped, 0);
+                var hitd = false;
+                var endCoords = Vector3.Zero;
+                var surfaceNormal = Vector3.Zero;
+                var entityHit = 0;
+
+                GetShapeTestResult(rayHandle, ref hitd, ref endCoords, ref surfaceNormal, ref entityHit);
+
+                if (hitd)
+                {
+                    SetEntityCoords(ped, position.X, position.Y, i, true, true, true, false);
+                    FreezeEntityPosition(ped, false);
+                    break;
+                }
+
+                await BaseScript.Delay(0);
+            }
+
+            await FadeIn(250);
+        }
     }
 }

@@ -394,15 +394,15 @@ namespace Average.Client.Framework
         public static void SetPedScale(int ped, float scale) => Function.Call((Hash)0x25ACFC650B65C538, ped, scale);
         public static void SetPedScale(float scale) => Function.Call((Hash)0x25ACFC650B65C538, scale);
         public static void UpdatePlayerPed() => Function.Call((Hash)0x704C908E9C405136, PlayerPedId());
-        public static void SetPedBodyComponent(uint component)
+        public static void SetPedBodyComponent(int ped, uint component)
         {
-            Function.Call((Hash)0x1902C4CFCC5BE57C, PlayerPedId(), component);
-            UpdatePedVariation();
+            Function.Call((Hash)0x1902C4CFCC5BE57C, ped, component);
+            UpdatePedVariation(ped);
         }
-        public static void SetPedBodyComponent(List<int> components, int index)
+        public static void SetPedBodyComponent(int ped, List<int> components, int index)
         {
-            Function.Call((Hash)0x1902C4CFCC5BE57C, PlayerPedId(), components[index]);
-            UpdatePedVariation();
+            Function.Call((Hash)0x1902C4CFCC5BE57C, ped, components[index]);
+            UpdatePedVariation(ped);
         }
         public static void UpdatePedVariation()
         {
@@ -415,11 +415,6 @@ namespace Average.Client.Framework
             Function.Call((Hash)0x704C908E9C405136, ped);
             Function.Call((Hash)0xAAB86462966168CE, ped, 1);
             Function.Call((Hash)0xCC8CA3E88256E58F, ped, 0, 1, 1, 1, 0);
-        }
-        public static void SetPedFaceFeature(int index, float value)
-        {
-            Function.Call((Hash)0x704C908E9C405136, PlayerPedId());
-            Function.Call((Hash)0x5653AB26C82938CF, PlayerPedId(), index, value);
         }
         public static void SetPedFaceFeature(int ped, int index, float value)
         {
@@ -544,7 +539,7 @@ namespace Average.Client.Framework
         public static bool IsPedTextureValid(int textureId) => Function.Call<bool>((Hash)0x31DC8D3F216D8509, textureId);
         public static void OverrideTextureOnPed(int ped, uint componentHash, int textureId) => Function.Call((Hash)0x0B46E25761519058, ped, componentHash, textureId);
         public static void UpdatePedTexture(int textureId) => Function.Call((Hash)0x92DAABA2C1C10B0E, textureId);
-        public static async void SetPlayerModel(uint model)
+        public static void SetPlayerModel(uint model)
         {
             Function.Call((Hash)0xED40380076A31506, PlayerId(), model, true);
         }

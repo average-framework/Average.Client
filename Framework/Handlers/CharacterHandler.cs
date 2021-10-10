@@ -32,30 +32,22 @@ namespace Average.Client.Framework.Handlers
         [ClientEvent("character:set_appearance")]
         private async void OnSetAppearance(string characterJson)
         {
-            var player = PlayerId();
-            var ped = GetPlayerPed(player);
-
-            Logger.Debug("Set ped appearance: " + ped + ", " + player);
-
+            var ped = PlayerPedId();
             var characterData = characterJson.Deserialize<CharacterData>();
-
             await _characterService.SetAppearance(ped, characterData);
         }
 
         [ClientEvent("character:remove_all_clothes")]
         private void OnRemoveAllClothes()
         {
-            _characterService.RemoveAllClothes();
+            _characterService.RemoveAllClothes(PlayerPedId());
         }
 
         [ClientEvent("character:set_outfit")]
         private async void OnRemoveAllClothes(string outfitJson)
         {
             var outfit = outfitJson.Deserialize<Dictionary<string, uint>>();
-            var player = PlayerId();
-            var ped = GetPlayerPed(player);
-
-            await _characterService.SetPedOutfit(ped, outfit);
+            await _characterService.SetPedOutfit(PlayerPedId(), outfit);
         }
 
         [ClientEvent("character:spawn_ped")]
@@ -63,25 +55,30 @@ namespace Average.Client.Framework.Handlers
         {
             NetworkStartSoloTutorialSession();
 
-            var ped = PlayerPedId();
             var characterData = characterJson.Deserialize<CharacterData>();
+            var ped = await _characterService.SpawnPed(characterData.Skin.Gender);
+            var tempPos = new Vector3(0f, 0f, 105f);
 
-            await _characterService.SpawnPed(characterData.Skin.Gender);
-
-            RequestCollisionAtCoord(characterData.Position.X, characterData.Position.Y, characterData.Position.Z);
-            Call(0xEA23C49EAA83ACFB, characterData.Position.X, characterData.Position.Y, characterData.Position.Z, characterData.Position.H, true, true, false);
-
-            var timer = GetGameTimer();
-            while (!HasCollisionLoadedAroundEntity(ped) && GetGameTimer() - timer < 5000) await BaseScript.Delay(0);
-
+            FreezeEntityPosition(ped, true);
             SetEntityCoords(ped, characterData.Position.X, characterData.Position.Y, characterData.Position.Z, true, true, true, false);
-            SetEntityHeading(ped, characterData.Position.H);
+            RequestCollisionAtCoord(characterData.Position.X, characterData.Position.Y, characterData.Position.Z);
+
+            var time = GetGameTimer();
+            while (!HasCollisionLoadedAroundEntity(ped) && (GetGameTimer() - time) < 5000) await BaseScript.Delay(0);
+
+            if (!HasCollisionLoadedAroundEntity(ped))
+            {
+                SetEntityCoords(ped, tempPos.X, tempPos.Y, tempPos.Z, true, true, true, false);
+                SetEntityHeading(ped, 0f);
+            }
 
             await _characterService.SetAppearance(ped, characterData);
 
-            NetworkEndTutorialSession();
+            FreezeEntityPosition(ped, false);
 
+            NetworkEndTutorialSession();
             ShutdownLoadingScreen();
+
             await FadeIn(1000);
         }
     }

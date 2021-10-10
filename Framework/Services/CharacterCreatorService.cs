@@ -756,6 +756,8 @@ namespace Average.Client.Framework.Services
 
         private async void InitDefaultPedComponents()
         {
+            var ped = PlayerPedId();
+
             // Define max cloth value by gender
             skirtsItem.MaxValue = GetOutfitComponentsByCategory(OutfitComponents.Loadouts).Count - 1;
             hairItem.MaxValue = GetOutfitComponentsByCategory(OutfitComponents.Hairs).Count - 1;
@@ -892,8 +894,8 @@ namespace Average.Client.Framework.Services
             bodyTypesItem.Value = new Random(Environment.TickCount + 8).Next(0, _characterService.bodyTypes.Count - 1);
             waistTypesItem.Value = new Random(Environment.TickCount + 9).Next(0, _characterService.waistTypes.Count - 1);
 
-            SetPedBodyComponent(_characterService.bodyTypes, bodyTypesItem.Value);
-            SetPedBodyComponent(_characterService.waistTypes, waistTypesItem.Value);
+            SetPedBodyComponent(ped, _characterService.bodyTypes, bodyTypesItem.Value);
+            SetPedBodyComponent(ped, _characterService.waistTypes, waistTypesItem.Value);
 
             await SetPedComponent(OutfitComponents.Hats, hatsItem);
             await SetPedComponent(OutfitComponents.Eyewear, eyewearItem);
@@ -1176,6 +1178,8 @@ namespace Average.Client.Framework.Services
 
         private void InitFaceFeaturesMenu()
         {
+            var ped = PlayerPedId();
+
             faceFeaturesMenu = new MenuContainer(_languageService.Get("Client.CharacterCreator.FaceTraits").ToUpper(), "Modification des vêtements");
             faceMenu.AddItem(new ButtonContainer(_languageService.Get("Client.CharacterCreator.FaceTraits"), faceFeaturesMenu));
 
@@ -1186,273 +1190,273 @@ namespace Average.Client.Framework.Services
 
             headWidthItem = new SelectorItem<float>(_languageService.Get("Client.CharacterCreator.HeadWidth"), -1f, 1f, 0f, 0.1f, (item) =>
             {
-                SetPedFaceFeature(CharacterFacePart.HeadWidth, item.Value);
+                SetPedFaceFeature(ped, CharacterFacePart.HeadWidth, item.Value);
                 characterFaceParts[CharacterFacePart.HeadWidth] = item.Value;
             });
             faceFeaturesMenu.AddItem(headWidthItem);
 
             eyebrowHeightItem = new SelectorItem<float>(_languageService.Get("Client.CharacterCreator.EyebrowsHeight"), -1f, 1f, 0f, 0.1f, (item) =>
             {
-                SetPedFaceFeature(CharacterFacePart.EyebrowHeight, item.Value);
+                SetPedFaceFeature(ped, CharacterFacePart.EyebrowHeight, item.Value);
                 characterFaceParts[CharacterFacePart.EyebrowHeight] = item.Value;
             });
             faceFeaturesMenu.AddItem(eyebrowHeightItem);
 
             eyebrowWidthItem = new SelectorItem<float>(_languageService.Get("Client.CharacterCreator.EyebrowsWidth"), -1f, 1f, 0f, 0.1f, (item) =>
             {
-                SetPedFaceFeature(CharacterFacePart.EyebrowWidth, item.Value);
+                SetPedFaceFeature(ped, CharacterFacePart.EyebrowWidth, item.Value);
                 characterFaceParts[CharacterFacePart.EyebrowWidth] = item.Value;
             });
             faceFeaturesMenu.AddItem(eyebrowWidthItem);
 
             eyebrowDepthItem = new SelectorItem<float>(_languageService.Get("Client.CharacterCreator.EyebrowsDepth"), -1f, 1f, 0f, 0.1f, (item) =>
             {
-                SetPedFaceFeature(CharacterFacePart.EyebrowDepth, item.Value);
+                SetPedFaceFeature(ped, CharacterFacePart.EyebrowDepth, item.Value);
                 characterFaceParts[CharacterFacePart.EyebrowDepth] = item.Value;
             });
             faceFeaturesMenu.AddItem(eyebrowDepthItem);
 
             earsWidthItem = new SelectorItem<float>(_languageService.Get("Client.CharacterCreator.EarsWidth"), -1f, 1f, 0f, 0.1f, (item) =>
             {
-                SetPedFaceFeature(CharacterFacePart.EarsWidth, item.Value);
+                SetPedFaceFeature(ped, CharacterFacePart.EarsWidth, item.Value);
                 characterFaceParts[CharacterFacePart.EarsWidth] = item.Value;
             });
             faceFeaturesMenu.AddItem(earsWidthItem);
 
             earsAngleItem = new SelectorItem<float>(_languageService.Get("Client.CharacterCreator.EarsCurvature"), -1f, 1f, 0f, 0.1f, (item) =>
             {
-                SetPedFaceFeature(CharacterFacePart.EarsAngle, item.Value);
+                SetPedFaceFeature(ped, CharacterFacePart.EarsAngle, item.Value);
                 characterFaceParts[CharacterFacePart.EarsAngle] = item.Value;
             });
             faceFeaturesMenu.AddItem(earsAngleItem);
 
             earsHeightItem = new SelectorItem<float>(_languageService.Get("Client.CharacterCreator.EarsSize"), -1f, 1f, 0f, 0.1f, (item) =>
             {
-                SetPedFaceFeature(CharacterFacePart.EarsHeight, item.Value);
+                SetPedFaceFeature(ped, CharacterFacePart.EarsHeight, item.Value);
                 characterFaceParts[CharacterFacePart.EarsHeight] = item.Value;
             });
             faceFeaturesMenu.AddItem(earsHeightItem);
 
             earsLobeSizeItem = new SelectorItem<float>(_languageService.Get("Client.CharacterCreator.LobeSize"), -1f, 1f, 0f, 0.1f, (item) =>
             {
-                SetPedFaceFeature(CharacterFacePart.EarsLobeSize, item.Value);
+                SetPedFaceFeature(ped, CharacterFacePart.EarsLobeSize, item.Value);
                 characterFaceParts[CharacterFacePart.EarsLobeSize] = item.Value;
             });
             faceFeaturesMenu.AddItem(earsLobeSizeItem);
 
             cheeckBonesHeightItem = new SelectorItem<float>(_languageService.Get("Client.CharacterCreator.CheekbonesHeight"), -1f, 1f, 0f, 0.1f, (item) =>
             {
-                SetPedFaceFeature(CharacterFacePart.CheeckBonesHeight, item.Value);
+                SetPedFaceFeature(ped, CharacterFacePart.CheeckBonesHeight, item.Value);
                 characterFaceParts[CharacterFacePart.CheeckBonesHeight] = item.Value;
             });
             faceFeaturesMenu.AddItem(cheeckBonesHeightItem);
 
             cheeckBonesWidthItem = new SelectorItem<float>(_languageService.Get("Client.CharacterCreator.CheekbonesWidth"), -1f, 1f, 0f, 0.1f, (item) =>
             {
-                SetPedFaceFeature(CharacterFacePart.CheeckBonesWidth, item.Value);
+                SetPedFaceFeature(ped, CharacterFacePart.CheeckBonesWidth, item.Value);
                 characterFaceParts[CharacterFacePart.CheeckBonesWidth] = item.Value;
             });
             faceFeaturesMenu.AddItem(cheeckBonesWidthItem);
 
             cheeckBonesDepthItem = new SelectorItem<float>(_languageService.Get("Client.CharacterCreator.CheekbonesDepth"), -1f, 1f, 0f, 0.1f, (item) =>
             {
-                SetPedFaceFeature(CharacterFacePart.CheeckBonesDepth, item.Value);
+                SetPedFaceFeature(ped, CharacterFacePart.CheeckBonesDepth, item.Value);
                 characterFaceParts[CharacterFacePart.CheeckBonesDepth] = item.Value;
             });
             faceFeaturesMenu.AddItem(cheeckBonesDepthItem);
 
             jawHeightItem = new SelectorItem<float>(_languageService.Get("Client.CharacterCreator.JawHeight"), -1f, 1f, 0f, 0.1f, (item) =>
             {
-                SetPedFaceFeature(CharacterFacePart.JawHeight, item.Value);
+                SetPedFaceFeature(ped, CharacterFacePart.JawHeight, item.Value);
                 characterFaceParts[CharacterFacePart.JawHeight] = item.Value;
             });
             faceFeaturesMenu.AddItem(jawHeightItem);
 
             jawWidthItem = new SelectorItem<float>(_languageService.Get("Client.CharacterCreator.JawWidth"), -1f, 1f, 0f, 0.1f, (item) =>
             {
-                SetPedFaceFeature(CharacterFacePart.JawWidth, item.Value);
+                SetPedFaceFeature(ped, CharacterFacePart.JawWidth, item.Value);
                 characterFaceParts[CharacterFacePart.JawWidth] = item.Value;
             });
             faceFeaturesMenu.AddItem(jawWidthItem);
 
             jawDepthItem = new SelectorItem<float>(_languageService.Get("Client.CharacterCreator.JawDepth"), -1f, 1f, 0f, 0.1f, (item) =>
             {
-                SetPedFaceFeature(CharacterFacePart.JawDepth, item.Value);
+                SetPedFaceFeature(ped, CharacterFacePart.JawDepth, item.Value);
                 characterFaceParts[CharacterFacePart.JawDepth] = item.Value;
             });
             faceFeaturesMenu.AddItem(jawDepthItem);
 
             chinHeightItem = new SelectorItem<float>(_languageService.Get("Client.CharacterCreator.ChinHeight"), -1f, 1f, 0f, 0.1f, (item) =>
             {
-                SetPedFaceFeature(CharacterFacePart.ChinHeight, item.Value);
+                SetPedFaceFeature(ped, CharacterFacePart.ChinHeight, item.Value);
                 characterFaceParts[CharacterFacePart.ChinHeight] = item.Value;
             });
             faceFeaturesMenu.AddItem(chinHeightItem);
 
             chinWidthItem = new SelectorItem<float>(_languageService.Get("Client.CharacterCreator.ChinWidth"), -1f, 1f, 0f, 0.1f, (item) =>
             {
-                SetPedFaceFeature(CharacterFacePart.ChinWidth, item.Value);
+                SetPedFaceFeature(ped, CharacterFacePart.ChinWidth, item.Value);
                 characterFaceParts[CharacterFacePart.ChinWidth] = item.Value;
             });
             faceFeaturesMenu.AddItem(chinWidthItem);
 
             chinDepthItem = new SelectorItem<float>(_languageService.Get("Client.CharacterCreator.ChinDepth"), -1f, 1f, 0f, 0.1f, (item) =>
             {
-                SetPedFaceFeature(CharacterFacePart.ChinDepth, item.Value);
+                SetPedFaceFeature(ped, CharacterFacePart.ChinDepth, item.Value);
                 characterFaceParts[CharacterFacePart.ChinDepth] = item.Value;
             });
             faceFeaturesMenu.AddItem(chinDepthItem);
 
             eyeLidHeightItem = new SelectorItem<float>(_languageService.Get("Client.CharacterCreator.EyelidHeight"), -1f, 1f, 0f, 0.1f, (item) =>
             {
-                SetPedFaceFeature(CharacterFacePart.EyeLidHeight, item.Value);
+                SetPedFaceFeature(ped, CharacterFacePart.EyeLidHeight, item.Value);
                 characterFaceParts[CharacterFacePart.EyeLidHeight] = item.Value;
             });
             faceFeaturesMenu.AddItem(eyeLidHeightItem);
 
             eyeLidWidthItem = new SelectorItem<float>(_languageService.Get("Client.CharacterCreator.EyelidWidth"), -1f, 1f, 0f, 0.1f, (item) =>
             {
-                SetPedFaceFeature(CharacterFacePart.EyeLidWidth, item.Value);
+                SetPedFaceFeature(ped, CharacterFacePart.EyeLidWidth, item.Value);
                 characterFaceParts[CharacterFacePart.EyeLidWidth] = item.Value;
             });
             faceFeaturesMenu.AddItem(eyeLidWidthItem);
 
             eyesDepthItem = new SelectorItem<float>(_languageService.Get("Client.CharacterCreator.EyesDepth"), -1f, 1f, 0f, 0.1f, (item) =>
             {
-                SetPedFaceFeature(CharacterFacePart.EyesDepth, item.Value);
+                SetPedFaceFeature(ped, CharacterFacePart.EyesDepth, item.Value);
                 characterFaceParts[CharacterFacePart.EyesDepth] = item.Value;
             });
             faceFeaturesMenu.AddItem(eyesDepthItem);
 
             eyesAngleItem = new SelectorItem<float>(_languageService.Get("Client.CharacterCreator.EyesAngle"), -1f, 1f, 0f, 0.1f, (item) =>
             {
-                SetPedFaceFeature(CharacterFacePart.EyesAngle, item.Value);
+                SetPedFaceFeature(ped, CharacterFacePart.EyesAngle, item.Value);
                 characterFaceParts[CharacterFacePart.EyesAngle] = item.Value;
             });
             faceFeaturesMenu.AddItem(eyesAngleItem);
 
             eyesDistanceItem = new SelectorItem<float>(_languageService.Get("Client.CharacterCreator.EyesDistance"), -1f, 1f, 0f, 0.1f, (item) =>
             {
-                SetPedFaceFeature(CharacterFacePart.EyesDistance, item.Value);
+                SetPedFaceFeature(ped, CharacterFacePart.EyesDistance, item.Value);
                 characterFaceParts[CharacterFacePart.EyesDistance] = item.Value;
             });
             faceFeaturesMenu.AddItem(eyesDistanceItem);
 
             eyesHeightItem = new SelectorItem<float>(_languageService.Get("Client.CharacterCreator.EyesHeight"), -1f, 1f, 0f, 0.1f, (item) =>
             {
-                SetPedFaceFeature(CharacterFacePart.EyesHeight, item.Value);
+                SetPedFaceFeature(ped, CharacterFacePart.EyesHeight, item.Value);
                 characterFaceParts[CharacterFacePart.EyesHeight] = item.Value;
             });
             faceFeaturesMenu.AddItem(eyesHeightItem);
 
             noseWidthItem = new SelectorItem<float>(_languageService.Get("Client.CharacterCreator.NoseWidth"), -1f, 1f, 0f, 0.1f, (item) =>
             {
-                SetPedFaceFeature(CharacterFacePart.NoseWidth, item.Value);
+                SetPedFaceFeature(ped, CharacterFacePart.NoseWidth, item.Value);
                 characterFaceParts[CharacterFacePart.NoseWidth] = item.Value;
             });
             faceFeaturesMenu.AddItem(noseWidthItem);
 
             noseSizeItem = new SelectorItem<float>(_languageService.Get("Client.CharacterCreator.NoseSize"), -1f, 1f, 0f, 0.1f, (item) =>
             {
-                SetPedFaceFeature(CharacterFacePart.NoseSize, item.Value);
+                SetPedFaceFeature(ped, CharacterFacePart.NoseSize, item.Value);
                 characterFaceParts[CharacterFacePart.NoseSize] = item.Value;
             });
             faceFeaturesMenu.AddItem(noseSizeItem);
 
             noseHeightItem = new SelectorItem<float>(_languageService.Get("Client.CharacterCreator.NoseHeight"), -1f, 1f, 0f, 0.1f, (item) =>
             {
-                SetPedFaceFeature(CharacterFacePart.NoseHeight, item.Value);
+                SetPedFaceFeature(ped, CharacterFacePart.NoseHeight, item.Value);
                 characterFaceParts[CharacterFacePart.NoseHeight] = item.Value;
             });
             faceFeaturesMenu.AddItem(noseHeightItem);
 
             noseAngleItem = new SelectorItem<float>(_languageService.Get("Client.CharacterCreator.NoseAngle"), -1f, 1f, 0f, 0.1f, (item) =>
             {
-                SetPedFaceFeature(CharacterFacePart.NoseAngle, item.Value);
+                SetPedFaceFeature(ped, CharacterFacePart.NoseAngle, item.Value);
                 characterFaceParts[CharacterFacePart.NoseAngle] = item.Value;
             });
             faceFeaturesMenu.AddItem(noseAngleItem);
 
             noseCurvatureItem = new SelectorItem<float>(_languageService.Get("Client.CharacterCreator.NoseCurvature"), -1f, 1f, 0f, 0.1f, (item) =>
             {
-                SetPedFaceFeature(CharacterFacePart.NoseCurvature, item.Value);
+                SetPedFaceFeature(ped, CharacterFacePart.NoseCurvature, item.Value);
                 characterFaceParts[CharacterFacePart.NoseCurvature] = item.Value;
             });
             faceFeaturesMenu.AddItem(noseCurvatureItem);
 
             noStrilsDistanceItem = new SelectorItem<float>(_languageService.Get("Client.CharacterCreator.NostrilsDistance"), -1f, 1f, 0f, 0.1f, (item) =>
             {
-                SetPedFaceFeature(CharacterFacePart.NoStrilsDistance, item.Value);
+                SetPedFaceFeature(ped, CharacterFacePart.NoStrilsDistance, item.Value);
                 characterFaceParts[CharacterFacePart.NoStrilsDistance] = item.Value;
             });
             faceFeaturesMenu.AddItem(noStrilsDistanceItem);
 
             mouthWidthItem = new SelectorItem<float>(_languageService.Get("Client.CharacterCreator.MouthWidth"), -1f, 1f, 0f, 0.1f, (item) =>
             {
-                SetPedFaceFeature(CharacterFacePart.MouthWidth, item.Value);
+                SetPedFaceFeature(ped, CharacterFacePart.MouthWidth, item.Value);
                 characterFaceParts[CharacterFacePart.MouthWidth] = item.Value;
             });
             faceFeaturesMenu.AddItem(mouthWidthItem);
 
             mouthDepthItem = new SelectorItem<float>(_languageService.Get("Client.CharacterCreator.MouthDepth"), -1f, 1f, 0f, 0.1f, (item) =>
             {
-                SetPedFaceFeature(CharacterFacePart.MouthDepth, item.Value);
+                SetPedFaceFeature(ped, CharacterFacePart.MouthDepth, item.Value);
                 characterFaceParts[CharacterFacePart.MouthDepth] = item.Value;
             });
             faceFeaturesMenu.AddItem(mouthDepthItem);
 
             mouthXPosItem = new SelectorItem<float>(_languageService.Get("Client.CharacterCreator.MouthHorzPos"), -1f, 1f, 0f, 0.1f, (item) =>
             {
-                SetPedFaceFeature(CharacterFacePart.MouthXPos, item.Value);
+                SetPedFaceFeature(ped, CharacterFacePart.MouthXPos, item.Value);
                 characterFaceParts[CharacterFacePart.MouthXPos] = item.Value;
             });
             faceFeaturesMenu.AddItem(mouthXPosItem);
 
             mouthYPosItem = new SelectorItem<float>(_languageService.Get("Client.CharacterCreator.MouthVertPos"), -1f, 1f, 0f, 0.1f, (item) =>
             {
-                SetPedFaceFeature(CharacterFacePart.MouthYPos, item.Value);
+                SetPedFaceFeature(ped, CharacterFacePart.MouthYPos, item.Value);
                 characterFaceParts[CharacterFacePart.MouthYPos] = item.Value;
             });
             faceFeaturesMenu.AddItem(mouthYPosItem);
 
             upperLipHeightItem = new SelectorItem<float>(_languageService.Get("Client.CharacterCreator.LipsSupHeight"), -1f, 1f, 0f, 0.1f, (item) =>
             {
-                SetPedFaceFeature(CharacterFacePart.UpperLipHeight, item.Value);
+                SetPedFaceFeature(ped, CharacterFacePart.UpperLipHeight, item.Value);
                 characterFaceParts[CharacterFacePart.UpperLipHeight] = item.Value;
             });
             faceFeaturesMenu.AddItem(upperLipHeightItem);
 
             upperLipWidthItem = new SelectorItem<float>(_languageService.Get("Client.CharacterCreator.LipsSupWidth"), -1f, 1f, 0f, 0.1f, (item) =>
             {
-                SetPedFaceFeature(CharacterFacePart.UpperLipWidth, item.Value);
+                SetPedFaceFeature(ped, CharacterFacePart.UpperLipWidth, item.Value);
                 characterFaceParts[CharacterFacePart.UpperLipWidth] = item.Value;
             });
             faceFeaturesMenu.AddItem(upperLipWidthItem);
 
             upperLipDepthItem = new SelectorItem<float>(_languageService.Get("Client.CharacterCreator.LipsSupDepth"), -1f, 1f, 0f, 0.1f, (item) =>
             {
-                SetPedFaceFeature(CharacterFacePart.UpperLipDepth, item.Value);
+                SetPedFaceFeature(ped, CharacterFacePart.UpperLipDepth, item.Value);
                 characterFaceParts[CharacterFacePart.UpperLipDepth] = item.Value;
             });
             faceFeaturesMenu.AddItem(upperLipDepthItem);
 
             lowerLipHeightItem = new SelectorItem<float>(_languageService.Get("Client.CharacterCreator.LipsInfHeight"), -1f, 1f, 0f, 0.1f, (item) =>
             {
-                SetPedFaceFeature(CharacterFacePart.LowerLipHeight, item.Value);
+                SetPedFaceFeature(ped, CharacterFacePart.LowerLipHeight, item.Value);
                 characterFaceParts[CharacterFacePart.LowerLipHeight] = item.Value;
             });
             faceFeaturesMenu.AddItem(lowerLipHeightItem);
 
             lowerLipWidthItem = new SelectorItem<float>(_languageService.Get("Client.CharacterCreator.LipsInfWidth"), -1f, 1f, 0f, 0.1f, (item) =>
             {
-                SetPedFaceFeature(CharacterFacePart.LowerLipWidth, item.Value);
+                SetPedFaceFeature(ped, CharacterFacePart.LowerLipWidth, item.Value);
                 characterFaceParts[CharacterFacePart.LowerLipWidth] = item.Value;
             });
             faceFeaturesMenu.AddItem(lowerLipWidthItem);
 
             lowerLipDepthItem = new SelectorItem<float>(_languageService.Get("Client.CharacterCreator.LipsInfDepth"), -1f, 1f, 0f, 0.1f, (item) =>
             {
-                SetPedFaceFeature(CharacterFacePart.LowerLipDepth, item.Value);
+                SetPedFaceFeature(ped, CharacterFacePart.LowerLipDepth, item.Value);
                 characterFaceParts[CharacterFacePart.LowerLipDepth] = item.Value;
             });
             faceFeaturesMenu.AddItem(lowerLipDepthItem);
@@ -1725,20 +1729,22 @@ namespace Average.Client.Framework.Services
 
         private void InitBodyMenu()
         {
+            var ped = PlayerPedId();
+
             bodyMenu = new MenuContainer(_languageService.Get("Client.CharacterCreator.Body").ToUpper(), "Corps");
 
             bodyTypesItem = new SelectorItem<int>("Morphologie", 0, _characterService.bodyTypes.Count - 1, 0, 1, (item) =>
             {
                 bodyTypesItem.Text = $"{_languageService.Get("Client.CharacterCreator.Morphology")}";
 
-                SetPedBodyComponent((uint)_characterService.bodyTypes[bodyTypesItem.Value]);
+                SetPedBodyComponent(ped, (uint)_characterService.bodyTypes[bodyTypesItem.Value]);
             });
 
             waistTypesItem = new SelectorItem<int>("Poids", 0, _characterService.waistTypes.Count - 1, 0, 1, (item) =>
             {
                 waistTypesItem.Text = $"{_languageService.Get("Client.CharacterCreator.Weight")}";
 
-                SetPedBodyComponent((uint)_characterService.waistTypes[waistTypesItem.Value]);
+                SetPedBodyComponent(ped, (uint)_characterService.waistTypes[waistTypesItem.Value]);
             });
 
             bodyMenu.AddItem(bodyTypesItem);
@@ -2063,13 +2069,14 @@ namespace Average.Client.Framework.Services
 
         private void RandomizeFace()
         {
+            var ped = PlayerPedId();
             var values = new Dictionary<int, float>();
 
             for (int i = 0; i < _characterService.faceParts.Count; i++)
             {
                 var part = int.Parse(_characterService.faceParts[i], NumberStyles.AllowHexSpecifier);
                 var rand = new Random(Environment.TickCount * (i == 0 ? 1 : i)).Next(-10, 10) / 10f;
-                SetPedFaceFeature(part, rand);
+                SetPedFaceFeature(ped, part, rand);
                 values.Add(part, rand);
 
                 characterFaceParts[part] = rand;

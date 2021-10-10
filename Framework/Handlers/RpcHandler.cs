@@ -65,7 +65,7 @@ namespace Average.Client.Framework.Handlers
                         }
                     }
 
-                    Type type = Type.GetType(resultType);
+                    var type = Type.GetType(resultType);
 
                     switch (native)
                     {
@@ -130,7 +130,7 @@ namespace Average.Client.Framework.Handlers
                                 result = RpcCall((ulong)native, default(string), newArgs.ToArray());
                             else if (type == typeof(Vector3))
                                 result = RpcCall((ulong)native, default(Vector3), newArgs.ToArray());
-                            
+
                             cb(result);
                             break;
                     }

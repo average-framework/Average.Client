@@ -17,7 +17,6 @@ namespace Average.Client.Framework.Services
 {
     internal class CharacterService : IService
     {
-        private int _blockedClothesState;
         private float _scale = 1f;
 
         public readonly List<Cloth> clothes;
@@ -27,8 +26,6 @@ namespace Average.Client.Framework.Services
         public readonly List<string> colorPalettes;
 
         private readonly EventService _eventService;
-
-        private List<string> _blockedClothes = new();
 
         public CharacterService(EventService eventService)
         {
@@ -45,7 +42,6 @@ namespace Average.Client.Framework.Services
         {
             try
             {
-                var test = characterData.ToJson();
                 _eventService.EmitServer("character:create_character", characterData.ToJson());
             }
             catch (Exception ex)
@@ -59,11 +55,14 @@ namespace Average.Client.Framework.Services
             _scale = characterData.Skin.Scale;
 
             SetPedBody(ped, characterData.Skin.Head, characterData.Skin.Body, characterData.Skin.Legs);
-            SetPedBodyComponents((uint)characterData.Skin.BodyType, (uint)characterData.Skin.WaistType);
+            SetPedBodyComponents(ped, (uint)characterData.Skin.BodyType, (uint)characterData.Skin.WaistType);
 
             await SetPedClothes(ped, characterData.Skin.Gender, characterData.Outfit);
-            SetPedFaceFeatures(characterData.Skin);
+
+            SetPedFaceFeatures(ped, characterData.Skin);
+            
             await SetFaceOverlays(ped, characterData.Skin);
+            await BaseScript.Delay(1000);
 
             SetPedComponentDisabled(ped, 0x3F1F01E5, 0, false);
             SetPedComponentDisabled(ped, 0xDA0E2C55, 0, false);
@@ -88,47 +87,47 @@ namespace Average.Client.Framework.Services
             RemovePedComponent(OutfitComponents.Pants);
         }
 
-        private void SetPedFaceFeatures(SkinData skin)
+        private void SetPedFaceFeatures(int ped, SkinData skin)
         {
-            SetPedFaceFeature(CharacterFacePart.CheeckBonesDepth, skin.CheeckBonesDepth);
-            SetPedFaceFeature(CharacterFacePart.CheeckBonesHeight, skin.CheeckBonesHeight);
-            SetPedFaceFeature(CharacterFacePart.CheeckBonesWidth, skin.CheeckBonesWidth);
-            SetPedFaceFeature(CharacterFacePart.ChinDepth, skin.ChinDepth);
-            SetPedFaceFeature(CharacterFacePart.ChinHeight, skin.ChinHeight);
-            SetPedFaceFeature(CharacterFacePart.ChinWidth, skin.ChinWidth);
-            SetPedFaceFeature(CharacterFacePart.EarsAngle, skin.EarsAngle);
-            SetPedFaceFeature(CharacterFacePart.EarsHeight, skin.EarsHeight);
-            SetPedFaceFeature(CharacterFacePart.EarsLobeSize, skin.EarsLobeSize);
-            SetPedFaceFeature(CharacterFacePart.EarsWidth, skin.EarsWidth);
-            SetPedFaceFeature(CharacterFacePart.EyebrowDepth, skin.EyebrowDepth);
-            SetPedFaceFeature(CharacterFacePart.EyebrowHeight, skin.EyebrowHeight);
-            SetPedFaceFeature(CharacterFacePart.EyebrowWidth, skin.EyebrowWidth);
-            SetPedFaceFeature(CharacterFacePart.EyeLidHeight, skin.EyeLidHeight);
-            SetPedFaceFeature(CharacterFacePart.EyeLidWidth, skin.EyeLidWidth);
-            SetPedFaceFeature(CharacterFacePart.EyesAngle, skin.EyesAngle);
-            SetPedFaceFeature(CharacterFacePart.EyesDepth, skin.EyesDepth);
-            SetPedFaceFeature(CharacterFacePart.EyesDistance, skin.EyesDistance);
-            SetPedFaceFeature(CharacterFacePart.EyesHeight, skin.EyesHeight);
-            SetPedFaceFeature(CharacterFacePart.HeadWidth, skin.HeadWidth);
-            SetPedFaceFeature(CharacterFacePart.JawDepth, skin.JawDepth);
-            SetPedFaceFeature(CharacterFacePart.JawHeight, skin.JawHeight);
-            SetPedFaceFeature(CharacterFacePart.JawWidth, skin.JawWidth);
-            SetPedFaceFeature(CharacterFacePart.LowerLipDepth, skin.LowerLipDepth);
-            SetPedFaceFeature(CharacterFacePart.LowerLipHeight, skin.LowerLipHeight);
-            SetPedFaceFeature(CharacterFacePart.LowerLipWidth, skin.LowerLipWidth);
-            SetPedFaceFeature(CharacterFacePart.MouthDepth, skin.MouthDepth);
-            SetPedFaceFeature(CharacterFacePart.MouthWidth, skin.MouthWidth);
-            SetPedFaceFeature(CharacterFacePart.MouthXPos, skin.MouthXPos);
-            SetPedFaceFeature(CharacterFacePart.MouthYPos, skin.MouthYPos);
-            SetPedFaceFeature(CharacterFacePart.NoseAngle, skin.NoseAngle);
-            SetPedFaceFeature(CharacterFacePart.NoseCurvature, skin.NoseCurvature);
-            SetPedFaceFeature(CharacterFacePart.NoseHeight, skin.NoseHeight);
-            SetPedFaceFeature(CharacterFacePart.NoseSize, skin.NoseSize);
-            SetPedFaceFeature(CharacterFacePart.NoseWidth, skin.NoseWidth);
-            SetPedFaceFeature(CharacterFacePart.NoStrilsDistance, skin.NoStrilsDistance);
-            SetPedFaceFeature(CharacterFacePart.UpperLipDepth, skin.UpperLipDepth);
-            SetPedFaceFeature(CharacterFacePart.UpperLipHeight, skin.UpperLipHeight);
-            SetPedFaceFeature(CharacterFacePart.UpperLipWidth, skin.UpperLipWidth);
+            SetPedFaceFeature(ped, CharacterFacePart.CheeckBonesDepth, skin.CheeckBonesDepth);
+            SetPedFaceFeature(ped, CharacterFacePart.CheeckBonesHeight, skin.CheeckBonesHeight);
+            SetPedFaceFeature(ped, CharacterFacePart.CheeckBonesWidth, skin.CheeckBonesWidth);
+            SetPedFaceFeature(ped, CharacterFacePart.ChinDepth, skin.ChinDepth);
+            SetPedFaceFeature(ped, CharacterFacePart.ChinHeight, skin.ChinHeight);
+            SetPedFaceFeature(ped, CharacterFacePart.ChinWidth, skin.ChinWidth);
+            SetPedFaceFeature(ped, CharacterFacePart.EarsAngle, skin.EarsAngle);
+            SetPedFaceFeature(ped, CharacterFacePart.EarsHeight, skin.EarsHeight);
+            SetPedFaceFeature(ped, CharacterFacePart.EarsLobeSize, skin.EarsLobeSize);
+            SetPedFaceFeature(ped, CharacterFacePart.EarsWidth, skin.EarsWidth);
+            SetPedFaceFeature(ped, CharacterFacePart.EyebrowDepth, skin.EyebrowDepth);
+            SetPedFaceFeature(ped, CharacterFacePart.EyebrowHeight, skin.EyebrowHeight);
+            SetPedFaceFeature(ped, CharacterFacePart.EyebrowWidth, skin.EyebrowWidth);
+            SetPedFaceFeature(ped, CharacterFacePart.EyeLidHeight, skin.EyeLidHeight);
+            SetPedFaceFeature(ped, CharacterFacePart.EyeLidWidth, skin.EyeLidWidth);
+            SetPedFaceFeature(ped, CharacterFacePart.EyesAngle, skin.EyesAngle);
+            SetPedFaceFeature(ped, CharacterFacePart.EyesDepth, skin.EyesDepth);
+            SetPedFaceFeature(ped, CharacterFacePart.EyesDistance, skin.EyesDistance);
+            SetPedFaceFeature(ped, CharacterFacePart.EyesHeight, skin.EyesHeight);
+            SetPedFaceFeature(ped, CharacterFacePart.HeadWidth, skin.HeadWidth);
+            SetPedFaceFeature(ped, CharacterFacePart.JawDepth, skin.JawDepth);
+            SetPedFaceFeature(ped, CharacterFacePart.JawHeight, skin.JawHeight);
+            SetPedFaceFeature(ped, CharacterFacePart.JawWidth, skin.JawWidth);
+            SetPedFaceFeature(ped, CharacterFacePart.LowerLipDepth, skin.LowerLipDepth);
+            SetPedFaceFeature(ped, CharacterFacePart.LowerLipHeight, skin.LowerLipHeight);
+            SetPedFaceFeature(ped, CharacterFacePart.LowerLipWidth, skin.LowerLipWidth);
+            SetPedFaceFeature(ped, CharacterFacePart.MouthDepth, skin.MouthDepth);
+            SetPedFaceFeature(ped, CharacterFacePart.MouthWidth, skin.MouthWidth);
+            SetPedFaceFeature(ped, CharacterFacePart.MouthXPos, skin.MouthXPos);
+            SetPedFaceFeature(ped, CharacterFacePart.MouthYPos, skin.MouthYPos);
+            SetPedFaceFeature(ped, CharacterFacePart.NoseAngle, skin.NoseAngle);
+            SetPedFaceFeature(ped, CharacterFacePart.NoseCurvature, skin.NoseCurvature);
+            SetPedFaceFeature(ped, CharacterFacePart.NoseHeight, skin.NoseHeight);
+            SetPedFaceFeature(ped, CharacterFacePart.NoseSize, skin.NoseSize);
+            SetPedFaceFeature(ped, CharacterFacePart.NoseWidth, skin.NoseWidth);
+            SetPedFaceFeature(ped, CharacterFacePart.NoStrilsDistance, skin.NoStrilsDistance);
+            SetPedFaceFeature(ped, CharacterFacePart.UpperLipDepth, skin.UpperLipDepth);
+            SetPedFaceFeature(ped, CharacterFacePart.UpperLipHeight, skin.UpperLipHeight);
+            SetPedFaceFeature(ped, CharacterFacePart.UpperLipWidth, skin.UpperLipWidth);
         }
 
         private async Task SetPedCloth(int ped, uint cloth)
@@ -142,11 +141,10 @@ namespace Average.Client.Framework.Services
             if (clothInfo == null) return;
 
             var category = uint.Parse(clothInfo.CategoryHash, NumberStyles.AllowHexSpecifier);
-
             var metaped = Call<int>(0xEC9A1261BF0CE510, ped);
             var time = GetGameTimer();
 
-            while (!Call<bool>(0xFB4891BD7578CDC1, ped, category) && (GetGameTimer() - time < 5000))
+            while (!Call<bool>(0xFB4891BD7578CDC1, ped, category) && (GetGameTimer() - time) < 1000)
             {
                 Call(0xD710A5007C2AC539, ped, category, 1);
                 Call(0xDF631E4BCE1B1FC4, ped, category, 0, 1);
@@ -157,20 +155,10 @@ namespace Average.Client.Framework.Services
 
                 await BaseScript.Delay(250);
             }
-
-            if (!Call<bool>(0xFB4891BD7578CDC1, ped, category))
-            {
-                // Cloth is not applied
-                _blockedClothes.Add(clothInfo.CategoryHash);
-
-                //Logger.Warn($"[Character] Unable to loading cloth: {clothInfo.CategoryHash}, {clothInfo.Hash} -> {cloth}");
-            }
         }
 
-        private async Task SetPedClothes(int ped, Gender gender, OutfitData outfitData)
+        internal async Task SetPedClothes(int ped, Gender gender, OutfitData outfitData)
         {
-            while (!Call<bool>(0xA0BC8FAED8CFEB3C, ped)) await BaseScript.Delay(250);
-
             await SetPedCloth(ped, outfitData.Torso);
             await SetPedCloth(ped, outfitData.Leg);
             await SetPedCloth(ped, outfitData.Head);
@@ -237,20 +225,9 @@ namespace Average.Client.Framework.Services
             Call(0x704C908E9C405136, ped);
             Call(0xAAB86462966168CE, ped, 1);
             Call(0xCC8CA3E88256E58F, ped, 0, 1, 1, 1, 0);
-
-            if (_blockedClothes.Count > 0 && _blockedClothesState <= 2)
-            {
-                _blockedClothesState++;
-                Logger.Debug($"[Character] Restart clothes loading.. Attempt [{_blockedClothesState}/3]");
-                await SpawnPed(gender);
-            }
-            else
-            {
-                Logger.Info("[Character] Clothes successfully loaded.");
-            }
         }
 
-        public async Task SpawnPed(Gender gender)
+        public async Task<int> SpawnPed(Gender gender)
         {
             var model = gender == Gender.Male ? (uint)GetHashKey("mp_male") : (uint)GetHashKey("mp_female");
 
@@ -276,6 +253,8 @@ namespace Average.Client.Framework.Services
             Call(0x4E4B996C928C7AA6, PlayerId());
 
             Call(Hash.CLEAR_PED_TASKS_IMMEDIATELY, ped);
+
+            return ped;
         }
 
         public async Task SetPedOutfit(int ped, Dictionary<string, uint> newClothes, int delay = 250)
@@ -308,14 +287,12 @@ namespace Average.Client.Framework.Services
             Call(0x704C908E9C405136, ped);
             Call(0xAAB86462966168CE, ped, 1);
             Call(0xCC8CA3E88256E58F, ped, 0, 1, 1, 1, 0);
-
-            Logger.Info("[Character] Clothes successfully loaded.");
         }
 
-        private void SetPedBodyComponents(uint bodyType, uint waistType)
+        private void SetPedBodyComponents(int ped, uint bodyType, uint waistType)
         {
-            SetPedBodyComponent(bodyType);
-            SetPedBodyComponent(waistType);
+            SetPedBodyComponent(ped, bodyType);
+            SetPedBodyComponent(ped, waistType);
         }
 
         private async Task SetFaceOverlay(int ped, int textureId, OverlayData overlay)
@@ -359,10 +336,8 @@ namespace Average.Client.Framework.Services
             }
         }
 
-        internal void RemoveAllClothes()
+        internal void RemoveAllClothes(int ped)
         {
-            var ped = PlayerPedId();
-
             RemovePedComponent(ped, OutfitComponents.Accessories);
             RemovePedComponent(ped, OutfitComponents.Armors);
             RemovePedComponent(ped, OutfitComponents.Badges);

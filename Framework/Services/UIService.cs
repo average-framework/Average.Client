@@ -68,7 +68,7 @@ namespace Average.Client.Framework.Services
         {
             foreach (var @event in events)
             {
-                Func<IDictionary<string, object>, CallbackDelegate, Task<CallbackDelegate>> test2 = async (body, cb) =>
+                Func<IDictionary<string, object>, CallbackDelegate, Task<CallbackDelegate>> callback = async (body, cb) =>
                 {
                     var haveResponse = false;
 
@@ -85,7 +85,7 @@ namespace Average.Client.Framework.Services
                 };
 
                 RegisterNuiCallbackType(@event.ToString());
-                _eventHandlers[$"__cfx_nui:{@event}"] += new Action<IDictionary<string, object>, CallbackDelegate>(async (body, resultCallback) => await test2.Invoke(body, resultCallback));
+                _eventHandlers[$"__cfx_nui:{@event}"] += new Action<IDictionary<string, object>, CallbackDelegate>(async (body, resultCallback) => await callback.Invoke(body, resultCallback));
             }
         }
 

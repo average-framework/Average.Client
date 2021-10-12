@@ -24,26 +24,66 @@ namespace Average.Client.Framework.Handlers
         }
 
         [ClientEvent("ui:load_frame")]
-        private void OnLoadFrame(string frame) => API.SendNuiMessage(new
-        {
-            eventName = "ui:load_frame",
-            frame
-        }.ToJson());
+        private void OnLoadFrame(string frameName) => _uiService.LoadFrame(frameName);
 
         [ClientEvent("ui:destroy_frame")]
-        private void OnDestroyFrame(string frame) => API.SendNuiMessage(new
+        private void OnDestroyFrame(string frameName) => _uiService.DestroyFrame(frameName);
+
+        [ClientEvent("ui:send_message")]
+        private void OnSendMessage(string frame, string requestType, string message) => _uiService.SendNui(frame, requestType, message);
+
+        [ClientEvent("ui:frame_focus")]
+        private void OnFrameFocus(string frameName)
         {
-            eventName = "ui:destroy_frame",
-            frame
-        }.ToJson());
+            _uiService.FocusFrame(frameName);
+        }
+
+        [ClientEvent("ui:focus")]
+        private void OnFocus(bool showCursor)
+        {
+            _uiService.Focus(showCursor);
+        }
+
+        [ClientEvent("ui:unfocus")]
+        private void OnUnfocus()
+        {
+            _uiService.Unfocus();
+        }
 
         [ClientEvent("ui:emit")]
-        private void OnSendMessage(string frame, string requestType, string message) => API.SendNuiMessage(new
+        private void OnEmit(string message)
         {
-            eventName = "ui:emit",
-            frame,
-            requestType,
-            message
-        }.ToJson());
+            _uiService.Emit(message);
+        }
+
+        [ClientEvent("ui:show")]
+        private void OnShow(string frameName)
+        {
+            _uiService.Show(frameName);
+        }
+
+        [ClientEvent("ui:hide")]
+        private void OnHide(string frameName)
+        {
+            _uiService.Hide(frameName);
+        }
+
+        [ClientEvent("ui:fadein")]
+        private void OnFadeIn(string frameName, int duration)
+        {
+            _uiService.FadeIn(frameName, duration);
+        }
+
+        [ClientEvent("ui:fadeout")]
+        private void OnFadeOut(string frameName, int duration)
+        {
+            _uiService.FadeOut(frameName, duration);
+        }
+
+        [ClientEvent("ui:zindex")]
+        private void OnSetZIndex(string frameName, int zIndex)
+        {
+            _uiService.SetZIndex(frameName, zIndex);
+        }
     }
 }

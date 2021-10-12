@@ -2,6 +2,7 @@
 using Average.Client.Framework.Diagnostics;
 using Average.Client.Framework.Interfaces;
 using Average.Client.Framework.Ray;
+using Average.Shared.Attributes;
 using Average.Shared.Enums;
 using CitizenFX.Core;
 using System;

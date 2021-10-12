@@ -53,6 +53,7 @@ namespace Average.Client
 
             // Reflections
             _container.Resolve<EventService>().Reflect();
+            _container.Resolve<UIService>().Reflect();
             _container.Resolve<ThreadService>().Reflect();
             _container.Resolve<ReplicateStateService>().Reflect();
 

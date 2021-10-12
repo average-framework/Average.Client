@@ -1,15 +1,26 @@
 ﻿using Average.Client.Framework.Attributes;
+using Average.Client.Framework.Diagnostics;
 using Average.Client.Framework.Extensions;
 using Average.Client.Framework.Interfaces;
+using Average.Client.Framework.Services;
 using CitizenFX.Core.Native;
+using System.Collections.Generic;
 
 namespace Average.Client.Framework.Handlers
 {
     internal class UIHandler : IHandler
     {
-        public UIHandler()
-        {
+        private readonly UIService _uiService;
 
+        public UIHandler(UIService uiService)
+        {
+            _uiService = uiService;
+        }
+
+        [ClientEvent("ui:register_nui_events")]
+        private void OnRegisterNuiEvents(List<object> events)
+        {
+            _uiService.RegisterUIServerCallback(events);
         }
 
         [ClientEvent("ui:load_frame")]

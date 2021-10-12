@@ -135,7 +135,7 @@ namespace Average.Client.Framework.Handlers
                             break;
                     }
 
-                    Logger.Debug("Native Call: " + native + ", " + string.Join(", ", args));
+                    //Logger.Debug("Native Call: " + native + ", " + string.Join(", ", args));
                 }
                 catch (Exception ex)
                 {
@@ -214,15 +214,15 @@ namespace Average.Client.Framework.Handlers
                 {
                     case long:
                         Call((long)native, newArgs.ToArray());
-                        Logger.Debug("long: " + (Hash)(long)native);
+                        //Logger.Debug("long: " + (Hash)(long)native);
                         break;
                     case ulong:
                         Call((ulong)native, newArgs.ToArray());
-                        Logger.Debug("ulong: " + (Hash)(ulong)native);
+                        //Logger.Debug("ulong: " + (Hash)(ulong)native);
                         break;
                 }
 
-                Logger.Debug("Native Call: " + native + ", " + string.Join(", ", newArgs));
+                //Logger.Debug("Native Call: " + native + ", " + string.Join(", ", newArgs));
             }
             catch (Exception ex)
             {

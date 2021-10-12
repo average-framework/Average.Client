@@ -1,7 +1,7 @@
-﻿using Average.Client.Framework.Attributes;
-using Average.Client.Framework.Events;
+﻿using Average.Client.Framework.Events;
 using Average.Client.Framework.Interfaces;
 using Average.Client.Menu;
+using Average.Shared.Attributes;
 using CitizenFX.Core;
 using System;
 using System.Collections.Generic;
@@ -68,7 +68,9 @@ namespace Average.Client.Framework.Services
         private CallbackDelegate OnClick(IDictionary<string, object> data, CallbackDelegate result)
         {
             if (!data.ContainsKey("name"))
+            {
                 return result;
+            }    
 
             var name = data["name"].ToString();
             var item = _currentMenu.GetItem(name);
@@ -226,7 +228,7 @@ namespace Average.Client.Framework.Services
 
             if (IsOpen && key == 27)
             {
-                if(key == 27)
+                if (key == 27)
                 {
                     if (_containerHistories.Count > 0)
                     {

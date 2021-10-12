@@ -5,6 +5,7 @@ using Average.Client.Framework.Extensions;
 using Average.Client.Framework.Interfaces;
 using Average.Client.Menu;
 using Average.Client.Models;
+using Average.Shared.Attributes;
 using Average.Shared.DataModels;
 using Average.Shared.Enums;
 using Average.Shared.Utilities;

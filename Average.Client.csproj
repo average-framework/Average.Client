@@ -99,7 +99,6 @@
     <Compile Include="Framework\Events\ResourceStopEventArgs.cs" />
     <Compile Include="Framework\Events\PopulationPedCreatingEventArgs.cs" />
     <Compile Include="Framework\Events\SessionInitializedEventArgs.cs" />
-    <Compile Include="Framework\Attributes\UICallbackAttribute.cs" />
     <Compile Include="Framework\Diagnostics\Logger.cs" />
     <Compile Include="Framework\Diagnostics\LogInfo.cs" />
     <Compile Include="Framework\Diagnostics\LogLevel.cs" />

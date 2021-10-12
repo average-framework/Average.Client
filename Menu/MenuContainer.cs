@@ -1,5 +1,4 @@
-﻿using Average.Client.Framework.Diagnostics;
-using Average.Client.Interfaces;
+﻿using Average.Client.Interfaces;
 using System.Collections.Generic;
 using static Average.Shared.SharedAPI;
 
@@ -25,7 +24,6 @@ namespace Average.Client.Menu
 
         public void AddItem(IMenuItem menuItem)
         {
-            Logger.Error("menu item: " + menuItem.Name + ", " + ItemExists(menuItem));
             if (!ItemExists(menuItem))
             {
                 menuItem.Parent = this;

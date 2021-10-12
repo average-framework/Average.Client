@@ -20,7 +20,6 @@ namespace Average.Client.Framework.Services
         private const BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy;
 
         private readonly Dictionary<string, List<Delegate>> _events = new();
-        private readonly Dictionary<string, List<Delegate>> _nuiEvents = new();
 
         public EventService(Container container, EventHandlerDictionary eventHandlers)
         {
@@ -41,7 +40,7 @@ namespace Average.Client.Framework.Services
             _eventHandlers["sessionInitialized"] += new Action(OnSessionInitialized);
             _eventHandlers["populationPedCreating"] += new Action<float, float, float, uint, dynamic>(OnPopulationPedCreating);
 
-            _eventHandlers["server-event:triggered"] += new Action<string, List<object>>(OnTriggerEvent);
+            _eventHandlers["server-event:triggered"] += new Action<string, List<object>>(OnTriggerServerEvent);
 
             Logger.Debug("EventService Initialized successfully");
         }
@@ -86,56 +85,13 @@ namespace Average.Client.Framework.Services
                     }
                 }
             }
-
-            // Register client nui events
-            foreach (var service in types)
-            {
-                if (_container.IsRegistered(service))
-                {
-                    // Continue if the service have the same type of this class
-                    if (service == GetType()) continue;
-
-                    // Get service instance
-                    var _service = _container.Resolve(service);
-                    var methods = service.GetMethods(flags);
-
-                    foreach (var method in methods)
-                    {
-                        var attr = method.GetCustomAttribute<UICallbackAttribute>();
-                        if (attr == null) continue;
-
-                        RegisterInternalNuiCallbackEvent(attr, _service, method);
-                    }
-                }
-            }
         }
 
-        private void RegisterInternalNuiCallbackEvent(string eventName, Func<IDictionary<string, object>, CallbackDelegate, CallbackDelegate> callback)
+        internal void RegisterInternalNuiCallbackEvent(string eventName, Func<IDictionary<string, object>, CallbackDelegate, CallbackDelegate> callback)
         {
             RegisterNuiCallbackType(eventName);
             _eventHandlers[$"__cfx_nui:{eventName}"] += new Action<IDictionary<string, object>, CallbackDelegate>((body, resultCallback) => callback.Invoke(body, resultCallback));
         }
-
-        private void RegisterInternalNuiCallbackEvent(UICallbackAttribute eventAttr, object classObj, MethodInfo method)
-        {
-            var methodParams = method.GetParameters();
-            var callback = (Func<IDictionary<string, object>, CallbackDelegate, CallbackDelegate>)Delegate.CreateDelegate(Expression.GetDelegateType((from parameter in method.GetParameters() select parameter.ParameterType).Concat(new[] { method.ReturnType }).ToArray()), classObj, method);
-
-            if (!_nuiEvents.ContainsKey(eventAttr.Name))
-            {
-                _nuiEvents.Add(eventAttr.Name, new List<Delegate> { callback });
-            }
-            else
-            {
-                _nuiEvents[eventAttr.Name].Add(callback);
-            }
-
-            RegisterNuiCallbackType(eventAttr.Name);
-            _eventHandlers[$"__cfx_nui:{eventAttr.Name}"] += new Action<IDictionary<string, object>, CallbackDelegate>((body, resultCallback) => callback.Invoke(body, resultCallback));
-
-            Logger.Debug($"Registering [UICallback]: {eventAttr.Name} on method: {method.Name}.");
-        }
-
         private void RegisterEvent(string eventName, Delegate action)
         {
             if (!_events.ContainsKey(eventName))
@@ -182,11 +138,8 @@ namespace Average.Client.Framework.Services
             BaseScript.TriggerServerEvent("client-event:triggered", eventName, args);
         }
 
-        private void OnTriggerEvent(string eventName, List<object> args)
+        private void OnTriggerServerEvent(string eventName, List<object> args)
         {
-            Logger.Debug("Receive event from server: " + eventName + ", " + string.Join(", ", args));
-            Logger.Debug("Types: " + eventName + ", " + string.Join(", ", args.Select(x => x.GetType())));
-
             Emit(eventName, args.ToArray());
         }
 

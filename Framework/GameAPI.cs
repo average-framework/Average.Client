@@ -1,4 +1,5 @@
-﻿using CitizenFX.Core;
+﻿using Average.Client.Models;
+using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using Newtonsoft.Json;
 using System;
@@ -10,7 +11,7 @@ using static CitizenFX.Core.Native.API;
 
 namespace Average.Client.Framework
 {
-    public static class GameAPI
+    internal static class GameAPI
     {
         public static async void SendNUI(object request)
         {

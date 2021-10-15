@@ -137,6 +137,7 @@
     <Compile Include="Framework\Services\LanguageService.cs" />
     <Compile Include="Framework\Services\MenuService.cs" />
     <Compile Include="Framework\Services\UIService.cs" />
+    <Compile Include="Framework\Services\WorldService.cs" />
     <Compile Include="Framework\UIEvents.cs" />
     <Compile Include="Handlers\ClientHandler.cs" />
     <Compile Include="Interfaces\IMenuItem.cs" />
@@ -161,9 +162,13 @@
     <Compile Include="Menu\Vector2InputItem.cs" />
     <Compile Include="Menu\Vector3Input.cs" />
     <Compile Include="Models\Cloth.cs" />
+    <Compile Include="Models\RaycastHit.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\.editorconfig">
+      <Link>.editorconfig</Link>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

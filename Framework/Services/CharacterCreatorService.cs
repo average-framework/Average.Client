@@ -444,6 +444,7 @@ namespace Average.Client.Framework.Services
 
             var characterData = new CharacterData
             {
+                CharacterId = RandomString(),
                 CreationDate = DateTime.Now,
                 Firstname = firstAndLastNameItem.Input1.Value.ToString(),
                 Lastname = firstAndLastNameItem.Input2.Value.ToString(),
@@ -575,7 +576,6 @@ namespace Average.Client.Framework.Services
             Unfocus();
 
             _characterService.Create(characterData);
-            _eventService.EmitServer("character:character_created");
 
             await FadeOut(500);
             await BaseScript.Delay(1000);

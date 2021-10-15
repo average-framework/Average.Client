@@ -1,4 +1,5 @@
 ﻿using Average.Client.Framework.Services;
+using Average.Client.Models;
 using Newtonsoft.Json;
 using System;
 using System.Threading.Tasks;
@@ -13,12 +14,12 @@ namespace Average.Client.Framework.Ray
         public string Emoji { get; }
 
         [JsonIgnore]
-        public Func<RaycastHit, Task<bool>> Condition { get; }
-
-        [JsonIgnore]
         public bool CloseMenuOnAction { get; }
 
         public bool IsVisible { get; set; }
+
+        [JsonIgnore]
+        public Func<RaycastHit, Task<bool>> Condition { get; }
 
         [JsonIgnore]
         public Action<RaycastHit> Action { get; }

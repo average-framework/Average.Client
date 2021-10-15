@@ -228,24 +228,21 @@ namespace Average.Client.Framework.Services
 
             if (IsOpen && key == 27)
             {
-                if (key == 27)
+                if (_containerHistories.Count > 0)
                 {
-                    if (_containerHistories.Count > 0)
-                    {
-                        var containerIndex = _containerHistories.Count - 1;
-                        var parent = _containerHistories[containerIndex];
+                    var containerIndex = _containerHistories.Count - 1;
+                    var parent = _containerHistories[containerIndex];
 
-                        Open(parent);
+                    Open(parent);
 
-                        _containerHistories.RemoveAt(containerIndex);
-                    }
-                    else
+                    _containerHistories.RemoveAt(containerIndex);
+                }
+                else
+                {
+                    if (CanCloseMenu)
                     {
-                        if (CanCloseMenu)
-                        {
-                            Close();
-                            _uiService.Unfocus();
-                        }
+                        Close();
+                        _uiService.Unfocus();
                     }
                 }
             }

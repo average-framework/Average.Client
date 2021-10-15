@@ -2,6 +2,7 @@
 using Average.Client.Framework.Diagnostics;
 using Average.Client.Framework.Interfaces;
 using Average.Client.Framework.Ray;
+using Average.Client.Models;
 using Average.Shared.Attributes;
 using Average.Shared.Enums;
 using CitizenFX.Core;
@@ -127,7 +128,7 @@ namespace Average.Client.Framework.Services
         {
             _currentRay = GetTarget(PlayerPedId(), TargetRange);
 
-            if(_lastEntityHit != _currentRay.EntityHit)
+            if (_lastEntityHit != _currentRay.EntityHit)
             {
                 _lastEntityHit = _currentRay.EntityHit;
                 CrossairCondition.Invoke(_currentRay, _lastEntityHit != _currentRay.EntityHit);
@@ -141,7 +142,7 @@ namespace Average.Client.Framework.Services
         [Thread]
         private async Task KeyboardUpdate()
         {
-            if(_rayGroupList.Count > 0)
+            if (_rayGroupList.Count > 0)
             {
                 if (IsControlJustReleased(0, 0x8CC9CD42))
                 {

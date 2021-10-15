@@ -36,6 +36,7 @@ namespace Average.Client
             _container.Register<MenuService>();
             _container.Register<RayService>();
             _container.Register<InputService>();
+            _container.Register<WorldService>();
 
             // Services
             _container.Register<CharacterService>();

@@ -24,7 +24,11 @@ namespace Average.Client.Framework.Handlers
         }
 
         [ClientEvent("ui:load_frame")]
-        private void OnLoadFrame(string frameName) => _uiService.LoadFrame(frameName);
+        private void OnLoadFrame(string frameName)
+        {
+            Logger.Error("Load frame from server: " + frameName);
+            _uiService.LoadFrame(frameName);
+        }
 
         [ClientEvent("ui:destroy_frame")]
         private void OnDestroyFrame(string frameName) => _uiService.DestroyFrame(frameName);

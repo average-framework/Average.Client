@@ -576,6 +576,7 @@ namespace Average.Client.Framework.Services
             Unfocus();
 
             _characterService.Create(characterData);
+            _eventService.EmitServer("character:character_created", characterData.CharacterId);
 
             await FadeOut(500);
             await BaseScript.Delay(1000);

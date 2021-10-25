@@ -119,9 +119,7 @@
     <Compile Include="Framework\Helpers\MathHelpers.cs" />
     <Compile Include="Framework\Interfaces\IHandler.cs" />
     <Compile Include="Framework\Interfaces\IService.cs" />
-    <Compile Include="Framework\Ray\RayGroup.cs" />
-    <Compile Include="Framework\Ray\RayGroupList.cs" />
-    <Compile Include="Framework\Ray\RayItem.cs" />
+    <Compile Include="Framework\Services\ClientService.cs" />
     <Compile Include="Framework\Services\CommandService.cs" />
     <Compile Include="Framework\Services\EventService.cs" />
     <Compile Include="Framework\Services\InputService.cs" />
@@ -162,7 +160,6 @@
     <Compile Include="Menu\Vector2InputItem.cs" />
     <Compile Include="Menu\Vector3Input.cs" />
     <Compile Include="Models\Cloth.cs" />
-    <Compile Include="Models\RaycastHit.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

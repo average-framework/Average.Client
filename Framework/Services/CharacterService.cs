@@ -1,9 +1,11 @@
-﻿using Average.Client.Framework.Diagnostics;
+﻿using Average.Client.Framework.Attributes;
+using Average.Client.Framework.Diagnostics;
 using Average.Client.Framework.Extensions;
 using Average.Client.Framework.Interfaces;
 using Average.Client.Models;
 using Average.Shared.DataModels;
 using Average.Shared.Enums;
+using Average.Shared.Models;
 using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using System;
@@ -17,26 +19,52 @@ namespace Average.Client.Framework.Services
 {
     internal class CharacterService : IService
     {
-        private float _scale = 1f;
-
-        public readonly List<Cloth> clothes;
-        public readonly List<int> bodyTypes;
-        public readonly List<int> waistTypes;
-        public readonly List<string> faceParts;
-        public readonly List<string> colorPalettes;
-
+        private readonly ClientService _clientService;
         private readonly EventService _eventService;
 
-        public CharacterService(EventService eventService)
+        public readonly List<Cloth> _clothes;
+        public readonly List<int> _bodyTypes;
+        public readonly List<int> _waistTypes;
+        public readonly List<string> _faceParts;
+        public readonly List<string> _colorPalettes;
+
+        private RaycastHit _currrentRaycast;
+        private int _lastEntityHit;
+
+        private const float MaxTargetRange = 6f;
+        private const int CrossairRefreshInterval = 500;
+
+        public CharacterService(ClientService clientService, EventService eventService)
         {
+            _clientService = clientService;
             _eventService = eventService;
 
-            clothes = Configuration.Parse<List<Cloth>>("utilities/clothes.json");
-            bodyTypes = Configuration.Parse<List<int>>("utilities/body_types.json");
-            waistTypes = Configuration.Parse<List<int>>("utilities/waist_types.json");
-            faceParts = Configuration.Parse<List<string>>("utilities/face_parts.json");
-            colorPalettes = Configuration.Parse<List<string>>("utilities/color_palettes.json");
+            _clothes = Configuration.Parse<List<Cloth>>("utilities/clothes.json");
+            _bodyTypes = Configuration.Parse<List<int>>("utilities/body_types.json");
+            _waistTypes = Configuration.Parse<List<int>>("utilities/waist_types.json");
+            _faceParts = Configuration.Parse<List<string>>("utilities/face_parts.json");
+            _colorPalettes = Configuration.Parse<List<string>>("utilities/color_palettes.json");
         }
+
+        #region Thread
+
+        [Thread]
+        private async Task CrossairUpdate()
+        {
+            _currrentRaycast = GetTarget(PlayerPedId(), MaxTargetRange);
+
+            if (_lastEntityHit != _currrentRaycast.EntityHit)
+            {
+                _lastEntityHit = _currrentRaycast.EntityHit;
+                _clientService.ShareData("Character:CurrentRaycast", _currrentRaycast, true);
+            }
+            else
+            {
+                await BaseScript.Delay(CrossairRefreshInterval);
+            }
+        }
+
+        #endregion
 
         internal void Create(CharacterData characterData)
         {
@@ -52,15 +80,13 @@ namespace Average.Client.Framework.Services
 
         internal async Task SetAppearance(int ped, CharacterData characterData)
         {
-            _scale = characterData.Skin.Scale;
-
             SetPedBody(ped, characterData.Skin.Head, characterData.Skin.Body, characterData.Skin.Legs);
             SetPedBodyComponents(ped, (uint)characterData.Skin.BodyType, (uint)characterData.Skin.WaistType);
 
             await SetPedClothes(ped, characterData.Skin.Gender, characterData.Outfit);
 
             SetPedFaceFeatures(ped, characterData.Skin);
-            
+
             await SetFaceOverlays(ped, characterData.Skin);
             await BaseScript.Delay(1000);
 
@@ -135,7 +161,7 @@ namespace Average.Client.Framework.Services
             // No cloth
             if (cloth == 0) return;
 
-            var clothInfo = clothes.Find(x => x.Hash == cloth.ToString("X8"));
+            var clothInfo = _clothes.Find(x => x.Hash == cloth.ToString("X8"));
 
             // Cloth does not exists in clothes.json file
             if (clothInfo == null) return;
@@ -263,7 +289,7 @@ namespace Average.Client.Framework.Services
             {
                 if (cloth.Value != 0)
                 {
-                    var c = clothes.Find(x => x.Hash == cloth.Value.ToString("X8"));
+                    var c = _clothes.Find(x => x.Hash == cloth.Value.ToString("X8"));
                     var categoryHash = uint.Parse(cloth.Key, NumberStyles.AllowHexSpecifier);
                     var time = GetGameTimer();
 

@@ -442,9 +442,11 @@ namespace Average.Client.Framework.Services
             if (int.Parse(dateOfBirthItem.Input2.Value.ToString()) < 1 || int.Parse(dateOfBirthItem.Input2.Value.ToString()) > 12) return;
             if (int.Parse(dateOfBirthItem.Input3.Value.ToString()) < 1820 || int.Parse(dateOfBirthItem.Input3.Value.ToString()) > 1880) return;
 
+            var characterId = RandomString();
+
             var characterData = new CharacterData
             {
-                CharacterId = RandomString(),
+                CharacterId = characterId,
                 CreationDate = DateTime.Now,
                 Firstname = firstAndLastNameItem.Input1.Value.ToString(),
                 Lastname = firstAndLastNameItem.Input2.Value.ToString(),
@@ -455,8 +457,8 @@ namespace Average.Client.Framework.Services
                 {
                     Gender = gender,
                     Scale = pedScaleItem.Value,
-                    BodyType = _characterService.bodyTypes[bodyTypesItem.Value],
-                    WaistType = _characterService.waistTypes[waistTypesItem.Value],
+                    BodyType = _characterService._bodyTypes[bodyTypesItem.Value],
+                    WaistType = _characterService._waistTypes[waistTypesItem.Value],
                     Body = uint.Parse(CharacterUtilities.Origins[culturesItem.Value].Bodies[bodyItem.Value], NumberStyles.HexNumber),
                     Head = uint.Parse(CharacterUtilities.Origins[culturesItem.Value].Heads[headsItem.Value], NumberStyles.HexNumber),
                     Legs = uint.Parse(CharacterUtilities.Origins[culturesItem.Value].Legs[legsItem.Value], NumberStyles.HexNumber),
@@ -562,11 +564,6 @@ namespace Average.Client.Framework.Services
                     Teeth = characterClothes[OutfitComponents.Teeth],
                     Torso = characterClothes[OutfitComponents.Torsos],
                     Vest = characterClothes[OutfitComponents.Vests],
-                },
-                Economy = new EconomyData
-                {
-                    Money = (decimal)_config["DefaultMoney"],
-                    Bank = (decimal)_config["DefaultBank"]
                 },
                 Position = new PositionData((float)_config["Locations"][_locationIndex]["X"], (float)_config["Locations"][_locationIndex]["Y"], (float)_config["Locations"][_locationIndex]["Z"], (float)_config["Locations"][_locationIndex]["H"]),
                 Data = new Dictionary<string, object>()
@@ -893,11 +890,11 @@ namespace Average.Client.Framework.Services
 
             RemovePedComponent(OutfitComponents.Pants);
 
-            bodyTypesItem.Value = new Random(Environment.TickCount + 8).Next(0, _characterService.bodyTypes.Count - 1);
-            waistTypesItem.Value = new Random(Environment.TickCount + 9).Next(0, _characterService.waistTypes.Count - 1);
+            bodyTypesItem.Value = new Random(Environment.TickCount + 8).Next(0, _characterService._bodyTypes.Count - 1);
+            waistTypesItem.Value = new Random(Environment.TickCount + 9).Next(0, _characterService._waistTypes.Count - 1);
 
-            SetPedBodyComponent(ped, _characterService.bodyTypes, bodyTypesItem.Value);
-            SetPedBodyComponent(ped, _characterService.waistTypes, waistTypesItem.Value);
+            SetPedBodyComponent(ped, _characterService._bodyTypes, bodyTypesItem.Value);
+            SetPedBodyComponent(ped, _characterService._waistTypes, waistTypesItem.Value);
 
             await SetPedComponent(OutfitComponents.Hats, hatsItem);
             await SetPedComponent(OutfitComponents.Eyewear, eyewearItem);
@@ -1124,10 +1121,10 @@ namespace Average.Client.Framework.Services
                 case OutfitComponents.Eyewear:
                 case OutfitComponents.Neckties:
                 case OutfitComponents.Neckwear:
-                    return _characterService.clothes.Where(x => x.CategoryHash == categoryHash && x.PedType == (int)gender).ToList();
+                    return _characterService._clothes.Where(x => x.CategoryHash == categoryHash && x.PedType == (int)gender).ToList();
             }
 
-            return _characterService.clothes.Where(x => x.CategoryHash == categoryHash && x.IsMultiplayer && x.PedType == (int)gender).ToList();
+            return _characterService._clothes.Where(x => x.CategoryHash == categoryHash && x.IsMultiplayer && x.PedType == (int)gender).ToList();
         }
 
         private void InitFaceMenu()
@@ -1604,8 +1601,8 @@ namespace Average.Client.Framework.Services
                 overlayTertiaryColorItem.OnRender(_uiService);
 
                 overlayPaletteItem.MinValue = 0;
-                overlayPaletteItem.MaxValue = _characterService.colorPalettes.Count - 1;
-                overlayPaletteItem.Value = _characterService.colorPalettes.IndexOf(characterOverlays[overlayInfo.Name].Palette.ToString("X"));
+                overlayPaletteItem.MaxValue = _characterService._colorPalettes.Count - 1;
+                overlayPaletteItem.Value = _characterService._colorPalettes.IndexOf(characterOverlays[overlayInfo.Name].Palette.ToString("X"));
                 overlayPaletteItem.Text = $"{_languageService.Get("Client.CharacterCreator.Palette")}";
                 overlayPaletteItem.OnRender(_uiService);
 
@@ -1686,11 +1683,11 @@ namespace Average.Client.Framework.Services
                 UpdateOverlay();
             });
 
-            overlayPaletteItem = new SelectorItem<int>(_languageService.Get("Client.CharacterCreator.Palette"), 0, _characterService.colorPalettes.Count - 1, 0, 1, async (item) =>
+            overlayPaletteItem = new SelectorItem<int>(_languageService.Get("Client.CharacterCreator.Palette"), 0, _characterService._colorPalettes.Count - 1, 0, 1, async (item) =>
             {
                 overlayPaletteItem.Text = $"{_languageService.Get("Client.CharacterCreator.Palette")}";
 
-                characterOverlays[overlayInfo.Name].Palette = uint.Parse(_characterService.colorPalettes[overlayPaletteItem.Value], NumberStyles.AllowHexSpecifier);
+                characterOverlays[overlayInfo.Name].Palette = uint.Parse(_characterService._colorPalettes[overlayPaletteItem.Value], NumberStyles.AllowHexSpecifier);
 
                 await BaseScript.Delay(0);
 
@@ -1735,18 +1732,18 @@ namespace Average.Client.Framework.Services
 
             bodyMenu = new MenuContainer(_languageService.Get("Client.CharacterCreator.Body").ToUpper(), "Corps");
 
-            bodyTypesItem = new SelectorItem<int>("Morphologie", 0, _characterService.bodyTypes.Count - 1, 0, 1, (item) =>
+            bodyTypesItem = new SelectorItem<int>("Morphologie", 0, _characterService._bodyTypes.Count - 1, 0, 1, (item) =>
             {
                 bodyTypesItem.Text = $"{_languageService.Get("Client.CharacterCreator.Morphology")}";
 
-                SetPedBodyComponent(ped, (uint)_characterService.bodyTypes[bodyTypesItem.Value]);
+                SetPedBodyComponent(ped, (uint)_characterService._bodyTypes[bodyTypesItem.Value]);
             });
 
-            waistTypesItem = new SelectorItem<int>("Poids", 0, _characterService.waistTypes.Count - 1, 0, 1, (item) =>
+            waistTypesItem = new SelectorItem<int>("Poids", 0, _characterService._waistTypes.Count - 1, 0, 1, (item) =>
             {
                 waistTypesItem.Text = $"{_languageService.Get("Client.CharacterCreator.Weight")}";
 
-                SetPedBodyComponent(ped, (uint)_characterService.waistTypes[waistTypesItem.Value]);
+                SetPedBodyComponent(ped, (uint)_characterService._waistTypes[waistTypesItem.Value]);
             });
 
             bodyMenu.AddItem(bodyTypesItem);
@@ -2074,9 +2071,9 @@ namespace Average.Client.Framework.Services
             var ped = PlayerPedId();
             var values = new Dictionary<int, float>();
 
-            for (int i = 0; i < _characterService.faceParts.Count; i++)
+            for (int i = 0; i < _characterService._faceParts.Count; i++)
             {
-                var part = int.Parse(_characterService.faceParts[i], NumberStyles.AllowHexSpecifier);
+                var part = int.Parse(_characterService._faceParts[i], NumberStyles.AllowHexSpecifier);
                 var rand = new Random(Environment.TickCount * (i == 0 ? 1 : i)).Next(-10, 10) / 10f;
                 SetPedFaceFeature(ped, part, rand);
                 values.Add(part, rand);

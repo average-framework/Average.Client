@@ -1,4 +1,4 @@
-﻿using Average.Client.Models;
+﻿using Average.Shared.Models;
 using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using Newtonsoft.Json;
@@ -81,7 +81,7 @@ namespace Average.Client.Framework
 
             GetShapeTestResult(rayHandle, ref hit, ref endCoords, ref surfaceNormal, ref entityHit);
 
-            return new RaycastHit(hit, endCoords, surfaceNormal, entityHit);
+            return new RaycastHit(hit, endCoords, surfaceNormal, entityHit, GetEntityType(entityHit));
         }
         public static int GetEntityFrontOfPlayer(int ped, float distance)
         {

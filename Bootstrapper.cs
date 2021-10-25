@@ -34,6 +34,7 @@ namespace Average.Client
             _container.Register<ReplicateStateService>();
             _container.Register<UIService>();
             _container.Register<MenuService>();
+            _container.Register<ClientService>();
             _container.Register<RayService>();
             _container.Register<InputService>();
             _container.Register<WorldService>();

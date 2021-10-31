@@ -2,28 +2,24 @@
 using Average.Client.Framework.Services;
 using Newtonsoft.Json;
 using System;
-using static Average.Shared.SharedAPI;
+using static Average.Client.Framework.GameAPI;
 
 namespace Average.Client.Framework.Menu
 {
-    internal class RedirectButtonItem : IPrimaryMenuItem
+    internal class BottomButtonItem : ISecondaryMenuItem
     {
         public string Id { get; set; }
         public string Text { get; set; }
-        public bool Visible { get; set; }
+        public bool Visible { get; set; } = true;
         public bool Disabled { get; set; }
 
         [JsonIgnore]
-        public MenuContainer MenuTarget { get; set; }
+        public Action<BottomButtonItem> OnClick { get; }
 
-        [JsonIgnore]
-        public Action<RedirectButtonItem> OnClick { get; }
-
-        public RedirectButtonItem(string text, MenuContainer menuTarget, Action<RedirectButtonItem> onClick, bool visible = true, bool disabled = false)
+        public BottomButtonItem(string text, Action<BottomButtonItem> onClick, bool visible = true, bool disabled = false)
         {
             Id = RandomString();
             Text = text;
-            MenuTarget = menuTarget;
             OnClick = onClick;
             Visible = visible;
             Disabled = disabled;

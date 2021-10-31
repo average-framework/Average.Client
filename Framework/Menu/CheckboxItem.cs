@@ -1,4 +1,5 @@
-﻿using Average.Client.Framework.Services;
+﻿using Average.Client.Framework.Interfaces;
+using Average.Client.Framework.Services;
 using Newtonsoft.Json;
 using System;
 using static Average.Shared.SharedAPI;
@@ -11,17 +12,19 @@ namespace Average.Client.Framework.Menu
         public string Text { get; set; }
         public bool IsChecked { get; set; }
         public bool Visible { get; set; }
+        public bool Disabled { get; set; }
 
         [JsonIgnore]
         public Action<CheckboxItem, bool> OnChange { get; }
 
-        public CheckboxItem(string text, bool isChecked, Action<CheckboxItem, bool> onChange, bool visible = true)
+        public CheckboxItem(string text, bool isChecked, Action<CheckboxItem, bool> onChange, bool visible = true, bool disabled = false)
         {
             Id = RandomString();
             Text = text;
             IsChecked = isChecked;
             OnChange = onChange;
             Visible = visible;
+            Disabled = disabled;
         }
 
         public object OnRender() => new
@@ -30,7 +33,8 @@ namespace Average.Client.Framework.Menu
             id = Id,
             text = Text,
             isChecked = IsChecked,
-            visible = Visible
+            visible = Visible,
+            disabled = Disabled
         };
 
         public void OnUpdate(UIService uiService) => uiService.SendNui("menu", "render_item", OnRender());

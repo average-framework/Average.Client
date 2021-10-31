@@ -1,4 +1,5 @@
-﻿using Average.Client.Framework.Services;
+﻿using Average.Client.Framework.Interfaces;
+using Average.Client.Framework.Services;
 using Newtonsoft.Json;
 using System;
 using static Average.Shared.SharedAPI;
@@ -28,17 +29,19 @@ namespace Average.Client.Framework.Menu
         public Vector2 Primary { get; set; }
         public Vector2 Secondary { get; set; }
         public bool Visible { get; set; }
+        public bool Disabled { get; set; }
 
         [JsonIgnore]
         public Action<Vector2Item, object, object> OnInput { get; }
 
-        public Vector2Item(string text, Vector2 primary, Vector2 secondary, Action<Vector2Item, object, object> onInput, bool visible = true)
+        public Vector2Item(string text, Vector2 primary, Vector2 secondary, Action<Vector2Item, object, object> onInput, bool visible = true, bool disabled = false)
         {
             Id = RandomString();
             Text = text;
             Primary = primary;
             Secondary = secondary;
             Visible = visible;
+            Disabled = disabled;
             OnInput = onInput;
         }
 
@@ -55,7 +58,8 @@ namespace Average.Client.Framework.Menu
             secondaryMaxLength = Secondary.MaxLength,
             secondaryPlaceHolder = Secondary.PlaceHolder,
             secondaryValue = Secondary.Value,
-            visible = Visible
+            visible = Visible,
+            disabled = Disabled
         };
 
         public void OnUpdate(UIService uiService) => uiService.SendNui("menu", "render_item", OnRender());

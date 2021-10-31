@@ -16,7 +16,7 @@ namespace Average.Client.Scripts.Commands
 
         private readonly TopContainer topContainer = new();
         private readonly BottomContainer bottomContainer = new();
-        private readonly StatsMenuInfo middleContainer = new();
+        private readonly StatsMenuInfo middleContainer;
 
         private readonly MenuContainer testMenu;
         private readonly MenuContainer twoMenu;
@@ -55,6 +55,7 @@ namespace Average.Client.Scripts.Commands
             {
                 Logger.Error("Value: " + item.Value + ", " + value);
                 //item.Text = "Je ne suis pas une banane";
+                item.Disabled = true;
                 item.OnUpdate(_uiService);
             }));
 
@@ -91,6 +92,28 @@ namespace Average.Client.Scripts.Commands
                 Logger.Error("Value: " + item.IsChecked + ", " + isChecked);
                 item.Text = "Checked ? : " + isChecked;
                 item.OnUpdate(_uiService);
+            }));
+
+            topContainer.AddItem(new SelectSliderItem("Offset 2", 0, 100, 20, 0, (item, selectType, value) =>
+            {
+                Logger.Error("Select: " + selectType + ", " + value + ", " + value.GetType().Name);
+            }));
+
+            middleContainer = new StatsMenuInfo();
+            middleContainer.AddItem(new StatItem("Vie", StatBarType.Five, 0, 100, 35));
+
+            var label = new LabelItem("0.00");
+            bottomContainer.AddItem(label);
+
+            bottomContainer.AddItem(new BottomButtonItem("Acheter", (item) =>
+            {
+                Logger.Error("Acheter");
+                middleContainer.Items[0].Label = "Enculer";
+                middleContainer.Items[0].Value = 75;
+                middleContainer.OnUpdate(_uiService);
+
+                label.Text = "75";
+                label.OnUpdate(_uiService);
             }));
 
             testMenu = new MenuContainer(topContainer, bottomContainer, middleContainer);

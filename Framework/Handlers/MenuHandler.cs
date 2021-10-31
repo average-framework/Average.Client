@@ -23,8 +23,6 @@ namespace Average.Client.Framework.Handlers
         [UICallback("window_ready")]
         private CallbackDelegate OnWindowReady(IDictionary<string, object> args, CallbackDelegate cb)
         {
-            Logger.Error("Window Ready 2");
-
             _menuService.OnClientWindowInitialized();
 
             return cb;
@@ -39,13 +37,9 @@ namespace Average.Client.Framework.Handlers
             var isPrimary = _menuService.currentMenu.GetPrimaryItem(id) != null;
             var isSecondary = _menuService.currentMenu.GetSecondaryItem(id) != null;
 
-            Logger.Error("Result: " + isPrimary + ", " + isSecondary);
-
             if (isPrimary)
             {
                 var primaryItem = _menuService.currentMenu.GetPrimaryItem(id);
-
-                Logger.Error("Result 2: " + primaryItem.GetType().Name + ", " + string.Join(", ", args));
 
                 switch (primaryItem)
                 {
@@ -82,24 +76,24 @@ namespace Average.Client.Framework.Handlers
                         break;
                     case SelectItem menuItem:
                         var selectTypeString = args["selectType"];
-                        var selectType = SelectItem.SelectType.Previous;
+                        var selectType = SelectType.Previous;
 
                         switch (selectTypeString)
                         {
                             case "-":
-                                selectType = SelectItem.SelectType.Previous;
+                                selectType = SelectType.Previous;
                                 menuItem.CurrentIndex--;
 
-                                if(menuItem.CurrentIndex < 0)
+                                if (menuItem.CurrentIndex < 0)
                                 {
                                     menuItem.CurrentIndex = menuItem.Items.Count - 1;
                                 }
                                 break;
                             case "+":
-                                selectType = SelectItem.SelectType.Next;
+                                selectType = SelectType.Next;
                                 menuItem.CurrentIndex++;
-                                
-                                if(menuItem.CurrentIndex > menuItem.Items.Count - 1)
+
+                                if (menuItem.CurrentIndex > menuItem.Items.Count - 1)
                                 {
                                     menuItem.CurrentIndex = 0;
                                 }
@@ -112,7 +106,7 @@ namespace Average.Client.Framework.Handlers
                             menuItem.OnSelect?.Invoke(menuItem, selectType, newItem);
                             menuItem.OnUpdate(_uiService);
                         }
-                        catch(Exception ex)
+                        catch (Exception ex)
                         {
                             Logger.Error("Ex: " + ex.StackTrace);
                         }
@@ -121,6 +115,118 @@ namespace Average.Client.Framework.Handlers
                         value = args["value"];
                         menuItem.Value = value;
                         menuItem.OnInput?.Invoke(menuItem, value);
+                        break;
+                    case SelectSliderItem menuItem:
+                        value = args["value"];
+                        selectTypeString = args["selectType"];
+                        selectType = SelectType.Previous;
+
+                        var isInt = !value.ToString().Contains(".");
+
+                        var intValue = 0;
+                        var floatValue = 0f;
+
+                        if (isInt)
+                        {
+                            intValue = int.Parse((string)value);
+                        }
+                        else
+                        {
+                            floatValue = float.Parse((string)value);
+                        }
+
+                        switch (selectTypeString)
+                        {
+                            case "*":
+                                if (isInt)
+                                {
+                                    if (intValue >= (int)menuItem.Value)
+                                    {
+                                        selectType = SelectType.Next;
+                                    }
+                                    else
+                                    {
+                                        selectType = SelectType.Previous;
+                                    }
+                                }
+                                else
+                                {
+                                    if (floatValue >= (float)menuItem.Value)
+                                    {
+                                        selectType = SelectType.Next;
+                                    }
+                                    else
+                                    {
+                                        selectType = SelectType.Previous;
+                                    }
+                                }
+                                break;
+                            case "-":
+                                selectType = SelectType.Previous;
+
+                                if (isInt)
+                                {
+                                    intValue -= (int)menuItem.Step;
+
+                                    if (intValue < (int)menuItem.Min)
+                                    {
+                                        intValue = (int)menuItem.Min;
+                                    }
+                                }
+                                else
+                                {
+                                    floatValue -= (float)menuItem.Step;
+
+                                    if (floatValue < (float)menuItem.Min)
+                                    {
+                                        floatValue = (float)menuItem.Min;
+                                    }
+                                }
+                                break;
+                            case "+":
+                                selectType = SelectType.Next;
+
+                                if (isInt)
+                                {
+                                    intValue += (int)menuItem.Step;
+
+                                    if (intValue > (int)menuItem.Max)
+                                    {
+                                        intValue = (int)menuItem.Max;
+                                    }
+                                }
+                                else
+                                {
+                                    floatValue += (float)menuItem.Step;
+
+                                    if (floatValue > (float)menuItem.Max)
+                                    {
+                                        floatValue = (float)menuItem.Max;
+                                    }
+                                }
+                                break;
+                        }
+
+                        if (isInt)
+                        {
+                            menuItem.Value = intValue;
+                        }
+                        else
+                        {
+                            menuItem.Value = floatValue;
+                        }
+
+                        menuItem.OnInput?.Invoke(menuItem, selectType, menuItem.Value);
+
+                        switch (selectTypeString)
+                        {
+                            case "*":
+                                break;
+                            case "-":
+                            case "+":
+                                menuItem.OnUpdate(_uiService);
+                                break;
+                        }
                         break;
                     case CheckboxItem menuItem:
                         var isChecked = (bool)args["isChecked"];
@@ -152,19 +258,13 @@ namespace Average.Client.Framework.Handlers
 
             if (_menuService.IsOpen && key == 27)
             {
-                Logger.Error("Histories: " + _menuService.histories.Count);
-
                 if (_menuService.histories.Count > 0)
                 {
                     var currentGroupIndex = _menuService.histories.FindIndex(x => x.Id == _menuService.currentMenu.Id);
 
-                    Logger.Error("CurrentGroupIndex: " + currentGroupIndex + ", " + _menuService.histories.Count);
-
                     if (currentGroupIndex > 0)
                     {
                         var parent = _menuService.histories[currentGroupIndex - 1];
-
-                        Logger.Error("Parent: " + parent.Id + ", " + parent.BannerTitle);
 
                         _menuService.Open(parent);
                         _menuService.histories.RemoveAt(currentGroupIndex);

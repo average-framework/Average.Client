@@ -21,7 +21,7 @@ namespace Average.Client.Framework.Handlers
             await _uiService.ShutdownLoadingScreen();
             await _uiService.FadeIn();
 
-            _characterCreatorService.StartCreator();
+            //_characterCreatorService.StartCreator();
         }
     }
 }

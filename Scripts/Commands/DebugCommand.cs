@@ -1,0 +1,124 @@
+﻿using Average.Client.Framework.Attributes;
+using Average.Client.Framework.Diagnostics;
+using Average.Client.Framework.Interfaces;
+using Average.Client.Framework.Menu;
+using Average.Client.Framework.Services;
+using System.Collections.Generic;
+using static CitizenFX.Core.Native.API;
+
+namespace Average.Client.Scripts.Commands
+{
+    internal class DebugCommand : ICommand
+    {
+        private readonly CharacterService _characterService;
+        private readonly MenuService _menuService;
+        private readonly UIService _uiService;
+
+        private readonly TopContainer topContainer = new();
+        private readonly BottomContainer bottomContainer = new();
+        private readonly StatsMenuInfo middleContainer = new();
+
+        private readonly MenuContainer testMenu;
+        private readonly MenuContainer twoMenu;
+
+        public DebugCommand(CharacterService characterService, MenuService menuService, UIService uiService)
+        {
+            _characterService = characterService;
+            _menuService = menuService;
+            _uiService = uiService;
+
+            topContainer.AddItem(new ButtonItem("Enculer 2", (item) =>
+            {
+                Logger.Error("Je suis un enculer");
+                item.Text = "Je ne suis pas un enculer";
+                item.OnUpdate(_uiService);
+            }));
+
+            twoMenu = new MenuContainer(new TopContainer(), new BottomContainer(), new StatsMenuInfo());
+            twoMenu.BannerTitle = "Enculer";
+
+            topContainer.AddItem(new RedirectButtonItem("Banane", twoMenu, (item) =>
+            {
+                Logger.Error("Je suis une banane");
+                item.Text = "Je ne suis pas une banane";
+                item.OnUpdate(_uiService);
+            }));
+
+            topContainer.AddItem(new StoreButtonItem("Carabine", 14.57m, (item) =>
+            {
+                Logger.Error("Payer: $" + item.Amount);
+                //item.Text = "Je ne suis pas une banane";
+                item.OnUpdate(_uiService);
+            }));
+
+            topContainer.AddItem(new TextboxItem("Firstname", 5, 20, "Prénom", "", (item, value) =>
+            {
+                Logger.Error("Value: " + item.Value + ", " + value);
+                //item.Text = "Je ne suis pas une banane";
+                item.OnUpdate(_uiService);
+            }));
+
+            topContainer.AddItem(new Vector2Item("Informations", new Vector2(5, 20, "Prénom", ""), new Vector2(5, 20, "Nom", ""), (item, primaryValue, secondaryValue) => 
+            {
+                item.Text = (string)primaryValue + " " + (string)secondaryValue;
+                item.OnUpdate(_uiService);
+            }));
+
+            topContainer.AddItem(new Vector3Item("Informations 2", new Vector3(5, 20, "Prénom", ""), new Vector3(5, 20, "Nom", ""), new Vector3(5, 20, "Mdrrr", "Cuillere"), (item, primaryValue, secondaryValue, tertiaryValue) =>
+            {
+                item.Text = (string)primaryValue + " " + (string)secondaryValue + " " + (string)tertiaryValue;
+                item.OnUpdate(_uiService);
+            }));
+
+            var genders = new List<object> { "Homme", "Femme", "Autres?" };
+
+            topContainer.AddItem(new SelectItem("Genre", genders, (item, type, value) => 
+            {
+                Logger.Error("Select: " + type + ", " + value);
+                item.Text = "Sel: " + value;
+                item.OnUpdate(_uiService);
+            }, 0));
+
+            topContainer.AddItem(new SliderItem("Offset", 0.1, 1.0, 0.1, 0.0, (item, value) =>
+            {
+                Logger.Error("Value: " + item.Value + ", " + value);
+                item.Text = "Offset: " + value;
+                item.OnUpdate(_uiService);
+            }));
+
+            topContainer.AddItem(new CheckboxItem("Offset", true, (item, isChecked) =>
+            {
+                Logger.Error("Value: " + item.IsChecked + ", " + isChecked);
+                item.Text = "Checked ? : " + isChecked;
+                item.OnUpdate(_uiService);
+            }));
+
+            testMenu = new MenuContainer(topContainer, bottomContainer, middleContainer);
+            testMenu.BannerTitle = "Enculer 1";
+        }
+
+        [ClientCommand("debug.gotow")]
+        private async void OnGotow()
+        {
+            var waypointCoords = GetWaypointCoords();
+            await _characterService.Teleport(PlayerPedId(), waypointCoords);
+        }
+
+        [ClientCommand("debug.open")]
+        private async void OnOpen()
+        {
+            Logger.Error("On Open: " + testMenu.BannerTitle);
+            _menuService.Open(testMenu);
+            _uiService.FocusFrame("menu");
+            _uiService.Focus();
+        }
+
+        [ClientCommand("debug.close")]
+        private async void OnClose()
+        {
+            Logger.Error("On Close");
+            _menuService.Close();
+            _uiService.Unfocus();
+        }
+    }
+}

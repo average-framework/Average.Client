@@ -1,7 +1,9 @@
-﻿using Average.Client.Framework.Handlers;
+﻿using Average.Client.Commands;
+using Average.Client.Framework.Handlers;
 using Average.Client.Framework.IoC;
 using Average.Client.Framework.Services;
-using Average.Client.Handlers;
+using Average.Client.Scripts;
+using Average.Client.Scripts.Commands;
 using CitizenFX.Core;
 
 namespace Average.Client
@@ -31,13 +33,16 @@ namespace Average.Client
             _container.Register<ThreadService>();
             _container.Register<CommandService>();
             _container.Register<LanguageService>();
-            _container.Register<ReplicateStateService>();
             _container.Register<UIService>();
             _container.Register<MenuService>();
             _container.Register<ClientService>();
-            _container.Register<RayService>();
             _container.Register<InputService>();
+            _container.Register<RayService>();
             _container.Register<WorldService>();
+            _container.Register<DoorService>();
+            _container.Register<GameService>();
+            _container.Register<InventoryService>();
+            _container.Register<InventoryItemsService>();
 
             // Services
             _container.Register<CharacterService>();
@@ -46,18 +51,28 @@ namespace Average.Client
             // Handlers
             _container.Register<RpcHandler>();
             _container.Register<UIHandler>();
-            _container.Register<CommandHandler>();
             _container.Register<ClientHandler>();
             _container.Register<CharacterHandler>();
             _container.Register<CharacterCreatorHandler>();
-            _container.Register<ReplicateStateHandler>();
-            _container.Register<InputHandler>();
+            _container.Register<RayHandler>();
+            _container.Register<WorldHandler>();
+            _container.Register<DoorHandler>();
+            _container.Register<InventoryHandler>();
+            _container.Register<MenuHandler>();
+
+            // Scripts
+            _container.Register<DebugScript>();
+
+            // Commands
+            _container.Register<WorldCommand>();
+            _container.Register<InventoryCommand>();
+            _container.Register<DebugCommand>();
 
             // Reflections
             _container.Resolve<EventService>().Reflect();
             _container.Resolve<UIService>().Reflect();
             _container.Resolve<ThreadService>().Reflect();
-            _container.Resolve<ReplicateStateService>().Reflect();
+            _container.Resolve<CommandService>().Reflect();
 
             // Called on resource start for initialize the client on server side
             _container.Resolve<ClientHandler>().OnClientInitialized();

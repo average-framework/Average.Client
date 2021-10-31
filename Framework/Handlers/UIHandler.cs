@@ -1,9 +1,7 @@
 ﻿using Average.Client.Framework.Attributes;
 using Average.Client.Framework.Diagnostics;
-using Average.Client.Framework.Extensions;
 using Average.Client.Framework.Interfaces;
 using Average.Client.Framework.Services;
-using CitizenFX.Core.Native;
 using System.Collections.Generic;
 
 namespace Average.Client.Framework.Handlers

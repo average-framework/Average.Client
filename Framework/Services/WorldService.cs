@@ -1,22 +1,39 @@
 ﻿using Average.Client.Framework.Interfaces;
+using Average.Shared.Enums;
+using Average.Shared.Events;
+using System;
 using static Average.Client.Framework.GameAPI;
-using static CitizenFX.Core.Native.API;
 
 namespace Average.Client.Framework.Services
 {
     internal class WorldService : IService
     {
-        private readonly RpcService _rpcService;
+        public TimeSpan Time { get; set; }
+        public Weather Weather { get; set; }
 
-        public WorldService(RpcService rpcService)
+        public event EventHandler<WorldTimeEventArgs> TimeChanged;
+        public event EventHandler<WorldWeatherEventArgs> WeatherChanged;
+
+        public WorldService()
         {
-            _rpcService = rpcService;
 
-            _rpcService.OnRequest<float>("world:get_entity_front_of_player", (cb, range) =>
-            {
-                var raycast = GetTarget(PlayerPedId(), range);
-                cb(raycast);
-            });
+        }
+
+        internal void SetTime(TimeSpan time, int transitionTime)
+        {
+            Call(0x669E223E64B1903C, time.Hours, time.Minutes, time.Seconds, transitionTime, true);
+
+            Time = time;
+            TimeChanged?.Invoke(this, new WorldTimeEventArgs(time, transitionTime));
+        }
+
+        internal void SetWeather(uint weather, float transitionTime)
+        {
+            Call(0xD74ACDF7DB8114AF, false);
+            Call(0x59174F1AFE095B5A, weather, true, true, true, transitionTime, false);
+
+            Weather = (Weather)weather;
+            WeatherChanged?.Invoke(this, new WorldWeatherEventArgs((Weather)weather, transitionTime));
         }
     }
 }

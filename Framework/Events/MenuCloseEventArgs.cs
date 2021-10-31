@@ -1,4 +1,4 @@
-﻿using Average.Client.Menu;
+﻿using Average.Client.Framework.Menu;
 using System;
 
 namespace Average.Client.Framework.Events

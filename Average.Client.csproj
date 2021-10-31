@@ -81,8 +81,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bootstrapper.cs" />
+    <Compile Include="Commands\InventoryCommand.cs" />
+    <Compile Include="Commands\WorldCommand.cs" />
     <Compile Include="Configuration.cs" />
+    <Compile Include="Framework\Attributes\ClientCommandAttribute.cs" />
     <Compile Include="Framework\Attributes\ClientEventAttribute.cs" />
+    <Compile Include="Framework\Attributes\CommandAliasAttribute.cs" />
     <Compile Include="Framework\Attributes\ThreadAttribute.cs" />
     <Compile Include="Framework\Events\ClientMapGameTypeStartEventArgs.cs" />
     <Compile Include="Framework\Events\ClientMapGameTypeStopEventArgs.cs" />
@@ -110,21 +114,38 @@
     <Compile Include="Framework\GameAPI.cs" />
     <Compile Include="Framework\Handlers\CharacterCreatorHandler.cs" />
     <Compile Include="Framework\Handlers\CharacterHandler.cs" />
-    <Compile Include="Framework\Handlers\CommandHandler.cs" />
-    <Compile Include="Framework\Handlers\InputHandler.cs" />
-    <Compile Include="Framework\Handlers\ReplicateStateHandler.cs" />
+    <Compile Include="Framework\Handlers\DoorHandler.cs" />
+    <Compile Include="Framework\Handlers\InventoryHandler.cs" />
+    <Compile Include="Framework\Handlers\MenuHandler.cs" />
+    <Compile Include="Framework\Handlers\RayHandler.cs" />
     <Compile Include="Framework\Handlers\RpcHandler.cs" />
     <Compile Include="Framework\Handlers\UIHandler.cs" />
+    <Compile Include="Framework\Handlers\WorldHandler.cs" />
     <Compile Include="Framework\Helpers\ConversionHelpers.cs" />
     <Compile Include="Framework\Helpers\MathHelpers.cs" />
+    <Compile Include="Framework\Interfaces\IClientJob.cs" />
+    <Compile Include="Framework\Interfaces\ICommand.cs" />
     <Compile Include="Framework\Interfaces\IHandler.cs" />
+    <Compile Include="Framework\Interfaces\IScript.cs" />
     <Compile Include="Framework\Interfaces\IService.cs" />
+    <Compile Include="Framework\Menu\SeparatorItem.cs" />
+    <Compile Include="Framework\Menu\SelectItem.cs" />
+    <Compile Include="Framework\Menu\CheckboxItem.cs" />
+    <Compile Include="Framework\Menu\SliderItem.cs" />
+    <Compile Include="Framework\Menu\Vector3Item.cs" />
+    <Compile Include="Framework\Menu\Vector2Item.cs" />
+    <Compile Include="Framework\Menu\TextboxItem.cs" />
+    <Compile Include="Framework\Menu\StoreButtonItem.cs" />
+    <Compile Include="Framework\Menu\RedirectButtonItem.cs" />
     <Compile Include="Framework\Services\ClientService.cs" />
     <Compile Include="Framework\Services\CommandService.cs" />
+    <Compile Include="Framework\Services\DoorService.cs" />
     <Compile Include="Framework\Services\EventService.cs" />
+    <Compile Include="Framework\Services\GameService.cs" />
     <Compile Include="Framework\Services\InputService.cs" />
+    <Compile Include="Framework\Services\InventoryItemsService.cs" />
+    <Compile Include="Framework\Services\InventoryService.cs" />
     <Compile Include="Framework\Services\RayService.cs" />
-    <Compile Include="Framework\Services\ReplicateStateService.cs" />
     <Compile Include="Framework\Services\ThreadService.cs" />
     <Compile Include="Framework\Services\RpcService.cs" />
     <Compile Include="Framework\IoC\Container.cs" />
@@ -137,30 +158,19 @@
     <Compile Include="Framework\Services\UIService.cs" />
     <Compile Include="Framework\Services\WorldService.cs" />
     <Compile Include="Framework\UIEvents.cs" />
-    <Compile Include="Handlers\ClientHandler.cs" />
-    <Compile Include="Interfaces\IMenuItem.cs" />
+    <Compile Include="Framework\Handlers\ClientHandler.cs" />
     <Compile Include="Main.cs" />
-    <Compile Include="Menu\ButtonContainer.cs" />
-    <Compile Include="Menu\ButtonItem.cs" />
-    <Compile Include="Menu\CheckboxInput.cs" />
-    <Compile Include="Menu\CheckboxItem.cs" />
-    <Compile Include="Menu\LabelItem.cs" />
-    <Compile Include="Menu\ListItem.cs" />
-    <Compile Include="Menu\BarItem.cs" />
-    <Compile Include="Menu\MenuContainer.cs" />
-    <Compile Include="Menu\TwoCheckboxItem.cs" />
-    <Compile Include="Menu\Vector3InputItem.cs" />
-    <Compile Include="Menu\RichTextItem.cs" />
-    <Compile Include="Menu\SelectorItem.cs" />
-    <Compile Include="Menu\TabContainer.cs" />
-    <Compile Include="Menu\TabItem.cs" />
-    <Compile Include="Menu\TextAreaItem.cs" />
-    <Compile Include="Menu\TextBoxItem.cs" />
-    <Compile Include="Menu\Vector2Input.cs" />
-    <Compile Include="Menu\Vector2InputItem.cs" />
-    <Compile Include="Menu\Vector3Input.cs" />
+    <Compile Include="Framework\Menu\ButtonItem.cs" />
+    <Compile Include="Framework\Menu\MenuContainer.cs" />
     <Compile Include="Models\Cloth.cs" />
+    <Compile Include="Framework\Storage\StorageContextItem.cs" />
+    <Compile Include="Framework\Storage\StorageContextMenu.cs" />
+    <Compile Include="Framework\Storage\StorageItemInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Framework\Ray\RayGroup.cs" />
+    <Compile Include="Framework\Ray\RayItem.cs" />
+    <Compile Include="Scripts\Commands\DebugCommand.cs" />
+    <Compile Include="Scripts\DebugScript.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\.editorconfig">
@@ -169,7 +179,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Framework\Rpc\" />
+    <Folder Include="Scripts\Handlers\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,6 +1,7 @@
 ﻿using Average.Client.Framework.Attributes;
 using Average.Client.Framework.Diagnostics;
 using Average.Client.Framework.Events;
+using Average.Client.Framework.Extensions;
 using Average.Client.Framework.Interfaces;
 using Average.Client.Framework.IoC;
 using CitizenFX.Core;
@@ -105,20 +106,6 @@ namespace Average.Client.Framework.Services
 
             Logger.Debug($"Registering [ClientEvent]: {eventName} on method: {action.Method.Name}.");
         }
-
-        //private void UnregisterEvent(string eventName)
-        //{
-        //    if (_events.ContainsKey(eventName))
-        //    {
-        //        _events.Remove(eventName);
-
-        //        Logger.Debug($"Removing [ClientEvent]: {eventName}");
-        //    }
-        //    else
-        //    {
-        //        Logger.Debug($"Unable to remove [ClientEvent]: {eventName}");
-        //    }
-        //}
 
         internal void RegisterInternalEvent(ClientEventAttribute eventAttr, object classObj, MethodInfo method)
         {

@@ -34,6 +34,7 @@ namespace Average.Client.Framework.Handlers
         {
             var ped = PlayerPedId();
             var characterData = characterJson.Deserialize<CharacterData>();
+
             await _characterService.SetAppearance(ped, characterData);
         }
 
@@ -47,6 +48,7 @@ namespace Average.Client.Framework.Handlers
         private async void OnRemoveAllClothes(string outfitJson)
         {
             var outfit = outfitJson.Deserialize<Dictionary<string, uint>>();
+
             await _characterService.SetPedOutfit(PlayerPedId(), outfit);
         }
 

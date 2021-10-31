@@ -1,6 +1,8 @@
 ﻿using Average.Client.Framework.Attributes;
 using Average.Client.Framework.Interfaces;
+using Average.Shared.Enums;
 using CitizenFX.Core;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using static CitizenFX.Core.Native.API;
@@ -14,9 +16,21 @@ namespace Average.Client.Framework.Services
 
         public class Input
         {
-            public string Id { get; set; }
-            public uint Key { get; set; }
-            public bool IsValidate { get; set; }
+            public string Id { get; }
+            public Control Key { get; }
+            public bool LastConditionState { get; set; }
+            public Func<bool> Condition { get; }
+            public Action<bool> OnStateChanged { get; }
+            public Action OnKeyReleased { get; }
+
+            public Input(Control key, Func<bool> condition, Action<bool> onStateChanged, Action onKeyReleased)
+            {
+                Id = Guid.NewGuid().ToString();
+                Key = key;
+                Condition = condition;
+                OnStateChanged = onStateChanged;
+                OnKeyReleased = onKeyReleased;
+            }
         }
 
         public InputService(EventService eventService)
@@ -32,26 +46,23 @@ namespace Average.Client.Framework.Services
                 for (int i = 0; i < _inputs.Count; i++)
                 {
                     var input = _inputs[i];
+                    var isValidate = input.Condition.Invoke();
 
-                    if (input.IsValidate && IsControlJustReleased(0, input.Key))
+                    if(input.LastConditionState != isValidate)
                     {
-                        _eventService.EmitServer("input:triggered", input.Id);
+                        input.LastConditionState = isValidate;
+                        input.OnStateChanged?.Invoke(isValidate);
+                    }
+
+                    if (isValidate && IsControlJustReleased(0, (uint)input.Key))
+                    {
+                        input.OnKeyReleased();
                     }
                 }
             }
             else
             {
                 await BaseScript.Delay(1000);
-            }
-        }
-
-        internal void SetInputState(string inputId, bool isValidate)
-        {
-            var index = _inputs.FindIndex(x => x.Id == inputId);
-
-            if (index > -1)
-            {
-                _inputs[index].IsValidate = isValidate;
             }
         }
 
@@ -65,14 +76,16 @@ namespace Average.Client.Framework.Services
             return _inputs.Exists(x => x.Id == input.Id);
         }
 
-        internal void RegisterInput(Input input)
+        internal InputService RegisterKey(Input input)
         {
             _inputs.Add(input);
+            return this;
         }
 
-        internal void UnregisterInput(Input input)
+        internal InputService UnregisterKey(Input input)
         {
             _inputs.Remove(input);
+            return this;
         }
     }
 }

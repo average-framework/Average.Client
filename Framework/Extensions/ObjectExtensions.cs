@@ -28,7 +28,7 @@ namespace Average.Client.Framework.Extensions
             {
                 try
                 {
-                    return (T)System.Convert.ChangeType(source, typeof(T));
+                    return (T)Convert.ChangeType(source, typeof(T));
                 }
                 catch
                 {

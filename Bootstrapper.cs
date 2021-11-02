@@ -31,6 +31,7 @@ namespace Average.Client
             _container.Register<EventService>();
             _container.Register<RpcService>();
             _container.Register<ThreadService>();
+            _container.Register<UserService>();
             _container.Register<CommandService>();
             _container.Register<LanguageService>();
             _container.Register<UIService>();
@@ -59,6 +60,7 @@ namespace Average.Client
             _container.Register<DoorHandler>();
             _container.Register<InventoryHandler>();
             _container.Register<MenuHandler>();
+            _container.Register<UserHandler>();
 
             // Scripts
             _container.Register<DebugScript>();

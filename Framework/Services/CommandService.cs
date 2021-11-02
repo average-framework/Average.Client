@@ -29,14 +29,16 @@ namespace Average.Client.Framework.Services
 
         private readonly Container _container;
         private readonly RpcService _rpc;
+        private readonly UserService _userService;
 
         private const BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy;
         private readonly List<Command> _commands = new();
 
-        public CommandService(Container container, RpcService rpc)
+        public CommandService(Container container, RpcService rpc, UserService userService)
         {
             _container = container;
             _rpc = rpc;
+            _userService = userService;
 
             Logger.Debug("CommandManager Initialized successfully");
         }
@@ -82,7 +84,28 @@ namespace Average.Client.Framework.Services
                     try
                     {
                         args.ForEach(x => newArgs.Add(Convert.ChangeType(x, methodParams[args.FindIndex(p => p == x)].ParameterType)));
-                        action.DynamicInvoke(newArgs.ToArray());
+
+                        Logger.Error("0");
+
+                        if (_userService.User == null) return;
+
+                        Logger.Error("1");
+
+                        var command = GetCommand(commandName);
+                        if (command == null) return;
+
+                        Logger.Error("2");
+
+                        if (_userService.User.PermissionLevel >= command.Attribute.PermissionLevel)
+                        {
+                            action.DynamicInvoke(newArgs.ToArray());
+                        }
+                        else
+                        {
+                            Logger.Error("You have not the permission level for this command.");
+                        }
+
+                        Logger.Error("3");
                     }
                     catch
                     {
@@ -118,19 +141,6 @@ namespace Average.Client.Framework.Services
             _commands.Add(new Command(cmdAttr, aliasAttr, action));
         }
 
-        private void RegisterCommand(string commandName)
-        {
-            API.RegisterCommand(commandName, new Action<int, List<object>, string>(async (source, args, raw) =>
-            {
-                // Need to add an rpc check, if the command have no valid argument or error, we need to get a command result from the server
-                _rpc.OnResponse<bool, string>("command:execute", (success, errorMessage) =>
-                {
-                    if (!success)
-                    {
-                        Logger.Error(errorMessage);
-                    }
-                }).Emit(commandName, args);
-            }), false);
-        }
+        private Command GetCommand(string commandName) => _commands.Find(x => x.Attribute.Command == commandName);
     }
 }

@@ -204,13 +204,9 @@ namespace Average.Client.Framework.Services
 
         internal async void Open(RayGroup group)
         {
-            Logger.Debug("Open 1");
-
             var raycast = _clientService.GetSharedData<RaycastHit>("Character:CurrentRaycast") ?? new RaycastHit();
 
             currentGroup = group;
-
-            Logger.Debug("Open 2: " + (currentGroup == null));
 
             foreach (var item in group)
             {
@@ -218,14 +214,10 @@ namespace Average.Client.Framework.Services
                 item.IsVisible = result;
             }
 
-            Logger.Debug("Open 3: " + (currentGroup == null));
-
             AddHistory(group);
             OnRender(group);
             SetCrossairVisibility(true, CrossairTransitionDuration);
             ShowMenu();
-
-            Logger.Debug("Open 4: " + (currentGroup == null));
 
             if (!IsOpen)
             {

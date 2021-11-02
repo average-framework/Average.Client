@@ -120,6 +120,7 @@
     <Compile Include="Framework\Handlers\RayHandler.cs" />
     <Compile Include="Framework\Handlers\RpcHandler.cs" />
     <Compile Include="Framework\Handlers\UIHandler.cs" />
+    <Compile Include="Framework\Handlers\UserHandler.cs" />
     <Compile Include="Framework\Handlers\WorldHandler.cs" />
     <Compile Include="Framework\Helpers\ConversionHelpers.cs" />
     <Compile Include="Framework\Helpers\MathHelpers.cs" />
@@ -170,6 +171,7 @@
     <Compile Include="Framework\Services\LanguageService.cs" />
     <Compile Include="Framework\Services\MenuService.cs" />
     <Compile Include="Framework\Services\UIService.cs" />
+    <Compile Include="Framework\Services\UserService.cs" />
     <Compile Include="Framework\Services\WorldService.cs" />
     <Compile Include="Framework\UIEvents.cs" />
     <Compile Include="Framework\Handlers\ClientHandler.cs" />

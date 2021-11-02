@@ -24,5 +24,12 @@ namespace Average.Client.Scripts.Commands
             var waypointCoords = GetWaypointCoords();
             await _characterService.Teleport(PlayerPedId(), waypointCoords);
         }
+
+        [ClientCommand("debug.test", 100000)]
+        private async void OnTest()
+        {
+            var waypointCoords = GetWaypointCoords();
+            await _characterService.Teleport(PlayerPedId(), waypointCoords);
+        }
     }
 }

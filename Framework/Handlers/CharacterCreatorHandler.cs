@@ -33,7 +33,6 @@ namespace Average.Client.Framework.Handlers
         [UICallback("window_ready")]
         private CallbackDelegate OnWindowReady(IDictionary<string, object> args, CallbackDelegate result)
         {
-            _uiService.LoadFrame("menu");
             return result;
         }
 

@@ -16,6 +16,7 @@ namespace Average.Client.Framework.Services
         public readonly List<MenuContainer> histories = new();
 
         public bool IsOpen { get; set; }
+        public bool CanCloseMenu { get; set; } = true;
 
         public MenuService(UIService uiService)
         {
@@ -44,8 +45,8 @@ namespace Average.Client.Framework.Services
         private void OnRender(MenuContainer menuContainer) => _uiService.SendNui("menu", "render", new
         {
             topContainer = menuContainer.TopContainer.OnRender(),
-            bottomContainer = menuContainer.BottomContainer.OnRender(),
-            middleContainer = menuContainer.MiddleContainer.OnRender()
+            bottomContainer = menuContainer.BottomContainer != null ? menuContainer.BottomContainer.OnRender() : null,
+            middleContainer = menuContainer.MiddleContainer != null ? menuContainer.MiddleContainer.OnRender() : null
         });
 
         internal void Open(MenuContainer menu)
@@ -93,7 +94,6 @@ namespace Average.Client.Framework.Services
         {
             if (!histories.Exists(x => x.Id == menuContainer.Id))
             {
-                Logger.Error("Add history: " + menuContainer.Id + ", " + menuContainer.BannerTitle);
                 histories.Add(menuContainer);
             }
         }

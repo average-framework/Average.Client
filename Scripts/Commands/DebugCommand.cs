@@ -5,6 +5,8 @@ using Average.Client.Framework.Menu;
 using Average.Client.Framework.Services;
 using System.Collections.Generic;
 using static CitizenFX.Core.Native.API;
+using static Average.Client.Framework.GameAPI;
+using Average.Shared.Enums;
 
 namespace Average.Client.Scripts.Commands
 {
@@ -13,6 +15,7 @@ namespace Average.Client.Scripts.Commands
         private readonly CharacterService _characterService;
         private readonly MenuService _menuService;
         private readonly UIService _uiService;
+        private readonly WorldService _worldService;
 
         private readonly TopContainer topContainer = new();
         private readonly BottomContainer bottomContainer = new();
@@ -21,11 +24,12 @@ namespace Average.Client.Scripts.Commands
         private readonly MenuContainer testMenu;
         private readonly MenuContainer twoMenu;
 
-        public DebugCommand(CharacterService characterService, MenuService menuService, UIService uiService)
+        public DebugCommand(CharacterService characterService, MenuService menuService, UIService uiService, WorldService worldService)
         {
             _characterService = characterService;
             _menuService = menuService;
             _uiService = uiService;
+            _worldService = worldService;
 
             topContainer.AddItem(new ButtonItem("Enculer 2", (item) =>
             {
@@ -59,13 +63,13 @@ namespace Average.Client.Scripts.Commands
                 item.OnUpdate(_uiService);
             }));
 
-            topContainer.AddItem(new Vector2Item("Informations", new Vector2(5, 20, "Prénom", ""), new Vector2(5, 20, "Nom", ""), (item, primaryValue, secondaryValue) => 
+            topContainer.AddItem(new Vector2Item("Informations", new Vector2Input(5, 20, "Prénom", ""), new Vector2Input(5, 20, "Nom", ""), (item, primaryValue, secondaryValue) => 
             {
                 item.Text = (string)primaryValue + " " + (string)secondaryValue;
                 item.OnUpdate(_uiService);
             }));
 
-            topContainer.AddItem(new Vector3Item("Informations 2", new Vector3(5, 20, "Prénom", ""), new Vector3(5, 20, "Nom", ""), new Vector3(5, 20, "Mdrrr", "Cuillere"), (item, primaryValue, secondaryValue, tertiaryValue) =>
+            topContainer.AddItem(new Vector3Item("Informations 2", new Vector3Input(5, 20, "Prénom", ""), new Vector3Input(5, 20, "Nom", ""), new Vector3Input(5, 20, "Mdrrr", "Cuillere"), (item, primaryValue, secondaryValue, tertiaryValue) =>
             {
                 item.Text = (string)primaryValue + " " + (string)secondaryValue + " " + (string)tertiaryValue;
                 item.OnUpdate(_uiService);
@@ -80,7 +84,7 @@ namespace Average.Client.Scripts.Commands
                 item.OnUpdate(_uiService);
             }, 0));
 
-            topContainer.AddItem(new SliderItem("Offset", 0.1, 1.0, 0.1, 0.0, (item, value) =>
+            topContainer.AddItem(new SliderItem("Offset", 0.1, 1.0, 0.1, 0.0, typeof(int), (item, value) =>
             {
                 Logger.Error("Value: " + item.Value + ", " + value);
                 item.Text = "Offset: " + value;
@@ -94,7 +98,7 @@ namespace Average.Client.Scripts.Commands
                 item.OnUpdate(_uiService);
             }));
 
-            topContainer.AddItem(new SelectSliderItem("Offset 2", 0, 100, 20, 0, (item, selectType, value) =>
+            topContainer.AddItem(new SelectSliderItem("Offset 2", 0, 100, 20, 0, typeof(int), (item, selectType, value) =>
             {
                 Logger.Error("Select: " + selectType + ", " + value + ", " + value.GetType().Name);
             }));
@@ -142,6 +146,16 @@ namespace Average.Client.Scripts.Commands
             Logger.Error("On Close");
             _menuService.Close();
             _uiService.Unfocus();
+        }
+
+        [ClientCommand("debug.snow")]
+        private void OnSnow()
+        {
+            _worldService.SetWeather((uint)Weather.Snowlight, 0);
+
+            Call(0xF02A9C330BBFC5C7, 3);
+            Call(0xF6BEE7E80EC5CA40, 4000f);
+            Call((uint)GetHashKey("FORCE_SNOW_PASS"), true);
         }
     }
 }

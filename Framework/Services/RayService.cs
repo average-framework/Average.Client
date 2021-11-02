@@ -175,6 +175,11 @@ namespace Average.Client.Framework.Services
             }
         }
 
+        internal RayGroup GetGroup(string groupName)
+        {
+            return _menus.Find(x => x.Name == groupName);
+        }
+
         internal void AddGroup(RayGroup group)
         {
             if (!_menus.Exists(x => x.Name == group.Name))

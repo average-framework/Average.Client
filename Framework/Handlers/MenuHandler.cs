@@ -113,32 +113,43 @@ namespace Average.Client.Framework.Handlers
                         break;
                     case SliderItem menuItem:
                         value = args["value"];
-                        menuItem.Value = value;
-                        menuItem.OnInput?.Invoke(menuItem, value);
-                        break;
-                    case SelectSliderItem menuItem:
-                        value = args["value"];
-                        selectTypeString = args["selectType"];
-                        selectType = SelectType.Previous;
-
-                        var isInt = !value.ToString().Contains(".");
 
                         var intValue = 0;
                         var floatValue = 0f;
 
-                        if (isInt)
+                        if (menuItem.ValueType == typeof(int))
                         {
-                            intValue = int.Parse((string)value);
+                            intValue = int.Parse((string)args["value"]);
+                            menuItem.Value = intValue;
                         }
                         else
                         {
-                            floatValue = float.Parse((string)value);
+                            floatValue = float.Parse((string)args["value"]);
+                            menuItem.Value = floatValue;
                         }
+
+                        menuItem.OnInput?.Invoke(menuItem, menuItem.Value);
+                        break;
+                    case SelectSliderItem menuItem:
+                        intValue = 0;
+                        floatValue = 0f;
+
+                        if(menuItem.ValueType == typeof(int))
+                        {
+                            intValue = int.Parse((string)args["value"]);
+                        }
+                        else
+                        {
+                            floatValue = float.Parse((string)args["value"]);
+                        }
+
+                        selectTypeString = args["selectType"];
+                        selectType = SelectType.Previous;
 
                         switch (selectTypeString)
                         {
                             case "*":
-                                if (isInt)
+                                if(menuItem.ValueType == typeof(int))
                                 {
                                     if (intValue >= (int)menuItem.Value)
                                     {
@@ -149,7 +160,7 @@ namespace Average.Client.Framework.Handlers
                                         selectType = SelectType.Previous;
                                     }
                                 }
-                                else
+                                else if (menuItem.ValueType == typeof(float))
                                 {
                                     if (floatValue >= (float)menuItem.Value)
                                     {
@@ -164,7 +175,7 @@ namespace Average.Client.Framework.Handlers
                             case "-":
                                 selectType = SelectType.Previous;
 
-                                if (isInt)
+                                if (menuItem.ValueType == typeof(int))
                                 {
                                     intValue -= (int)menuItem.Step;
 
@@ -173,7 +184,7 @@ namespace Average.Client.Framework.Handlers
                                         intValue = (int)menuItem.Min;
                                     }
                                 }
-                                else
+                                else if (menuItem.ValueType == typeof(float))
                                 {
                                     floatValue -= (float)menuItem.Step;
 
@@ -186,7 +197,7 @@ namespace Average.Client.Framework.Handlers
                             case "+":
                                 selectType = SelectType.Next;
 
-                                if (isInt)
+                                if (menuItem.ValueType == typeof(int))
                                 {
                                     intValue += (int)menuItem.Step;
 
@@ -195,7 +206,7 @@ namespace Average.Client.Framework.Handlers
                                         intValue = (int)menuItem.Max;
                                     }
                                 }
-                                else
+                                else if (menuItem.ValueType == typeof(float))
                                 {
                                     floatValue += (float)menuItem.Step;
 
@@ -207,11 +218,11 @@ namespace Average.Client.Framework.Handlers
                                 break;
                         }
 
-                        if (isInt)
+                        if(menuItem.ValueType == typeof(int))
                         {
                             menuItem.Value = intValue;
                         }
-                        else
+                        else if (menuItem.ValueType == typeof(float))
                         {
                             menuItem.Value = floatValue;
                         }
@@ -277,8 +288,11 @@ namespace Average.Client.Framework.Handlers
                 }
                 else
                 {
-                    _menuService.Close();
-                    _uiService.Unfocus();
+                    if (_menuService.CanCloseMenu)
+                    {
+                        _menuService.Close();
+                        _uiService.Unfocus();
+                    }
                 }
             }
 

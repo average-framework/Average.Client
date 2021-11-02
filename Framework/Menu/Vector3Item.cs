@@ -6,19 +6,23 @@ using static Average.Shared.SharedAPI;
 
 namespace Average.Client.Framework.Menu
 {
-    internal class Vector3
+    internal class Vector3Input
     {
         public int MinLength { get; set; }
         public int MaxLength { get; set; }
         public string PlaceHolder { get; set; }
         public object Value { get; set; }
 
-        public Vector3(int minLength, int maxLength, string placeHolder, object value)
+        [JsonIgnore]
+        public Func<Vector3Item, bool> Validate { get; set; }
+
+        public Vector3Input(int minLength, int maxLength, string placeHolder, object value, Func<Vector3Item, bool> validate = null)
         {
             MinLength = minLength;
             MaxLength = maxLength;
             PlaceHolder = placeHolder;
             Value = value;
+            Validate = validate;
         }
     }
 
@@ -26,16 +30,16 @@ namespace Average.Client.Framework.Menu
     {
         public string Id { get; private set; }
         public string Text { get; set; }
-        public Vector3 Primary { get; set; }
-        public Vector3 Secondary { get; set; }
-        public Vector3 Tertiary { get; set; }
+        public Vector3Input Primary { get; set; }
+        public Vector3Input Secondary { get; set; }
+        public Vector3Input Tertiary { get; set; }
         public bool Visible { get; set; }
         public bool Disabled { get; set; }
 
         [JsonIgnore]
         public Action<Vector3Item, object, object, object> OnInput { get; }
 
-        public Vector3Item(string text, Vector3 primary, Vector3 secondary, Vector3 tertiary, Action<Vector3Item, object, object, object> onInput, bool visible = true, bool disabled = false)
+        public Vector3Item(string text, Vector3Input primary, Vector3Input secondary, Vector3Input tertiary, Action<Vector3Item, object, object, object> onInput, bool visible = true, bool disabled = false)
         {
             Id = RandomString();
             Text = text;

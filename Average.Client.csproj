@@ -133,6 +133,7 @@
     <Compile Include="Framework\Interfaces\IService.cs" />
     <Compile Include="Framework\Menu\BottomButtonItem.cs" />
     <Compile Include="Framework\Menu\BottomContainer.cs" />
+    <Compile Include="Framework\Menu\LabelSeparatorItem.cs" />
     <Compile Include="Framework\Menu\LabelItem.cs" />
     <Compile Include="Framework\Menu\SelectType.cs" />
     <Compile Include="Framework\Menu\SeparatorItem.cs" />

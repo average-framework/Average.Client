@@ -20,7 +20,10 @@ namespace Average.Client.Framework.Menu
         [JsonIgnore]
         public Action<TextboxItem, object> OnInput { get; }
 
-        public TextboxItem(string text, int minLength, int maxLength, string placeHolder, object value, Action<TextboxItem, object> onInput, bool visible = true, bool disabled = false)
+        [JsonIgnore]
+        public Func<TextboxItem, bool> Validate { get; set; }
+
+        public TextboxItem(string text, int minLength, int maxLength, string placeHolder, object value, Action<TextboxItem, object> onInput, Func<TextboxItem, bool> validate = null, bool visible = true, bool disabled = false)
         {
             Id = RandomString();
             Text = text;
@@ -31,6 +34,7 @@ namespace Average.Client.Framework.Menu
             OnInput = onInput;
             Visible = visible;
             Disabled = disabled;
+            Validate = validate;
         }
 
         public object OnRender() => new

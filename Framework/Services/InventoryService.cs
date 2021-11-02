@@ -239,7 +239,6 @@ namespace Average.Client.Framework.Services
             {
                 weight = CalculateWeight(storageData).ToString("0.00"),
                 maxWeight = storageData.MaxWeight.ToString("0.00"),
-
                 type
             });
         }
@@ -566,8 +565,6 @@ namespace Average.Client.Framework.Services
 
                 if (availableSlot != -1 || createInNewSlot)
                 {
-                    Logger.Debug("available ? " + availableSlot + ", " + storageData.StorageId);
-
                     if (createInNewSlot)
                     {
                         availableSlot = createInSlotId;
@@ -577,8 +574,6 @@ namespace Average.Client.Framework.Services
                     {
                         if (!createInNewSlot)
                         {
-                            Logger.Debug("Slot -> 0");
-
                             // Créer un nouvelle item dans un slot disponible
                             newItem.SlotId = availableSlot;
                             storageData.Items.Add(newItem);
@@ -592,8 +587,6 @@ namespace Average.Client.Framework.Services
                         }
                         else
                         {
-                            Logger.Debug("Slot -> 1");
-
                             newItem.SlotId = createInSlotId;
                             storageData.Items.Add(newItem);
 
@@ -623,7 +616,6 @@ namespace Average.Client.Framework.Services
 
                                 // Appel une action définis
                                 var targetItem = GetItemOnSlot(availableSlot, storageData);
-                                //info.OnStacking.Invoke(newItem, targetItem);
                                 var itemIndex = storageData.Items.FindIndex(x => x.SlotId == targetItem.SlotId);
 
                                 storageData.Items.RemoveAt(itemIndex);
@@ -640,11 +632,8 @@ namespace Average.Client.Framework.Services
                             {
                                 if (!createInNewSlot)
                                 {
-                                    Logger.Debug("Slot -> 2");
-
                                     // Appel l'action par defaut
                                     var itemInstance = storageData.Items.Find(x => x.SlotId == newItem.SlotId);
-                                    //itemInstance.Count += newItem.Count;
 
                                     StackItemOnSlot(storageData, newItem, itemInstance);
 
@@ -653,10 +642,6 @@ namespace Average.Client.Framework.Services
                                         Update(storageData);
                                     }
                                 }
-                                //else
-                                //{
-                                //    Logger.Debug("Slot -> 3");
-                                //}
                             }
                         }
                         else
@@ -741,8 +726,6 @@ namespace Average.Client.Framework.Services
 
                 if (slotId == targetSlotId) return;
 
-                Logger.Error("Inventory 1");
-
                 // On déplace l'item sur un slot définis
                 SetItemOnSlot(destinationStorage, slotId, targetSlotId);
             }
@@ -784,8 +767,6 @@ namespace Average.Client.Framework.Services
                 }
                 else
                 {
-                    Logger.Error("Test 1");
-
                     // Récupère l'instance de l'item dans le coffre
                     var itemInstance = destinationStorage.Items.Find(x => x.SlotId == targetSlotId);
                     if (itemInstance == null) return;
@@ -793,7 +774,6 @@ namespace Average.Client.Framework.Services
                     if (itemInstance.Name == newItem.Name)
                     {
                         // Les items sont identique, on les stack
-                        Logger.Error("Test 2: " + itemInstance.Name + ", " + itemInstance.Count + ", " + newItem.Name + ", " + newItem.Count);
 
                         // On vérifie que l'inventaire à assez de place pour recevoir l'item provenant du coffre
                         if (!HasFreeSpaceForWeight(newItem, destinationStorage))
@@ -815,8 +795,6 @@ namespace Average.Client.Framework.Services
                     else
                     {
                         // Les items sont différent, on les alternes
-
-                        Logger.Error("Alternate");
 
                         var sourceCopy = new StorageItemData(item.Name, item.Count);
                         sourceCopy.SlotId = item.SlotId;
@@ -847,8 +825,6 @@ namespace Average.Client.Framework.Services
 
                         // On supprime l'item du coffre ce trouvant sur le slotId définis avant d'ajouter le nouvelle item
                         RemoveItemOnSlot(destinationStorage, targetSlotId);
-
-                        Logger.Error("Informations: " + slotId + ", " + targetSlotId + "\n" + sourceCopy.ToJson(Newtonsoft.Json.Formatting.Indented) + "\n" + destinationCopy.ToJson(Newtonsoft.Json.Formatting.Indented));
 
                         // Ajoute l'item du coffre dans l'inventaire
                         AddItem(destinationCopy, sourceStorage, true, slotId);
@@ -898,7 +874,6 @@ namespace Average.Client.Framework.Services
                         targetCount = (targetInfo.CanBeStacked && targetInfo.OnRenderStacking != null) ? targetInfo.OnRenderStacking.Invoke(targetItem) : targetItem.Count,
                         targetImg = targetInfo.Img,
                         contextItems = GetItemContextMenu(targetItem.Name),
-
                         type
                     });
                 }
@@ -928,7 +903,6 @@ namespace Average.Client.Framework.Services
                     targetCount = (info.CanBeStacked && info.OnRenderStacking != null) ? info.OnRenderStacking.Invoke(item) : item.Count,
                     targetImg = info.Img,
                     contextItems = GetItemContextMenu(item.Name),
-
                     type
                 });
 

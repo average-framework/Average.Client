@@ -18,9 +18,12 @@ namespace Average.Client.Framework.Menu
         public bool Disabled { get; set; }
 
         [JsonIgnore]
+        public Type ValueType { get; set; } = typeof(int);
+
+        [JsonIgnore]
         public Action<SelectSliderItem, SelectType, object> OnInput { get; }
 
-        public SelectSliderItem(string text, object min, object max, object step, object value, Action<SelectSliderItem, SelectType, object> onInput, bool visible = true, bool disabled = false)
+        public SelectSliderItem(string text, object min, object max, object step, object value, Type valueType, Action<SelectSliderItem, SelectType, object> onInput, bool visible = true, bool disabled = false)
         {
             Id = RandomString();
             Text = text;
@@ -28,6 +31,7 @@ namespace Average.Client.Framework.Menu
             Max = max;
             Step = step;
             Value = value;
+            ValueType = valueType;
             OnInput = onInput;
             Visible = visible;
             Disabled = disabled;

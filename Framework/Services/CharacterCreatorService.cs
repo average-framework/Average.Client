@@ -326,6 +326,9 @@ namespace Average.Client.Framework.Services
 
             _config = Configuration.ParseToObject("configs/character_creator.json");
 
+            // Menu
+            _menuService.CanCloseMenu = false;
+
             // Events
             _eventService.ResourceStop += OnResourceStop;
 
@@ -638,7 +641,6 @@ namespace Average.Client.Framework.Services
 
         internal async void StartCreator()
         {
-            _menuService.CanCloseMenu = false;
             _threadService.StartThread(WeatherUpdate);
 
             await _characterService.SpawnPed(gender);
@@ -2047,15 +2049,15 @@ namespace Average.Client.Framework.Services
                 await SetPedComponent(OutfitComponents.TalismanWrist, item);
             });
 
-            //clothesTopContainer.AddItem(new LabelSeparatorItem("Tête"));
+            clothesTopContainer.AddItem(new LabelSeparatorItem("Tête", "../src/img/inventory_items/clothing_generic_mask.png"));
             clothesTopContainer.AddItem(hatsItem);
             clothesTopContainer.AddItem(eyewearItem);
             clothesTopContainer.AddItem(masksItem);
             clothesTopContainer.AddItem(masksLargeItem);
-            //clothesTopContainer.AddItem(new LabelSeparatorItem("Nuque"));
+            clothesTopContainer.AddItem(new LabelSeparatorItem("Nuque", "../src/img/inventory_items/kit_bandana.png"));
             clothesTopContainer.AddItem(neckwearItem);
             clothesTopContainer.AddItem(necktiesItem);
-            //clothesTopContainer.AddItem(new LabelSeparatorItem("Haut du corps"));
+            clothesTopContainer.AddItem(new LabelSeparatorItem("Haut du corps", "../src/img/inventory_items/clothing_generic_vest.png"));
             clothesTopContainer.AddItem(shirtsItem);
             clothesTopContainer.AddItem(vestItem);
             clothesTopContainer.AddItem(suspendersItem);
@@ -2064,39 +2066,39 @@ namespace Average.Client.Framework.Services
             clothesTopContainer.AddItem(chapsItem);
             clothesTopContainer.AddItem(coatsItem);
             clothesTopContainer.AddItem(coatsClosedItem);
-            //clothesTopContainer.AddItem(new LabelSeparatorItem("Bas du corps"));
+            clothesTopContainer.AddItem(new LabelSeparatorItem("Bas du corps", "../src/img/inventory_items/clothing_generic_pants.png"));
             clothesTopContainer.AddItem(pantsItem);
             if (gender == Gender.Female) clothesTopContainer.AddItem(skirtsItem);
             clothesTopContainer.AddItem(beltItem);
             clothesTopContainer.AddItem(buckleItem);
             clothesTopContainer.AddItem(legAttachmentsItem);
-            //clothesTopContainer.AddItem(new LabelSeparatorItem("Bottes"));
+            clothesTopContainer.AddItem(new LabelSeparatorItem("Bottes", "../src/img/inventory_items/clothing_generic_boots.png"));
             clothesTopContainer.AddItem(bootsItem);
             clothesTopContainer.AddItem(spursItem);
             clothesTopContainer.AddItem(spatsItem);
-            //clothesTopContainer.AddItem(new LabelSeparatorItem("Mains / Bras"));
+            clothesTopContainer.AddItem(new LabelSeparatorItem("Main / Bras", "../src/img/inventory_items/clothing_generic_glove.png"));
             clothesTopContainer.AddItem(glovesItem);
             clothesTopContainer.AddItem(gauntletsItem);
             clothesTopContainer.AddItem(ringsRightHandItem);
             clothesTopContainer.AddItem(ringsLeftHandItem);
             clothesTopContainer.AddItem(braceletsItem);
-            //clothesTopContainer.AddItem(new LabelSeparatorItem("Accessoires"));
+            clothesTopContainer.AddItem(new LabelSeparatorItem("Accessoires", "../src/img/inventory_items/clothing_generic_belt_accs.png"));
             clothesTopContainer.AddItem(satchelsItem);
             clothesTopContainer.AddItem(accessoriesItem);
             if (gender == Gender.Female) clothesTopContainer.AddItem(femaleUnknow01Item);
-            //clothesTopContainer.AddItem(new LabelSeparatorItem("Ceintures d'arme / Holsters"));
+            clothesTopContainer.AddItem(new LabelSeparatorItem("Ceintures d'armes / Holsters", "../src/img/inventory_items/upgrade_bandolier.png"));
             clothesTopContainer.AddItem(gunbeltItem);
             clothesTopContainer.AddItem(loadoutsItem);
             clothesTopContainer.AddItem(holstersCrossdrawItem);
             clothesTopContainer.AddItem(holstersLeftItem);
             clothesTopContainer.AddItem(holstersRightItem);
-            //clothesTopContainer.AddItem(new LabelSeparatorItem("Etuis"));
+            clothesTopContainer.AddItem(new LabelSeparatorItem("Etuis", "../src/img/inventory_items/upgrade_offhand_holster.png"));
             clothesTopContainer.AddItem(sheathsItem);
             clothesTopContainer.AddItem(apronsItem);
 
             if (gender == Gender.Male)
             {
-                //clothesTopContainer.AddItem(new LabelSeparatorItem("Talismans"));
+                clothesTopContainer.AddItem(new LabelSeparatorItem("Talismans", "../src/img/inventory_items/provision_talisman_raven_claw.png"));
                 clothesTopContainer.AddItem(talismanBeltItem);
                 clothesTopContainer.AddItem(talismanHolsterItem);
                 clothesTopContainer.AddItem(talismanSatchelItem);

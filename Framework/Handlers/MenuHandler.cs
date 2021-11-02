@@ -282,8 +282,11 @@ namespace Average.Client.Framework.Handlers
                     }
                     else
                     {
-                        _menuService.Close();
-                        _uiService.Unfocus();
+                        if (_menuService.CanCloseMenu)
+                        {
+                            _menuService.Close();
+                            _uiService.Unfocus();
+                        }
                     }
                 }
                 else

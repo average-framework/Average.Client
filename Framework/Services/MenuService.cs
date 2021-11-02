@@ -76,10 +76,10 @@ namespace Average.Client.Framework.Services
         {
             if (IsOpen)
             {
+                _uiService.SendNui("menu", "close");
+
                 ClearHistory();
                 OnMenuClosed(currentMenu);
-
-                _uiService.SendNui("menu", "close");
 
                 IsOpen = false;
             }

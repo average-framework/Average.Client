@@ -39,33 +39,9 @@ namespace Average.Client.Framework.Services
             _clientService = clientService;
             _inputService = inputService;
 
-            CrossairCondition = DefaultCrossairCondition;
-
-            var testGroup = new RayGroup("testGroup");
-
-            _mainGroup.AddItem(new RayItem("Debug 1", "", false,
-                action: (raycast) =>
-                {
-                    Logger.Debug("Debug 1");
-                    Open(testGroup);
-                },
-                condition: async (raycast) =>
-                {
-                    return true;
-                }));
-
-            testGroup.AddItem(new RayItem("Debug 2", "", true,
-                action: (raycast) =>
-                {
-                    Logger.Debug("Debug 2");
-                },
-                condition: async (raycast) =>
-                {
-                    return true;
-                }));
+            CrossairCondition = DefaultCrossairCondition;  
 
             AddGroup(_mainGroup);
-            AddGroup(testGroup);
 
             // Inputs
             _inputService.RegisterKey(new Input((Control)0x8CC9CD42,
@@ -127,7 +103,7 @@ namespace Average.Client.Framework.Services
                     _isFocusActive = true;
 
                     ShowMenu();
-                    SetVisibility(false);
+                    SetVisibility(false, 0);
                     SetCrossairVisibility(true, CrossairTransitionDuration);
                 }
             }
@@ -262,7 +238,6 @@ namespace Average.Client.Framework.Services
                 histories.Add(group);
             }
         }
-
 
         internal void RemoveHistory(RayGroup group)
         {

@@ -42,11 +42,11 @@ namespace Average.Client
             _container.Register<RayService>();
             _container.Register<WorldService>();
             _container.Register<DoorService>();
+            _container.Register<MapService>();
             _container.Register<GameService>();
             _container.Register<InventoryService>();
             _container.Register<InventoryItemsService>();
             _container.Register<ObjectStreamingService>();
-            _container.Register<MapService>();
 
             // Services
             _container.Register<CharacterService>();

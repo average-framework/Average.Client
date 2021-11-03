@@ -9,10 +9,12 @@ namespace Average.Client.Framework.Services
     internal class GameService : IService
     {
         private readonly UIService _uiService;
+        private readonly MapService _mapService;
 
-        public GameService(UIService uiService)
+        public GameService(UIService uiService, MapService mapService)
         {
             _uiService = uiService;
+            _mapService = mapService;
 
             _uiService.Unfocus();
 
@@ -21,6 +23,8 @@ namespace Average.Client.Framework.Services
             SetHudComponents();
             LoadInteriors();
             SetVisualSettings();
+
+            _mapService.Load();
 
             Logger.Debug("GameService Initialized successfully");
         }

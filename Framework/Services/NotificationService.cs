@@ -1,4 +1,5 @@
 ﻿using Average.Client.Framework.Attributes;
+using Average.Client.Framework.Diagnostics;
 using Average.Client.Framework.Interfaces;
 using CitizenFX.Core;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ namespace Average.Client.Framework.Services
 {
     internal class NotificationService : IService
     {
-        public interface INotification
+        internal interface INotification
         {
             string Id { get; }
             int CurrentDuration { get; set; }
@@ -19,21 +20,71 @@ namespace Average.Client.Framework.Services
             bool IsCreated { get; set; }
         }
 
-        public class NotificationModel : INotification
+        internal enum NotificationCountType : int
+        {
+            Decrease,
+            Increase
+        }
+
+        internal class NotificationIcoModel : INotification
         {
             public string Id { get; } = RandomString();
-            public string Ico { get; }
-            public string Count { get; set; }
+            public string IcoPath { get; }
+            public NotificationCountType CountType { get; set; }
+            public int Count { get; set; }
             public int CurrentDuration { get; set; }
             public int Duration { get; }
             public int FadeInDuration { get; }
             public int FadeOutDuration { get; }
             public bool IsCreated { get; set; }
 
-            public NotificationModel(string count, string ico, int duration, int fadeInDuration, int fadeOutDuration)
+            public NotificationIcoModel(NotificationCountType countType, int count, string icoPath, int duration, int fadeInDuration, int fadeOutDuration)
             {
+                CountType = countType;
                 Count = count;
-                Ico = ico;
+                IcoPath = icoPath;
+                Duration = duration;
+                FadeInDuration = fadeInDuration;
+                FadeOutDuration = fadeOutDuration;
+            }
+        }
+
+        internal class NotificationStoreModel : INotification
+        {
+            public string Id { get; } = RandomString();
+            public NotificationCountType CountType { get; set; }
+            public string Text { get; set; }
+            public int Count { get; set; }
+            public int CurrentDuration { get; set; }
+            public int Duration { get; }
+            public int FadeInDuration { get; }
+            public int FadeOutDuration { get; }
+            public bool IsCreated { get; set; }
+
+            public NotificationStoreModel(NotificationCountType countType, string text, int count, int duration, int fadeInDuration, int fadeOutDuration)
+            {
+                CountType = countType;
+                Text = text;
+                Count = count;
+                Duration = duration;
+                FadeInDuration = fadeInDuration;
+                FadeOutDuration = fadeOutDuration;
+            }
+        }
+
+        internal class NotificationHelpTextModel : INotification
+        {
+            public string Id { get; } = RandomString();
+            public string Text { get; set; }
+            public int CurrentDuration { get; set; }
+            public int Duration { get; }
+            public int FadeInDuration { get; }
+            public int FadeOutDuration { get; }
+            public bool IsCreated { get; set; }
+
+            public NotificationHelpTextModel(string text, int duration, int fadeInDuration, int fadeOutDuration)
+            {
+                Text = text;
                 Duration = duration;
                 FadeInDuration = fadeInDuration;
                 FadeOutDuration = fadeOutDuration;
@@ -55,6 +106,8 @@ namespace Average.Client.Framework.Services
             _uiService.SetZIndex("notification", 10000);
         }
 
+        #region Thread
+
         [Thread]
         private async Task Update()
         {
@@ -68,13 +121,32 @@ namespace Average.Client.Framework.Services
 
                     switch (notification)
                     {
-                        case NotificationModel n:
+                        case NotificationIcoModel n:
                             _uiService.SendNui("notification", "create", new
                             {
                                 id = n.Id,
-                                ico = n.Ico,
-                                count = n.Count,
-                                fadeInDuration = n.FadeInDuration
+                                ico = n.IcoPath,
+                                count = GetNotificationCountTypeString(n.CountType) + n.Count,
+                                fadeInDuration = n.FadeInDuration,
+                                type = n.GetType().Name
+                            });
+                            break;
+                        case NotificationStoreModel n:
+                            _uiService.SendNui("notification", "create", new
+                            {
+                                id = n.Id,
+                                text = GetNotificationCountTypeString(n.CountType) + n.Count + " " + n.Text,
+                                fadeInDuration = n.FadeInDuration,
+                                type = n.GetType().Name
+                            });
+                            break;
+                        case NotificationHelpTextModel n:
+                            _uiService.SendNui("notification", "create", new
+                            {
+                                id = n.Id,
+                                text = n.Text,
+                                fadeInDuration = n.FadeInDuration,
+                                type = n.GetType().Name
                             });
                             break;
                     }
@@ -93,7 +165,7 @@ namespace Average.Client.Framework.Services
             }
             else
             {
-                Hide();
+                //Hide();
             }
 
             for (int i = 0; i < _queue.Count; i++)
@@ -114,22 +186,43 @@ namespace Average.Client.Framework.Services
             await BaseScript.Delay(100);
         }
 
+        #endregion
+
+        #region Logic
+
+        private string GetNotificationCountTypeString(NotificationCountType countType)
+        {
+            switch (countType)
+            {
+                case NotificationCountType.Decrease:
+                    return "-";
+                case NotificationCountType.Increase:
+                    return "+";
+            }
+
+            return default;
+        }
+
         private async Task Remove(INotification notification)
         {
             _uiService.SendNui("notification", "remove", new
             {
                 id = notification.Id,
-                fadeOutDuration = notification.FadeOutDuration
+                fadeOutDuration = notification.FadeOutDuration,
+                type = notification.GetType().Name
             });
+
+            Logger.Error("wait: " + notification.FadeOutDuration);
 
             await BaseScript.Delay(notification.FadeOutDuration);
 
+            Logger.Error("remove");
             _queue.Remove(notification);
         }
 
-        public void Schedule(string count, string ico, int duration, int fadeInDuration, int fadeOutDuration)
+        public void Schedule(INotification notification)
         {
-            _queue.Add(new NotificationModel(count, ico, duration, fadeInDuration, fadeOutDuration));
+            _queue.Add(notification);
         }
 
         internal void Show()
@@ -141,5 +234,7 @@ namespace Average.Client.Framework.Services
         {
             _uiService.SendNui("notification", "hide");
         }
+
+        #endregion
     }
 }

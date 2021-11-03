@@ -46,7 +46,7 @@ namespace Average.Client.Scripts
             // Doit récupèrer l'id de l'entité via ça position
 
             e.OverrideCalls.setPosition(coords.X, coords.Y, coords.Z);
-            e.OverrideCalls.setModel()
+            //e.OverrideCalls.setModel()
             //SetPedOutfitPreset()
         }
 

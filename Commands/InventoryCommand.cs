@@ -16,7 +16,7 @@ namespace Average.Client.Commands
         }
 
         // DEBUG ------------------------------------
-        [ClientCommand("storage.open_chest")]
+        [ClientCommand("storage:open_chest")]
         private async void OpenChest()
         {
             var chestId = "enterprise_bill&joe";
@@ -30,7 +30,7 @@ namespace Average.Client.Commands
         }
         // ------------------------------------------
 
-        [ClientCommand("storage.add_item")]
+        [ClientCommand("storage:add_item")]
         private void AddItem(string itemName, int itemCount)
         {
             var storage = _inventoryService.Inventory;
@@ -40,7 +40,7 @@ namespace Average.Client.Commands
             _inventoryService.AddItem(new StorageItemData(itemName, itemCount), storage);
         }
 
-        [ClientCommand("storage.remove_item_on_slot")]
+        [ClientCommand("storage:remove_item_on_slot")]
         private void RemoveItemOnSlot(int slotId)
         {
             var storage = _inventoryService.Inventory;

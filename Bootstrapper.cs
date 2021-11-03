@@ -35,6 +35,7 @@ namespace Average.Client
             _container.Register<CommandService>();
             _container.Register<LanguageService>();
             _container.Register<UIService>();
+            _container.Register<NotificationService>();
             _container.Register<MenuService>();
             _container.Register<ClientService>();
             _container.Register<InputService>();
@@ -44,6 +45,8 @@ namespace Average.Client
             _container.Register<GameService>();
             _container.Register<InventoryService>();
             _container.Register<InventoryItemsService>();
+            _container.Register<ObjectStreamingService>();
+            _container.Register<MapService>();
 
             // Services
             _container.Register<CharacterService>();
@@ -61,6 +64,8 @@ namespace Average.Client
             _container.Register<InventoryHandler>();
             _container.Register<MenuHandler>();
             _container.Register<UserHandler>();
+            _container.Register<ObjectStreamingHandler>();
+            _container.Register<NotificationHandler>();
 
             // Scripts
             _container.Register<DebugScript>();
@@ -69,6 +74,8 @@ namespace Average.Client
             _container.Register<WorldCommand>();
             _container.Register<InventoryCommand>();
             _container.Register<DebugCommand>();
+            _container.Register<ObjectStreamingCommand>();
+            _container.Register<MapCommand>();
 
             // Reflections
             _container.Resolve<EventService>().Reflect();

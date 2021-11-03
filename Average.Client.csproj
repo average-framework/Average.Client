@@ -82,11 +82,14 @@
   <ItemGroup>
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="Commands\InventoryCommand.cs" />
+    <Compile Include="Commands\MapCommand.cs" />
+    <Compile Include="Commands\ObjectStreamingCommand.cs" />
     <Compile Include="Commands\WorldCommand.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="Framework\Attributes\ClientCommandAttribute.cs" />
     <Compile Include="Framework\Attributes\ClientEventAttribute.cs" />
     <Compile Include="Framework\Attributes\CommandAliasAttribute.cs" />
+    <Compile Include="Framework\Attributes\ClientJobAttribute.cs" />
     <Compile Include="Framework\Attributes\ThreadAttribute.cs" />
     <Compile Include="Framework\Events\ClientMapGameTypeStartEventArgs.cs" />
     <Compile Include="Framework\Events\ClientMapGameTypeStopEventArgs.cs" />
@@ -117,6 +120,8 @@
     <Compile Include="Framework\Handlers\DoorHandler.cs" />
     <Compile Include="Framework\Handlers\InventoryHandler.cs" />
     <Compile Include="Framework\Handlers\MenuHandler.cs" />
+    <Compile Include="Framework\Handlers\NotificationHandler.cs" />
+    <Compile Include="Framework\Handlers\ObjectStreamingHandler.cs" />
     <Compile Include="Framework\Handlers\RayHandler.cs" />
     <Compile Include="Framework\Handlers\RpcHandler.cs" />
     <Compile Include="Framework\Handlers\UIHandler.cs" />
@@ -160,7 +165,11 @@
     <Compile Include="Framework\Services\InputService.cs" />
     <Compile Include="Framework\Services\InventoryItemsService.cs" />
     <Compile Include="Framework\Services\InventoryService.cs" />
+    <Compile Include="Framework\Services\MapService.cs" />
+    <Compile Include="Framework\Services\NotificationService.cs" />
+    <Compile Include="Framework\Services\ObjectStreamingService.cs" />
     <Compile Include="Framework\Services\RayService.cs" />
+    <Compile Include="Framework\Services\ServerJobService.cs" />
     <Compile Include="Framework\Services\ThreadService.cs" />
     <Compile Include="Framework\Services\RpcService.cs" />
     <Compile Include="Framework\IoC\Container.cs" />
@@ -182,6 +191,12 @@
     <Compile Include="Framework\Storage\StorageContextItem.cs" />
     <Compile Include="Framework\Storage\StorageContextMenu.cs" />
     <Compile Include="Framework\Storage\StorageItemInfo.cs" />
+    <Compile Include="Models\Imap.cs" />
+    <Compile Include="Models\Interior.cs" />
+    <Compile Include="Models\InteriorSet.cs" />
+    <Compile Include="Models\MyImap.cs" />
+    <Compile Include="Models\MyInterior.cs" />
+    <Compile Include="Models\ObjectModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Framework\Ray\RayGroup.cs" />
     <Compile Include="Framework\Ray\RayItem.cs" />
@@ -195,6 +210,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Jobs\" />
     <Folder Include="Scripts\Handlers\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

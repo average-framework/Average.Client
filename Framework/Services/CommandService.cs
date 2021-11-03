@@ -85,16 +85,10 @@ namespace Average.Client.Framework.Services
                     {
                         args.ForEach(x => newArgs.Add(Convert.ChangeType(x, methodParams[args.FindIndex(p => p == x)].ParameterType)));
 
-                        Logger.Error("0");
-
                         if (_userService.User == null) return;
-
-                        Logger.Error("1");
 
                         var command = GetCommand(commandName);
                         if (command == null) return;
-
-                        Logger.Error("2");
 
                         if (_userService.User.PermissionLevel >= command.Attribute.PermissionLevel)
                         {
@@ -104,8 +98,6 @@ namespace Average.Client.Framework.Services
                         {
                             Logger.Error("You have not the permission level for this command.");
                         }
-
-                        Logger.Error("3");
                     }
                     catch
                     {

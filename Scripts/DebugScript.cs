@@ -48,27 +48,27 @@ namespace Average.Client.Scripts
 
             adminGroup.AddItem(new RayItem("Midi", "🌕", false, (raycast) =>
             {
-                _worldService.SetTime(new TimeSpan(12, 0, 0), 0);
+                _worldService.SetNetworkedTime(new TimeSpan(12, 0, 0), 0);
             }, async (raycast) => true));
 
             adminGroup.AddItem(new RayItem("Minuit", "🌙", false, (raycast) =>
             {
-                _worldService.SetTime(new TimeSpan(24, 0, 0), 0);
+                _worldService.SetNetworkedTime(new TimeSpan(24, 0, 0), 0);
             }, async (raycast) => true));
 
             adminGroup.AddItem(new RayItem("Soleil", "☀️", false, (raycast) =>
             {
-                _worldService.SetWeather((uint)Weather.Sunny, 0);
+                _worldService.SetNetworkedWeather(Weather.Sunny.ToString(), 0f);
             }, async (raycast) => true));
 
             adminGroup.AddItem(new RayItem("Orage", "🌩", false, (raycast) =>
             {
-                _worldService.SetWeather((uint)Weather.Thunderstorm, 0);
+                _worldService.SetNetworkedWeather(Weather.Thunderstorm.ToString(), 0f);
             }, async (raycast) => true));
 
             adminGroup.AddItem(new RayItem("Activé la neige", "❄️", false, (raycast) =>
             {
-                _worldService.SetWeather((uint)Weather.Snowlight, 0);
+                _worldService.SetNetworkedWeather(Weather.Snowlight.ToString(), 0f);
 
                 Call(0xF02A9C330BBFC5C7, 3);
                 Call(0xF6BEE7E80EC5CA40, 4000f);
@@ -77,7 +77,7 @@ namespace Average.Client.Scripts
 
             adminGroup.AddItem(new RayItem("Désactiver la neige", "❄️", false, (raycast) =>
             {
-                _worldService.SetWeather((uint)Weather.Sunny, 0);
+                _worldService.SetNetworkedWeather(Weather.Sunny.ToString(), 0f);
 
                 Call(0xF02A9C330BBFC5C7, 0);
                 Call(0xF6BEE7E80EC5CA40, 0f);
@@ -87,6 +87,11 @@ namespace Average.Client.Scripts
             adminGroup.AddItem(new RayItem("Planter le jeu", "♨️", true, (raycast) =>
             {
                 while (true) { }
+            }, async (raycast) => true));
+
+            adminGroup.AddItem(new RayItem("Météo suivante", "🌩", false, (raycast) =>
+            {
+                _worldService.SetNetworkedNextWeather(0f);
             }, async (raycast) => true));
 
             adminGroup.AddItem(new RayItem("Ce téléporter au marqueur", "🪂", true, (raycast) =>

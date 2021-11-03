@@ -22,28 +22,25 @@ namespace Average.Client.Commands
         [ClientCommand("world:set_time")]
         private void OnSetTime(int hours, int minutes, int seconds, int transitionTime)
         {
-            _eventService.EmitServer("world:set_time", hours, minutes, seconds, transitionTime);
+            _worldService.SetNetworkedTime(new TimeSpan(hours, minutes, seconds), transitionTime);
         }
 
         [ClientCommand("world:set_weather")]
         private void OnSetWeather(string weatherName, float transitionTime)
         {
-            if (Enum.TryParse(weatherName, true, out Weather weather))
-            {
-                _eventService.EmitServer("world:set_weather", (uint)weather, transitionTime);
-            }
+            _worldService.SetNetworkedWeather(weatherName, transitionTime);
         }
 
         [ClientCommand("world:set_next_weather")]
         private void OnSetNextWeather(float transitionTime)
         {
-            _eventService.EmitServer("world:set_next_weather", transitionTime);
+            _worldService.SetNetworkedNextWeather(transitionTime);
         }
 
         [ClientCommand("world.enable_snow")]
         private void OnEnableSnow()
         {
-            _worldService.SetWeather((uint)Weather.Snowlight, 0);
+            _worldService.SetNetworkedWeather(Weather.Snowlight.ToString(), 0f);
 
             Call(0xF02A9C330BBFC5C7, 3);
             Call(0xF6BEE7E80EC5CA40, 4000f);
@@ -53,7 +50,7 @@ namespace Average.Client.Commands
         [ClientCommand("world.disable_snow")]
         private void OnDisableSnow()
         {
-            _worldService.SetWeather((uint)Weather.Sunny, 0);
+            _worldService.SetNetworkedWeather(Weather.Sunny.ToString(), 0f);
 
             Call(0xF02A9C330BBFC5C7, 0);
             Call(0xF6BEE7E80EC5CA40, 0f);

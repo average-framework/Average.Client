@@ -1,5 +1,4 @@
-﻿using Average.Client.Framework.Diagnostics;
-using Average.Client.Framework.Events;
+﻿using Average.Client.Framework.Events;
 using Average.Client.Framework.Interfaces;
 using Average.Client.Framework.Menu;
 using System;

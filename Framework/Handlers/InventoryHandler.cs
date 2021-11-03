@@ -36,8 +36,6 @@ namespace Average.Client.Framework.Handlers
         [UICallback("window_ready")]
         private CallbackDelegate OnWindowReady(IDictionary<string, object> args, CallbackDelegate cb)
         {
-            Logger.Error("Window Ready 1");
-
             _inventoryService.OnClientWindowInitialized();
 
             return cb;

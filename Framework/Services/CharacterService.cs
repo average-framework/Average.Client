@@ -66,6 +66,30 @@ namespace Average.Client.Framework.Services
 
         #endregion
 
+        internal async void SetTemporaryPed(string hashName, int variante)
+        {
+            var model = (uint)GetHashKey(hashName);
+            RequestModel(model, true);
+
+            while (!HasModelLoaded(model))
+            {
+                await BaseScript.Delay(100);
+            }
+
+            SetPlayerModel((uint)GetHashKey(hashName));
+            SetPedOutfitPreset(PlayerPedId(), variante);
+        }
+
+        internal void ClearDamagePack()
+        {
+            Call(0x523C79AEEFCC4A2A, PlayerPedId(), 10, "ALL");
+        }
+
+        internal void SetDamagePack(string pack, float damage, float multiplier)
+        {
+            Call(0x46DF918788CB093F, PlayerPedId(), pack, damage, multiplier);
+        }
+
         internal void Create(CharacterData characterData)
         {
             try

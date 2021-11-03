@@ -1,0 +1,6 @@
+
+Average.Client.csproj
+*.cache
+obj/Debug/Average.Client.csproj.CoreCompileInputs.cache
+*.cache
+*.csproj

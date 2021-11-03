@@ -4,6 +4,7 @@ using Average.Client.Framework.Interfaces;
 using Average.Client.Framework.Services;
 using static Average.Client.Framework.Services.NotificationService;
 using static CitizenFX.Core.Native.API;
+using static Average.Client.Framework.GameAPI;
 
 namespace Average.Client.Scripts.Commands
 {
@@ -50,6 +51,12 @@ namespace Average.Client.Scripts.Commands
         private void OnVisualSettings(string settingName, float value)
         {
             GameAPI.SetVisualSettings(settingName, value);
+        }
+
+        [ClientCommand("debug:ped_config_flag")]
+        private void OnPedConfigFlag(int config, bool enabled)
+        {
+            Call(0x1913FE4CBF41C463, PlayerPedId(), config, enabled);
         }
     }
 }

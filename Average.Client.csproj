@@ -81,6 +81,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bootstrapper.cs" />
+    <Compile Include="Commands\CharacterCommand.cs" />
     <Compile Include="Commands\InventoryCommand.cs" />
     <Compile Include="Commands\MapCommand.cs" />
     <Compile Include="Commands\ObjectStreamingCommand.cs" />
@@ -157,6 +158,7 @@
     <Compile Include="Framework\Menu\TextboxItem.cs" />
     <Compile Include="Framework\Menu\StoreButtonItem.cs" />
     <Compile Include="Framework\Menu\RedirectButtonItem.cs" />
+    <Compile Include="Framework\Services\AIService.cs" />
     <Compile Include="Framework\Services\ClientService.cs" />
     <Compile Include="Framework\Services\CommandService.cs" />
     <Compile Include="Framework\Services\DoorService.cs" />
@@ -175,6 +177,7 @@
     <Compile Include="Framework\IoC\Container.cs" />
     <Compile Include="Framework\IoC\ContainerItem.cs" />
     <Compile Include="Framework\IoC\Reuse.cs" />
+    <Compile Include="Scripts\AIZombieScript.cs" />
     <Compile Include="Scripts\CharacterCreatorScript.cs" />
     <Compile Include="Framework\Services\CharacterService.cs" />
     <Compile Include="Framework\Services\LanguageService.cs" />

@@ -36,6 +36,8 @@ namespace Average.Client
             _container.Register<LanguageService>();
             _container.Register<UIService>();
             _container.Register<NotificationService>();
+            _container.Register<AIRoutineService>();
+            _container.Register<AIComportementService>();
             _container.Register<MenuService>();
             _container.Register<ClientService>();
             _container.Register<InputService>();
@@ -52,6 +54,7 @@ namespace Average.Client
             // Scripts
             _container.Register<CharacterCreatorScript>();
             _container.Register<DebugScript>();
+            _container.Register<AIZombieScript>();
 
             // Handlers
             _container.Register<RpcHandler>();
@@ -74,6 +77,7 @@ namespace Average.Client
             _container.Register<DebugCommand>();
             _container.Register<ObjectStreamingCommand>();
             _container.Register<MapCommand>();
+            _container.Register<CharacterCommand>();
 
             // Reflections
             _container.Resolve<EventService>().Reflect();

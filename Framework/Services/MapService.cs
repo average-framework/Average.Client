@@ -24,11 +24,11 @@ namespace Average.Client.Framework.Services
         {
             _threadService = threadService;
 
-            MyImaps = Configuration.Parse<List<MyImap>>("configs/my_imaps");
-            MyInteriors = Configuration.Parse<List<MyInterior>>("configs/my_interiors");
-            Imaps = Configuration.Parse<List<Imap>>("utilities/imaps_infos");
-            Interiors = Configuration.Parse<List<Interior>>("utilities/interiors_infos");
-            InteriorsSet = Configuration.Parse<List<InteriorSet>>("utilities/interiors_set_infos");
+            MyImaps = Configuration.Parse<List<MyImap>>("configs/custom_imaps.json");
+            MyInteriors = Configuration.Parse<List<MyInterior>>("configs/custom_interiors.json");
+            Imaps = Configuration.Parse<List<Imap>>("utilities/imaps.json");
+            Interiors = Configuration.Parse<List<Interior>>("utilities/interiors.json");
+            InteriorsSet = Configuration.Parse<List<InteriorSet>>("utilities/interiors_set.json");
         }
 
         public void StartLowSpecMode()

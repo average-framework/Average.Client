@@ -169,7 +169,7 @@
     <Compile Include="Framework\Services\NotificationService.cs" />
     <Compile Include="Framework\Services\ObjectStreamingService.cs" />
     <Compile Include="Framework\Services\RayService.cs" />
-    <Compile Include="Framework\Services\ServerJobService.cs" />
+    <Compile Include="Framework\Services\ClientJobService.cs" />
     <Compile Include="Framework\Services\ThreadService.cs" />
     <Compile Include="Framework\Services\RpcService.cs" />
     <Compile Include="Framework\IoC\Container.cs" />

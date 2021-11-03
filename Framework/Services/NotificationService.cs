@@ -1,5 +1,4 @@
 ﻿using Average.Client.Framework.Attributes;
-using Average.Client.Framework.Diagnostics;
 using Average.Client.Framework.Interfaces;
 using CitizenFX.Core;
 using System.Collections.Generic;
@@ -43,7 +42,7 @@ namespace Average.Client.Framework.Services
 
         private readonly UIService _uiService;
 
-        private List<INotification> _queue = new();
+        private readonly List<INotification> _queue = new();
 
         public NotificationService(UIService uiService)
         {
@@ -53,7 +52,7 @@ namespace Average.Client.Framework.Services
         internal void OnClientWindowInitialized()
         {
             _uiService.LoadFrame("notification");
-            _uiService.SetZIndex("notification", 100000);
+            _uiService.SetZIndex("notification", 10000);
         }
 
         [Thread]
@@ -65,8 +64,6 @@ namespace Average.Client.Framework.Services
 
                 if (!notification.IsCreated)
                 {
-                    //Show();
-
                     notification.IsCreated = true;
 
                     switch (notification)
@@ -81,14 +78,8 @@ namespace Average.Client.Framework.Services
                             });
                             break;
                     }
-
-                    //await BaseScript.Delay(notification.Duration);
-
-                    //Remove(notification);
                 }
             }
-
-            //Hide();
 
             await BaseScript.Delay(250);
         }
@@ -116,7 +107,7 @@ namespace Average.Client.Framework.Services
                     if (notification.CurrentDuration >= notification.Duration)
                     {
                         await Remove(notification);
-                    }    
+                    }
                 }
             }
 

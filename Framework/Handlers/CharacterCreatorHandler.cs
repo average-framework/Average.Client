@@ -1,6 +1,7 @@
 ﻿using Average.Client.Framework.Attributes;
 using Average.Client.Framework.Interfaces;
 using Average.Client.Framework.Services;
+using Average.Client.Scripts;
 using Average.Shared.Attributes;
 using CitizenFX.Core;
 using System.Collections.Generic;
@@ -11,13 +12,13 @@ namespace Average.Client.Framework.Handlers
     internal class CharacterCreatorHandler : IHandler
     {
         private readonly UIService _uiService;
-        private readonly CharacterCreatorService _characterCreatorService;
+        private readonly CharacterCreatorScript _characterCreator;
         private readonly MenuService _menuService;
 
-        public CharacterCreatorHandler(UIService uiService, CharacterCreatorService characterCreatorService, MenuService menuService)
+        public CharacterCreatorHandler(UIService uiService, CharacterCreatorScript characterCreator, MenuService menuService)
         {
             _uiService = uiService;
-            _characterCreatorService = characterCreatorService;
+            _characterCreator = characterCreator;
             _menuService = menuService;
         }
 
@@ -27,7 +28,7 @@ namespace Average.Client.Framework.Handlers
             await _uiService.ShutdownLoadingScreen();
             await _uiService.FadeIn();
 
-            _characterCreatorService.StartCreator();
+            _characterCreator.StartCreator();
         }
 
         [UICallback("window_ready")]
@@ -69,26 +70,26 @@ namespace Average.Client.Framework.Handlers
                 else if (key == 38)
                 {
                     // Top
-                    if (!IsCamInterpolating(_characterCreatorService.defaultCamera) && !IsCamInterpolating(_characterCreatorService.faceCamera) && !IsCamInterpolating(_characterCreatorService.bodyCamera) && !IsCamInterpolating(_characterCreatorService.footCamera))
+                    if (!IsCamInterpolating(_characterCreator.defaultCamera) && !IsCamInterpolating(_characterCreator.faceCamera) && !IsCamInterpolating(_characterCreator.bodyCamera) && !IsCamInterpolating(_characterCreator.footCamera))
                     {
-                        if (_characterCreatorService.currentCamIndex < 3)
+                        if (_characterCreator.currentCamIndex < 3)
                         {
-                            _characterCreatorService.currentCamIndex += 1;
+                            _characterCreator.currentCamIndex += 1;
 
-                            _characterCreatorService.SwitchCamera(_characterCreatorService.currentCamIndex);
+                            _characterCreator.SwitchCamera(_characterCreator.currentCamIndex);
 
-                            switch (_characterCreatorService.currentCamIndex)
+                            switch (_characterCreator.currentCamIndex)
                             {
                                 case 0:
                                     break;
                                 case 1:
-                                    SetCamActiveWithInterp(_characterCreatorService.faceCamera, _characterCreatorService.defaultCamera, 750, 1, 0);
+                                    SetCamActiveWithInterp(_characterCreator.faceCamera, _characterCreator.defaultCamera, 750, 1, 0);
                                     break;
                                 case 2:
-                                    SetCamActiveWithInterp(_characterCreatorService.bodyCamera, _characterCreatorService.faceCamera, 750, 1, 0);
+                                    SetCamActiveWithInterp(_characterCreator.bodyCamera, _characterCreator.faceCamera, 750, 1, 0);
                                     break;
                                 case 3:
-                                    SetCamActiveWithInterp(_characterCreatorService.footCamera, _characterCreatorService.bodyCamera, 750, 1, 0);
+                                    SetCamActiveWithInterp(_characterCreator.footCamera, _characterCreator.bodyCamera, 750, 1, 0);
                                     break;
                             }
                         }
@@ -97,24 +98,24 @@ namespace Average.Client.Framework.Handlers
                 else if (key == 40)
                 {
                     // Bottom
-                    if (!IsCamInterpolating(_characterCreatorService.defaultCamera) && !IsCamInterpolating(_characterCreatorService.faceCamera) && !IsCamInterpolating(_characterCreatorService.bodyCamera) && !IsCamInterpolating(_characterCreatorService.footCamera))
+                    if (!IsCamInterpolating(_characterCreator.defaultCamera) && !IsCamInterpolating(_characterCreator.faceCamera) && !IsCamInterpolating(_characterCreator.bodyCamera) && !IsCamInterpolating(_characterCreator.footCamera))
                     {
-                        if (_characterCreatorService.currentCamIndex > 0)
+                        if (_characterCreator.currentCamIndex > 0)
                         {
-                            _characterCreatorService.currentCamIndex -= 1;
+                            _characterCreator.currentCamIndex -= 1;
 
-                            _characterCreatorService.SwitchCamera(_characterCreatorService.currentCamIndex);
+                            _characterCreator.SwitchCamera(_characterCreator.currentCamIndex);
 
-                            switch (_characterCreatorService.currentCamIndex)
+                            switch (_characterCreator.currentCamIndex)
                             {
                                 case 0:
-                                    SetCamActiveWithInterp(_characterCreatorService.defaultCamera, _characterCreatorService.faceCamera, 750, 1, 0);
+                                    SetCamActiveWithInterp(_characterCreator.defaultCamera, _characterCreator.faceCamera, 750, 1, 0);
                                     break;
                                 case 1:
-                                    SetCamActiveWithInterp(_characterCreatorService.faceCamera, _characterCreatorService.bodyCamera, 750, 1, 0);
+                                    SetCamActiveWithInterp(_characterCreator.faceCamera, _characterCreator.bodyCamera, 750, 1, 0);
                                     break;
                                 case 2:
-                                    SetCamActiveWithInterp(_characterCreatorService.bodyCamera, _characterCreatorService.footCamera, 750, 1, 0);
+                                    SetCamActiveWithInterp(_characterCreator.bodyCamera, _characterCreator.footCamera, 750, 1, 0);
                                     break;
                                 case 3:
                                     break;

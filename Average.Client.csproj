@@ -175,7 +175,7 @@
     <Compile Include="Framework\IoC\Container.cs" />
     <Compile Include="Framework\IoC\ContainerItem.cs" />
     <Compile Include="Framework\IoC\Reuse.cs" />
-    <Compile Include="Framework\Services\CharacterCreatorService.cs" />
+    <Compile Include="Scripts\CharacterCreatorScript.cs" />
     <Compile Include="Framework\Services\CharacterService.cs" />
     <Compile Include="Framework\Services\LanguageService.cs" />
     <Compile Include="Framework\Services\MenuService.cs" />

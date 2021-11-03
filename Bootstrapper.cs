@@ -47,10 +47,11 @@ namespace Average.Client
             _container.Register<InventoryService>();
             _container.Register<InventoryItemsService>();
             _container.Register<ObjectStreamingService>();
-
-            // Services
             _container.Register<CharacterService>();
-            _container.Register<CharacterCreatorService>();
+
+            // Scripts
+            _container.Register<CharacterCreatorScript>();
+            _container.Register<DebugScript>();
 
             // Handlers
             _container.Register<RpcHandler>();
@@ -66,9 +67,6 @@ namespace Average.Client
             _container.Register<UserHandler>();
             _container.Register<ObjectStreamingHandler>();
             _container.Register<NotificationHandler>();
-
-            // Scripts
-            _container.Register<DebugScript>();
 
             // Commands
             _container.Register<WorldCommand>();

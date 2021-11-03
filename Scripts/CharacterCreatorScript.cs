@@ -1,8 +1,10 @@
-﻿using Average.Client.Framework.Diagnostics;
+﻿using Average.Client.Framework;
+using Average.Client.Framework.Diagnostics;
 using Average.Client.Framework.Events;
 using Average.Client.Framework.Extensions;
 using Average.Client.Framework.Interfaces;
 using Average.Client.Framework.Menu;
+using Average.Client.Framework.Services;
 using Average.Client.Models;
 using Average.Shared.DataModels;
 using Average.Shared.Enums;
@@ -17,9 +19,9 @@ using System.Threading.Tasks;
 using static Average.Client.Framework.GameAPI;
 using static CitizenFX.Core.Native.API;
 
-namespace Average.Client.Framework.Services
+namespace Average.Client.Scripts
 {
-    internal class CharacterCreatorService : IService
+    internal class CharacterCreatorScript : IService
     {
         // Containers
         private MenuContainer faceMenu;
@@ -315,7 +317,7 @@ namespace Average.Client.Framework.Services
 
         public bool IsOpen { get; private set; }
 
-        public CharacterCreatorService(UIService uiService, CharacterService characterService, MenuService menuService, ThreadService threadService, EventService eventService, LanguageService languageService)
+        public CharacterCreatorScript(UIService uiService, CharacterService characterService, MenuService menuService, ThreadService threadService, EventService eventService, LanguageService languageService)
         {
             _menuService = menuService;
             _threadService = threadService;
@@ -655,7 +657,7 @@ namespace Average.Client.Framework.Services
             Call(0xEA23C49EAA83ACFB, x, y, z, h, true, true, false);
 
             var timer = GetGameTimer();
-            while (!HasCollisionLoadedAroundEntity(ped) && (GetGameTimer() - timer) < 5000) await BaseScript.Delay(0);
+            while (!HasCollisionLoadedAroundEntity(ped) && GetGameTimer() - timer < 5000) await BaseScript.Delay(0);
 
             SetEntityCoords(ped, x, y, z, true, true, true, true);
             SetEntityHeading(ped, h);
@@ -1072,7 +1074,7 @@ namespace Average.Client.Framework.Services
                 if (!primaryValue.ToString().All(char.IsNumber)) return false;
                 if (primaryValue.ToString().Length > item.Primary.MinLength) return false;
                 if (primaryValue < 1 || primaryValue > 31) return false;
-                
+
                 return true;
             }), new(2, 2, "05", "", (item) =>
             {

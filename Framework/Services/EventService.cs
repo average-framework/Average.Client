@@ -1,7 +1,6 @@
 ﻿using Average.Client.Framework.Attributes;
 using Average.Client.Framework.Diagnostics;
 using Average.Client.Framework.Events;
-using Average.Client.Framework.Extensions;
 using Average.Client.Framework.Interfaces;
 using Average.Client.Framework.IoC;
 using CitizenFX.Core;
@@ -135,81 +134,66 @@ namespace Average.Client.Framework.Services
         private void OnGameEventTriggered(string name, int[] data)
         {
             GameEventTriggered?.Invoke(this, new GameEventTriggeredEventArgs(name, data));
-            EmitServer("client:game_event", name, data);
         }
 
         private void OnResourceStart(string resource)
         {
             ResourceStart?.Invoke(this, new ResourceStartEventArgs(resource));
-            EmitServer("client:resource_start", resource);
         }
 
         private void OnResourceStop(string resource)
         {
             ResourceStop?.Invoke(this, new ResourceStopEventArgs(resource));
-            EmitServer("client:resource_stop", resource);
         }
 
         private void OnClientResourceStart(string resource)
         {
             ClientResourceStart?.Invoke(null, new ClientResourceStartEventArgs(resource));
-            EmitServer("client:client_resource_start", resource);
         }
 
         private void OnClientResourceStop(string resource)
         {
             ClientResourceStop?.Invoke(this, new ClientResourceStopEventArgs(resource));
-            EmitServer("client:client_resource_stop", resource);
         }
 
         private void OnResourceStarting(string resource)
         {
             ResourceStarting?.Invoke(this, new ResourceStartingEventArgs(resource));
-            EmitServer("client:resource_starting", resource);
         }
 
         private void OnClientMapStart(string resource)
         {
             ClientMapStart?.Invoke(this, new ClientMapStartEventArgs(resource));
-            EmitServer("client:client_map_start", resource);
         }
 
         private void OnClientMapStop(string resource)
         {
             ClientMapStop?.Invoke(this, new ClientMapStopEventArgs(resource));
-            EmitServer("client:client_map_stop", resource);
         }
 
         private void OnClientGameTypeStart(string resource)
         {
             ClientGameTypeStart?.Invoke(this, new ClientMapGameTypeStartEventArgs(resource));
-            EmitServer("client:client_game_type_start", resource);
         }
 
         private void OnClientGameTypeStop(string resource)
         {
             ClientGameTypeStop?.Invoke(this, new ClientMapGameTypeStopEventArgs(resource));
-            EmitServer("client:client_game_type_stop", resource);
         }
 
         private void OnPlayerActivated()
         {
             PlayerActivated?.Invoke(this, new PlayerActivatedEventArgs());
-            EmitServer("client:player_activated");
         }
 
         private void OnSessionInitialized()
         {
             SessionInitialized?.Invoke(this, new SessionInitializedEventArgs());
-            EmitServer("client:session_initialized");
         }
 
         private void OnPopulationPedCreating(float x, float y, float z, uint model, dynamic overrideCalls)
         {
-            Logger.Error("OnPopulationPedCreating");
-
             PopulationPedCreating?.Invoke(this, new PopulationPedCreatingEventArgs(new Vector3(x, y, z), model, overrideCalls));
-            Emit("client:population_ped_creating", new PopulationPedCreatingEventArgs(new Vector3(x, y, z), model, overrideCalls));
         }
 
         #endregion

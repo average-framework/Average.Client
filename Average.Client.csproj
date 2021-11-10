@@ -83,11 +83,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bootstrapper.cs" />
-    <Compile Include="Commands\CharacterCommand.cs" />
-    <Compile Include="Commands\InventoryCommand.cs" />
-    <Compile Include="Commands\MapCommand.cs" />
-    <Compile Include="Commands\ObjectStreamingCommand.cs" />
-    <Compile Include="Commands\WorldCommand.cs" />
+    <Compile Include="Framework\Commands\CharacterCommand.cs" />
+    <Compile Include="Framework\Commands\InventoryCommand.cs" />
+    <Compile Include="Framework\Commands\MapCommand.cs" />
+    <Compile Include="Framework\Commands\ObjectStreamingCommand.cs" />
+    <Compile Include="Framework\Commands\WorldCommand.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="Framework\Attributes\ClientCommandAttribute.cs" />
     <Compile Include="Framework\Attributes\ClientEventAttribute.cs" />

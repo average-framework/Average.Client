@@ -721,7 +721,7 @@ namespace Average.Client.Scripts
             {
                 var zone = _zones.Find(x => Vector3.Distance(entityCoords, x.Position) <= x.Radius);
 
-                if(zone == null)
+                if (zone == null)
                 {
                     DeleteEntity(ref entity);
                     return;

@@ -1,11 +1,10 @@
 ﻿using Average.Client.Framework.Interfaces;
-using Average.Client.Framework.Services;
-using System;
-using static CitizenFX.Core.Native.API;
-using static Average.Client.Framework.GameAPI;
 using Average.Client.Framework.Ray;
+using Average.Client.Framework.Services;
 using Average.Shared.Enums;
-using Average.Client.Framework.Attributes;
+using System;
+using static Average.Client.Framework.GameAPI;
+using static CitizenFX.Core.Native.API;
 
 namespace Average.Client.Scripts
 {

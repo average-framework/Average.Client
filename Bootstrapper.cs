@@ -1,4 +1,4 @@
-﻿using Average.Client.Commands;
+﻿using Average.Client.Framework.Commands;
 using Average.Client.Framework.Handlers;
 using Average.Client.Framework.IoC;
 using Average.Client.Framework.Services;

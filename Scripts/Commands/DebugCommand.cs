@@ -1,5 +1,4 @@
-﻿using Average.Client.Framework;
-using Average.Client.Framework.Attributes;
+﻿using Average.Client.Framework.Attributes;
 using Average.Client.Framework.Interfaces;
 using Average.Client.Framework.Services;
 using static Average.Client.Framework.GameAPI;

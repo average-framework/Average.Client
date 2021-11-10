@@ -4,7 +4,7 @@ using Average.Client.Framework.Interfaces;
 using Average.Client.Framework.Services;
 using Average.Shared.DataModels;
 
-namespace Average.Client.Commands
+namespace Average.Client.Framework.Commands
 {
     internal class InventoryCommand : ICommand
     {

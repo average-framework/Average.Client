@@ -6,7 +6,7 @@ using System;
 using static Average.Client.Framework.GameAPI;
 using static CitizenFX.Core.Native.API;
 
-namespace Average.Client.Commands
+namespace Average.Client.Framework.Commands
 {
     internal class WorldCommand : ICommand
     {

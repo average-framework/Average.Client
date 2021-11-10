@@ -21,7 +21,7 @@ using static CitizenFX.Core.Native.API;
 
 namespace Average.Client.Scripts
 {
-    internal class CharacterCreatorScript : IService
+    internal class CharacterCreatorScript : IScript
     {
         // Containers
         private MenuContainer faceMenu;
@@ -2362,6 +2362,11 @@ namespace Average.Client.Scripts
                 DestroyCam(bodyCamera, true);
                 DestroyCam(footCamera, true);
             }
+        }
+
+        public void Dispose()
+        {
+            GC.SuppressFinalize(this);
         }
     }
 }

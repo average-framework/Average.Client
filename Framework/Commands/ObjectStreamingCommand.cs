@@ -5,7 +5,7 @@ using Average.Client.Framework.Services;
 using CitizenFX.Core;
 using static CitizenFX.Core.Native.API;
 
-namespace Average.Client.Commands
+namespace Average.Client.Framework.Commands
 {
     internal class ObjectStreamingCommand : ICommand
     {

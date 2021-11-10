@@ -5,7 +5,7 @@ using CitizenFX.Core;
 using System.Globalization;
 using static CitizenFX.Core.Native.API;
 
-namespace Average.Client.Commands
+namespace Average.Client.Framework.Commands
 {
     internal class MapCommand
     {

@@ -206,6 +206,8 @@ namespace Average.Client.Framework.Services
 
         private void OnPopulationPedCreating(float x, float y, float z, uint model, dynamic overrideCalls)
         {
+            Logger.Error("OnPopulationPedCreating");
+
             PopulationPedCreating?.Invoke(this, new PopulationPedCreatingEventArgs(new Vector3(x, y, z), model, overrideCalls));
             Emit("client:population_ped_creating", new PopulationPedCreatingEventArgs(new Vector3(x, y, z), model, overrideCalls));
         }

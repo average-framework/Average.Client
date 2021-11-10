@@ -47,5 +47,12 @@ namespace Average.Client.Commands
 
             _inventoryService.RemoveItemOnSlot(storage, slotId);
         }
+
+
+        [ClientCommand("giveitem")]
+        private void GiveItem(int playerId, string itemName, int itemCount)
+        {
+            _inventoryService.GiveItem(playerId, itemName, itemCount);
+        }
     }
 }

@@ -5,6 +5,7 @@ using static CitizenFX.Core.Native.API;
 using static Average.Client.Framework.GameAPI;
 using Average.Client.Framework.Ray;
 using Average.Shared.Enums;
+using Average.Client.Framework.Attributes;
 
 namespace Average.Client.Scripts
 {
@@ -14,13 +15,17 @@ namespace Average.Client.Scripts
         private readonly RayService _rayService;
         private readonly WorldService _worldService;
         private readonly CharacterService _characterService;
+        private readonly EventService _eventService;
+        private readonly InventoryService _inventoryService;
 
-        public DebugScript(MenuService menuService, RayService rayService, WorldService worldService, CharacterService characterService)
+        public DebugScript(InventoryService inventoryService, EventService eventService, MenuService menuService, RayService rayService, WorldService worldService, CharacterService characterService)
         {
             _menuService = menuService;
             _rayService = rayService;
             _worldService = worldService;
             _characterService = characterService;
+            _eventService = eventService;
+            _inventoryService = inventoryService;
 
             var adminGroup = new RayGroup("admin");
 

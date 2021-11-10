@@ -33,6 +33,12 @@ namespace Average.Client.Framework.Handlers
             _inventoryService.Inventory = storageData;
         }
 
+        [ClientEvent("inventory:giveitem")]
+        private void OnGiveItem(int playerId, string itemName, int itemCount)
+        {
+            _inventoryService.GiveItem(playerId, itemName, itemCount);
+        }
+
         [UICallback("window_ready")]
         private CallbackDelegate OnWindowReady(IDictionary<string, object> args, CallbackDelegate cb)
         {

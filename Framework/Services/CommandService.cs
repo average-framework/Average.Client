@@ -115,7 +115,7 @@ namespace Average.Client.Framework.Services
             Logger.Debug($"[CommandService] Registering [ClientCommand]: {commandName} on method: {action.Method.Name}.");
         }
 
-        internal void RegisterInternalClientCommand(ClientCommandAttribute cmdAttr, CommandAliasAttribute aliasAttr, object classObj, MethodInfo method)
+        private void RegisterInternalClientCommand(ClientCommandAttribute cmdAttr, CommandAliasAttribute aliasAttr, object classObj, MethodInfo method)
         {
             var methodParams = method.GetParameters();
             var action = Delegate.CreateDelegate(Expression.GetDelegateType((from parameter in method.GetParameters() select parameter.ParameterType).Concat(new[] { method.ReturnType }).ToArray()), classObj, method);
@@ -133,6 +133,6 @@ namespace Average.Client.Framework.Services
             _commands.Add(new Command(cmdAttr, aliasAttr, action));
         }
 
-        private Command GetCommand(string commandName) => _commands.Find(x => x.Attribute.Command == commandName);
+        internal Command GetCommand(string commandName) => _commands.Find(x => x.Attribute.Command == commandName);
     }
 }

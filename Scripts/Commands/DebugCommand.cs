@@ -2,9 +2,9 @@
 using Average.Client.Framework.Attributes;
 using Average.Client.Framework.Interfaces;
 using Average.Client.Framework.Services;
+using static Average.Client.Framework.GameAPI;
 using static Average.Client.Framework.Services.NotificationService;
 using static CitizenFX.Core.Native.API;
-using static Average.Client.Framework.GameAPI;
 
 namespace Average.Client.Scripts.Commands
 {
@@ -25,8 +25,7 @@ namespace Average.Client.Scripts.Commands
         [ClientCommand("debug.gotow", 100)]
         private async void OnGotow()
         {
-            var waypointCoords = GetWaypointCoords();
-            await _characterService.Teleport(PlayerPedId(), waypointCoords);
+            await _characterService.Teleport(PlayerPedId(), GetWaypointCoords());
         }
 
         [ClientCommand("debug:create_not_ico", 1000)]
@@ -50,7 +49,7 @@ namespace Average.Client.Scripts.Commands
         [ClientCommand("debug:vs", 1000)]
         private void OnVisualSettings(string settingName, float value)
         {
-            GameAPI.SetVisualSettings(settingName, value);
+            SetVisualSettings(settingName, value);
         }
 
         [ClientCommand("debug:ped_config_flag")]

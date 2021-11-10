@@ -40,7 +40,7 @@ namespace Average.Client.Framework.Services
                 _sharedData.Add(key, value);
             }
 
-            _eventService.EmitServer("client:share_data", key, value, @override);
+            //_eventService.EmitServer("client:share_data", key, value, @override);
         }
 
         internal void UnshareData(string key)
@@ -50,7 +50,7 @@ namespace Average.Client.Framework.Services
                 _sharedData.Remove(key);
             }
 
-            _eventService.EmitServer("client:unshare_data", key);
+            //_eventService.EmitServer("client:unshare_data", key);
         }
     }
 }

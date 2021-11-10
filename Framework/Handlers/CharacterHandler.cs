@@ -61,7 +61,7 @@ namespace Average.Client.Framework.Handlers
             var ped = await _characterService.SpawnPed(characterData.Skin.Gender);
             var tempPos = new Vector3(0f, 0f, 105f);
 
-            FreezeEntityPosition(ped, true);
+            //FreezeEntityPosition(ped, true);
             SetEntityCoords(ped, characterData.Position.X, characterData.Position.Y, characterData.Position.Z, true, true, true, false);
             RequestCollisionAtCoord(characterData.Position.X, characterData.Position.Y, characterData.Position.Z);
 
@@ -76,7 +76,7 @@ namespace Average.Client.Framework.Handlers
 
             await _characterService.SetAppearance(ped, characterData);
 
-            FreezeEntityPosition(ped, false);
+            //FreezeEntityPosition(ped, false);
 
             NetworkEndTutorialSession();
             ShutdownLoadingScreen();

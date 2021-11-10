@@ -102,7 +102,7 @@ namespace Average.Client.Framework.Services
             }
         }
 
-        internal async Task SetAppearance(int ped, CharacterData characterData)
+        public async Task SetAppearance(int ped, CharacterData characterData)
         {
             SetPedBody(ped, characterData.Skin.Head, characterData.Skin.Body, characterData.Skin.Legs);
             SetPedBodyComponents(ped, (uint)characterData.Skin.BodyType, (uint)characterData.Skin.WaistType);
@@ -443,11 +443,12 @@ namespace Average.Client.Framework.Services
         internal async Task Teleport(int ped, Vector3 position)
         {
             await FadeOut(250);
-
+            
             for (int i = (int)GetHeightmapBottomZForPosition(position.X, position.Y) - 10; i < 1000; i++)
             {
                 FreezeEntityPosition(ped, true);
                 SetEntityCoords(ped, position.X, position.Y, i, true, true, true, false);
+
                 var rayHandle = StartShapeTestRay(position.X, position.Y, i, position.X, position.Y, i - 2f, -1, ped, 0);
                 var hitd = false;
                 var endCoords = Vector3.Zero;

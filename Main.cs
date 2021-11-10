@@ -20,7 +20,7 @@ namespace Average.Client
             _removeTick = task => Tick -= task;
 
             var container = new Container();
-            var boostrap = new Bootstrapper(container, EventHandlers);
+            var boostrap = new Bootstrapper(container, EventHandlers, Exports);
         }
 
         internal static void AddTick(Func<Task> func) => _instance._addTick(func);

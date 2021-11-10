@@ -12,11 +12,13 @@ namespace Average.Client
     {
         private readonly Container _container;
         private readonly EventHandlerDictionary _eventHandlers;
+        private readonly ExportDictionary _exportDictionary;
 
-        public Bootstrapper(Container container, EventHandlerDictionary eventHandlers)
+        public Bootstrapper(Container container, EventHandlerDictionary eventHandlers, ExportDictionary exportDictionary)
         {
             _container = container;
             _eventHandlers = eventHandlers;
+            _exportDictionary = exportDictionary;
 
             Register();
         }
@@ -25,6 +27,7 @@ namespace Average.Client
         {
             // Others
             _container.RegisterInstance(_eventHandlers);
+            _container.RegisterInstance(_exportDictionary);
 
             // Framework Services
             //_container.Register<RpcService>(reuse: Reuse.Transient);
@@ -36,8 +39,6 @@ namespace Average.Client
             _container.Register<LanguageService>();
             _container.Register<UIService>();
             _container.Register<NotificationService>();
-            _container.Register<AIRoutineService>();
-            _container.Register<AIComportementService>();
             _container.Register<MenuService>();
             _container.Register<ClientService>();
             _container.Register<InputService>();
@@ -50,10 +51,13 @@ namespace Average.Client
             _container.Register<InventoryItemsService>();
             _container.Register<ObjectStreamingService>();
             _container.Register<CharacterService>();
+            _container.Register<GameEventService>();
+            _container.Register<AudioService>();
 
             // Scripts
             _container.Register<CharacterCreatorScript>();
             _container.Register<DebugScript>();
+            _container.Register<PlayerScript>();
             _container.Register<AIZombieScript>();
 
             // Handlers

@@ -1,6 +1,7 @@
 ﻿using Average.Client.Framework.Attributes;
 using Average.Client.Framework.Interfaces;
 using Average.Client.Framework.Services;
+using static CitizenFX.Core.Native.API;
 
 namespace Average.Client.Commands
 {

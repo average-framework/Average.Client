@@ -24,7 +24,7 @@
     <DebugSymbols>false</DebugSymbols>
     <DebugType>none</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\AverageFrameworkServerMongo\resources\avg\</OutputPath>
+    <OutputPath>..\..\..\..\..\AverageFrameworkServerMongo\resources\avg\</OutputPath>
     <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -64,13 +64,15 @@
   <ItemGroup>
     <Reference Include="Average.Shared.net, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\AverageFrameworkServerMongo\resources\avg\libs\Average.Shared.net.dll</HintPath>
+      <HintPath>..\..\..\..\..\AverageFrameworkServerMongo\resources\avg\libs\Average.Shared.net.dll</HintPath>
     </Reference>
-    <Reference Include="CitizenFX.Client.Core">
-      <HintPath>..\..\AverageFrameworkServer\resources\avg\libs\CitizenFX.Client.Core.dll</HintPath>
+    <Reference Include="CitizenFX.Client.Core, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\AverageFrameworkServerMongo\resources\avg\libs\CitizenFX.Client.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\AverageFrameworkServer\resources\avg\libs\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\AverageFrameworkServerMongo\resources\avg\libs\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -92,6 +94,18 @@
     <Compile Include="Framework\Attributes\CommandAliasAttribute.cs" />
     <Compile Include="Framework\Attributes\ClientJobAttribute.cs" />
     <Compile Include="Framework\Attributes\ThreadAttribute.cs" />
+    <Compile Include="Framework\Enums\AttributeCore.cs" />
+    <Compile Include="Framework\Enums\Emotes.cs" />
+    <Compile Include="Framework\Enums\HerbType.cs" />
+    <Compile Include="Framework\Enums\Keys.cs" />
+    <Compile Include="Framework\Enums\MarkerType.cs" />
+    <Compile Include="Framework\Enums\PedAttribute.cs" />
+    <Compile Include="Framework\Enums\PostEffect.cs" />
+    <Compile Include="Framework\Enums\Timecycles.cs" />
+    <Compile Include="Framework\Enums\WalkStyles.cs" />
+    <Compile Include="Framework\Enums\Weapon.cs" />
+    <Compile Include="Framework\Enums\WeaponAttachPoint.cs" />
+    <Compile Include="Framework\Enums\WeaponGroup.cs" />
     <Compile Include="Framework\Events\ClientMapGameTypeStartEventArgs.cs" />
     <Compile Include="Framework\Events\ClientMapGameTypeStopEventArgs.cs" />
     <Compile Include="Framework\Events\ClientMapStartEventArgs.cs" />
@@ -158,11 +172,12 @@
     <Compile Include="Framework\Menu\TextboxItem.cs" />
     <Compile Include="Framework\Menu\StoreButtonItem.cs" />
     <Compile Include="Framework\Menu\RedirectButtonItem.cs" />
-    <Compile Include="Framework\Services\AIService.cs" />
+    <Compile Include="Framework\Services\AudioService.cs" />
     <Compile Include="Framework\Services\ClientService.cs" />
     <Compile Include="Framework\Services\CommandService.cs" />
     <Compile Include="Framework\Services\DoorService.cs" />
     <Compile Include="Framework\Services\EventService.cs" />
+    <Compile Include="Framework\Services\GameEventService.cs" />
     <Compile Include="Framework\Services\GameService.cs" />
     <Compile Include="Framework\Services\InputService.cs" />
     <Compile Include="Framework\Services\InventoryItemsService.cs" />
@@ -177,6 +192,7 @@
     <Compile Include="Framework\IoC\Container.cs" />
     <Compile Include="Framework\IoC\ContainerItem.cs" />
     <Compile Include="Framework\IoC\Reuse.cs" />
+    <Compile Include="Framework\Structs\PlayerCore.cs" />
     <Compile Include="Scripts\AIZombieScript.cs" />
     <Compile Include="Scripts\CharacterCreatorScript.cs" />
     <Compile Include="Framework\Services\CharacterService.cs" />
@@ -205,6 +221,7 @@
     <Compile Include="Framework\Ray\RayItem.cs" />
     <Compile Include="Scripts\Commands\DebugCommand.cs" />
     <Compile Include="Scripts\DebugScript.cs" />
+    <Compile Include="Scripts\PlayerScript.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\.editorconfig">

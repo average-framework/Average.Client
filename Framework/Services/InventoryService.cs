@@ -119,6 +119,11 @@ namespace Average.Client.Framework.Services
             }
         }
 
+        internal void GiveItem(int playerId, string itemName, int itemCount)
+        {
+            _eventService.EmitServer("Inventory:GiveItem", playerId, itemName, itemCount);
+        }
+
         internal async Task<StorageData> Get(string storageId)
         {
             StorageData data = null;
